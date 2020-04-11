@@ -18,7 +18,7 @@
 -> 时间类型转换
     - time.strftime("%Y年%m月%d日"， time.localtime(time.time() - ...))
 
-# 返回命令行结果
+-> 返回命令行结果
 res = os.popen("Command").read()
 
 -> 获取文件大小

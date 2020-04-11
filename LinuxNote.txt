@@ -1,19 +1,19 @@
-# 查看镜像源
-/etc/apt/sources.list.parrot文件下说可以用”parrot-mirror-selector“去查看或修改镜像源。
-# 修改镜像源
-vim /etc/apt/sources.list.d/parrot.list
-源1（中国科技大学）：deb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
-源2（北京清华大学）：deb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
+-> 查看镜像源
+    - /etc/apt/sources.list.parrot文件下说可以用”parrot-mirror-selector“去查看或修改镜像源。
+-> 修改镜像源
+    - vim /etc/apt/sources.list.d/parrot.list
+    - 源1（中国科技大学）：deb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
+    - 源2（北京清华大学）：deb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
 
-# vim强制修改只读文件
-w !sudo tee %
-# 修改文件属性
-sudo chmod a+w file_name
+-> vim强制修改只读文件
+    - w !sudo tee %
+-> 修改文件属性
+   - sudo chmod a+w file_name
 
-# ssh
-允许远程连接：vim /etc/ssh/sshd_config -->PermitRootLogin yes
+-> ssh
+    - 允许远程连接：vim /etc/ssh/sshd_config -->PermitRootLogin yes
 
-# 在.bashrc文件中添加一个python文件再source .bashrc运行，被添加的python文件会被执行
+-> 在.bashrc文件中添加一个python文件再source .bashrc运行，被添加的python文件会被执行
 
 
 
