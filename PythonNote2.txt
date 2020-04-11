@@ -1,0 +1,65 @@
+主线任务：
+-------------------------------------------------
+1、js解密
+<----------------------------------------------->
+-> url中文编码   - urldecode
+
+-> json文件保存编码一致
+    - with open(..., encoding='utf-8') as f:
+        f.write(json.dumps(待保存文件, ensure_ascii=False) + '\n')
+
+-> re模块  # \s* 匹配空格，起到换行作用
+    - ip_adress = re.compile(
+                '<td class="country"><img src="http://fs.xicidaili.com/images/flag/cn.png" alt="Cn" /></td>\s*<td>(.*?)</td>\s*<td>(.*?)</td>'
+            )
+
+-> scrapy中使用FormRequest()来发出带data的请求
+
+-> 时间类型转换
+    - time.strftime("%Y年%m月%d日"， time.localtime(time.time() - ...))
+
+# 返回命令行结果
+res = os.popen("Command").read()
+
+-> 获取文件大小
+    - os.stat("文件路径及文件名").st_size
+    - os.path.getsize("文件路径及文件名")
+
+-> 路径env python版本可以动态的切换python版本
+-> 主进程、主线程，傻傻分不清
+-> python 的多线程是利用的CPU上下文切换，同一时刻只在一个核上进行操作，实质上还是单线程。
+-> python 的IO操作不占用CPU，计算占用CPU。所以python多线程适合密集型IO任务，不适合密集型CPU任务。
+-> 线程的进程ID是离发起该线程最近的进程ID，其父进程ID是运行程序员代码的主进程ID
+    - 编译器进程（PPID=None，PID=0）---> 运行代码进程（PPID=0, PID=1）---> 程序员发起进程（PPID=1, PID=2）---> A线程（PID=1, PID=2）---> D线程（PID=1, ID=2）
+-> 线程间通信用queue模块中的Queue实例化一个q然后对该q操作，进程能和其线程能共享q
+-> 进程通信用multiprocessing模块中的Queue实例化一个q（父进程克隆出的q）然后要把q传给子进程才能都对q操作，实质上是数据的传递，不是共享数据
+-> 要实现进程间数据共享，使用multiprocessing模块中的Manager实例化一个共享空间m，通过其中的m.list(...), m.dict(...)等数据类型来实现数据共享
+-> 管道通信用multiprocessing模块中的Pipe实例化两个通信的端口A、B，可以通过端口A.send()发也能A.recv()收，B和A一样
+-> multiprocessing模块中的进程锁Lock，用处1：防止多个进程同时占用屏幕，用法和线程锁类似，线实例化一把锁lock，再lock.acquire()和lock.release()
+-> 启用一个进程会克隆父进程的数据给子进程用，开销很大，因此有进程池来限制   见例9
+-> 进程池：multiprocessing模块中的Pool，实例化对象pool时可在Pool中传入一个最大进程数，pool的异步async方法可以传入回调函数
+    - 注意：必须要加pool.close()和pool.join()，顺序不能颠倒
+-> 守护线程：主线程结束，不管子线程有没有执行完，都将强制结束。用Thread实例化的对象th中的setDaemon(True)来将子线程设置为守护线程。注意要在start之前设置
+
+-> 协程：
+    - greenlet：手动的
+    - gevent: 自动的
+
+-> requests
+    - 对于保存响应数据较大的情况(如视频)，应一点一点的对其进行保存：
+    for chunk in response.iter_content(1024):
+        f.write(chunk)
+
+-> http://httpbin.org/ip            - 请求获取ip
+-> http://httpbin.org/cookie     - 请求获取cookie
+
+
+
+
+
+
+
+
+
+
+

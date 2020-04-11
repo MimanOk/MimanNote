@@ -1,0 +1,100 @@
+-> 注释
+    - <!-- 注释内容 -->
+
+-> 网页重定向:
+    - <meta http-equiv="Refresh" Content="time(单位/s): 重定向地址">
+
+-> 网页图标ICON
+    - < link rel="shortcut icon" href="the address of icon" >
+
+-> 图标
+    - 大于：&gt; 小于：&lt; 等于：&eq; 空格：&nbsp; 
+
+-> 标签
+    - 块级标签：<div>（白板）; <h1-6>（加大加粗）; <p>（段落间有间距）; 
+    - 行内标签：<span>（白板）; <>
+
+-> form表单
+    - <form action="提交的地方" method="GET/POST">
+    - <input type="text" name="text1"/> 单行文本
+    - <textarea name="">默认值<textarea/> 多行文本
+    - <input type="password" name="pwd"/>
+    - <input type="button" value="btn1"/>
+    - <input type="submit" value="提交"/>
+    - <input type="radio" name="单选框" value="提交值1" checked="checked"/>   name相同则互斥，才能达到单选效果
+    - <input type="checkbox" name="复选框" value="提交值1"/>   批量提交数据
+    - <input type="file" name=""filename/> 提交文件，依赖form表单的一个属性：enctype="multipart/form-data"
+    - <input type="reset" value="重置"/> 重置
+    - <select name="" size="2"> 后台根据name取值，size显示多个
+           <option value="1">选择1</option>
+           <option value="2" selected="selected">选择2</option>
+      </select>
+    - <select name="" multiple="multiple" size="2"> 按住crtl多选
+           <option value="1">选择1</option>
+           <option value="2" selected="selected">选择2</option>
+           <optgroup label="组名（不可选）">...</optgroup>
+      </select>
+    - </form>
+
+-> a标签
+    - 跳转
+    - 锚 href="#标签的id"
+
+-> img标签
+    - <img src="图片路径" title="鼠标放上去时显示" style="height: 200px; width: 200px;" alt="图片加载失败时显示">
+
+-> 列表（很少用）
+    - <ol> 有序
+          <li></li>
+          <li></li>
+      </ol>
+    - <ul> 无序
+          <li></li>
+          <li></li>
+      </ul>
+    - <dl> 分层
+          <dt></dt> 标题（左上侧）
+          <dd></dd> 内容（右下侧）
+      </dl>
+
+-> 表格
+    - <table border="边框宽">
+      <thead> 表头
+          <tr>
+              <th>表头1</th>
+          </tr>
+      </thead>
+      <tbody> 表体
+          <tr> 行
+              <td colspan="2">列1</td> 占两列
+              <td rowspan="2">列2</td> 占两列
+          </tr>
+      </tbody>
+      </table>
+
+-> label
+    - <label for="标签的id">...</label> 通过for点击label时光标定位到for指向的id
+    - <input id="id" type="text" name="name">
+
+-> fieldset（很少用）
+    - <fieldset>
+          <legend>类似标题</legend>
+          <input>...
+      </filedset>
+
+-> 横线
+    - </hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

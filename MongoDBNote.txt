@@ -1,0 +1,112 @@
+# 默认连接端口：27017
+
+# 选择库
+use 库名
+
+# 显示库
+show dbs
+
+# 显示库中数据名
+show collections
+
+--------------------------------------------->
+# 查找库中的数据
+1. 查找所有
+db.user.find()
+2. 查找所有name属性, 默认带有_id属性
+# 不带_id
+db.user.find({}, {name:1})
+# 带_id
+db.user.find({}, {name:1, _id: 0})
+3. 查找所有年龄为24的人的名字
+# 不带_id
+db.user.find({age: 24}, {name: 1, _id: 0})
+# goods_id不等于3的商品
+db.user.find({goods_id: {$ne: 3}}, {goods_name: 1, goods_price: 1, _id: 0})
+# goods_price小于等于100的商品
+db.user.find({goods_price: {$lte: 100}}, {goods_name: 1, goods_id: 1, _id: 0})
+# goods_id为5和11的商品
+db.user.find({goods_id: {$in: [5, 11]}}, {goods_name: 1, goods_price: 1, _id: 0})
+# 100<=goods_price<=500
+db.user.find({$and: [goods_price: {$gte: 100}, goods_price: {$lte: 500}]}, {goods_name: 1, goods_id: 1, _id: 0})
+# goods_id != 3且goods_id != 10
+db.user.find({$and: [goods_id: {$ne: 3}, goods_id: {$ne: 10}]}, {goods_name: 1, goods_id: 1, _id: 0})
+db.user.find({goods_id: {$nin: [3, 10]}}, {goods_name: 1, goods_id: 1, _id: 0})
+db.user.find({$nor: [{goods_id: 3}, {goods_id: 10}], {goods_name: 1, goods_id: 1, _id: 0})
+# 存在goods_name的列
+db.user.find({goods_name: {$exists: 1}})
+# 取出goods_id % 5 == 1的列
+db.user.find({goods_id: {$mod: [5, 1]}}, {goods_name: 1, goods_id: 1, _id: 0})
+# 取出数据类型为整型或浮点型或双精度型的年龄列
+db.user.find({age: {$type: 1}})
+备注:
+1. Double
+2. String
+3. Object
+4. Array
+5. Binary data
+6. Undefined(Deprecated)
+7. Object id
+8. Boolean
+9. Date
+10. Null
+11. Regular Expression
+...
+13. JavaScript
+14. symbol
+# 包含指定内容的列（爱好为a, b, c）
+db.user.find({hobby: {$all: [a, b, c]})
+# $where 和 $regex
+db.user.find({$where: "this.goods_price > 200"})
+db.user.find({goods_name: {$regex: /^零食.*/}}, {goods_name:1, _id: 0})
+---------------------------------------------<
+
+# 保存数据
+db.user.save({name: "name", age: "age"})
+
+--------------------------------------------->
+# 修改数据
+db.user.update(_id: ..., {$set: {name: "newname"}})
+$set               ：修改某个列的值
+$unset           ：删除某个列
+$rename        ：重命名某个列
+$inc               ：增长某个列
+$setOnInsert  ：当upsert为true时，并且发生了insert操作时，可以补充的字段。
+# 可选参数：(multi: true flase, upset: true false)
+multi: 是否多行，是 true，否false
+upsert: 为true时：有所要查询的数据则修改，否则添加（为false时不添加）
+---------------------------------------------<
+
+# 删除数据
+db.user.remove({name: "Miman"})
+db.user.remove({name: "Miman"}, true)  # 有相同时只删除一个
+
+# 移除数据名
+db.user.drop()
+
+# 移除数据库
+db.dropDatabase()
+
+--------------------------------------------->
+# 创建集合
+db.createCollection(name, opions) 
+1. options->>可选参数，指定有关内存大小及索引的选项
+2. options可以是如下参数：
+	1. capped  bool型  true为固定大小，为true时必须指定size参数。
+	2. autoIndexId  bool型  为true，自动在_id字段创建索引，默认为flase。
+	3. size  以千字节计（KB）。
+	4. max  包含文档的最大数量。
+# 自动创建集合
+db.coll.insert({name: "Miman"})
+---------------------------------------------<
+
+#################################
+                <<<pymongo>>>
+update_one or update_many：
+return.matched_count: 匹配数
+return.modified_count: 修改数
+
+delete_one or delete_many:
+return.deleted_count: 删除数目
+db.col.count_documents({name: "Miman"}): 统计符合条件的数目
+

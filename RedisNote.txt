@@ -1,0 +1,113 @@
+# 默认连接端口：6379
+命令行下：
+~、连接redis： redis-cli
+~、help 指令：列出帮助信息
+~、用户验证： auth pass
+
+~~、字符串
+~、设置单个set：  set key value ex（存活时间，单位秒）px（存活时间，单位毫秒）nx（key存在就不设置）xx（key不存在就设置）
+~、设置多个set： mset key1 value key2 value...
+~、获取多个set： mget key1 key2
+~、设置位setbit：  setbit offset 0或1
+~、del：删除key
+~、append：追加
+~、select：切换库
+~、keys *：列出当前库中所有key
+~、获取并设置getset： getset key new_value
+~、类似切片getrange： getrange key start end
+~、计算位中的1：  countbit
+~、自增incr：  incr key
+~、自增incrby： incrby key increment
+~、自增incrbyfloat： incrbyfloat key floatnum
+~、自减decr： decr key
+
+~~、hash
+~、单个hash设置： hset key field1 value
+~、单个hash获取：hget key field1 value  ；  hgetall key  ；  hkeys key  ；  hvals value
+~、多个hash设置：hmset key field1 value field2 value...
+~、多个hash获取：hget key field1 field2
+~、hlen：获取有几个key
+~、判断是否存在key：hexists key
+~、删除field：hdel key field1 field2
+~、自增：hincrby key field increment
+~、自增hincrbyfloat： hincrbyfloat key floatnum
+~、hkeys key
+~、正则查找：hscan key start match M*
+~、正则查找并设置查找结果为iter：hscan_iter key start match M*（pycharm中使用）
+
+~~、列表
+~、往列表左边放数据：lpush name 1 2 3
+~、往列表右边放数据：rpush name 1 2 3
+~、取全部数据：lrange name 0 -1
+~、llen：获取列表长度
+~、linsert name before|afer pivot value
+~、按索引设置lset：lset name index value
+~、lrem name（列表名） count（删除数量） value（要删除的值）
+~、lpop：从左侧获取第一个元素并移除
+~、移除选定范围外的元素：ltrim start end
+~、blpop key timeout：在指定时间内从列表左边取出元素并返回
+~、从列表1右边取出一个元素放到列表2左边：rpoplpush list1 list2
+~、指定时间内从列表1右边取出一个元素放到列表2左边：brpoplpush list1 list2 timeout （可以从另一个线程中get数据到当前线程）
+
+~~、集合
+~、增加集合元素：sadd key value1 value2...
+~、查看集合元素：smembers key
+~、获取对应集合中元素个数：scard key
+~、（差集）第一个key和其他key的不同元素：sdiff key1 key2...
+~、（差集）第一个key和其他key的不同元素存到新的集合中：sdiffstore new_key key1 key2...
+~、（交集）都有的元素：sinter key1 key2...
+~、（并集）相当于集合间相加：sunion key1 key2
+~、（并集并存储）：sunionstore key key1 key2
+~、查看是否有该成员：sismember key value
+~、somve source destination member：将某个成员从一个集合中移动到另一个集合中
+~、spop key：从集合的右侧移除一个元素并将其返回
+~、srandmember key numbers：从集合中随机获取numbers个元素
+~、srem key values：从key中删除指定的某些值
+~、正则查找：sscan key start match M*
+~、正则查找并设置查找结果为iter：sscan_iter key start match M*（pycharm中使用）
+
+~~、有序集合
+~、添加元素或更新元素权重：zadd key 权重值 value1 权重值 value2
+~、查看元素：zrange key 0 -1 withscore
+~、zcard：获取集合数量，同上
+~、zcount key min max：获取key中权重为min到max之间的元素
+~、zincrby：同上
+~、zrank key value：升序排序
+~、zrevrank key value：降序排序
+~、zrem：同上，删除
+~、zremrangebyrank：根据排行范围删除
+~、zremrangebyscore：根据权重排行删除
+~、zremrangebylex：根据值返回删除
+~、zsore key value：根据value获取权重值
+~、zinterstore：获取两个有序集合的交集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
+用法：zinterstore new_key count（参加交集的集合数） 集合1 集合2 ：默认权重值相加，及agg为sum； min取权重值小的， max取大的
+~、zunionstore：获取两个有序集合的并集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
+用法同上
+~、zscan：同上
+~、del key vaule：删除
+~、keys in*：列出以in开头的元素
+~、expire key value：设置过期时间
+~、move key db：把key移动到另一个库（另一个库有该key则不移）
+~、randomkey：随机获取一个key（不删除）
+~、type key：获取key对应值的类型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

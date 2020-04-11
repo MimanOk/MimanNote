@@ -1,0 +1,68 @@
+-> 初始化项目：scrapy startproject project_name
+    - scrapy genspider spider_name(不可与项目名相同) allow_spider_domain_name(允许爬的域名)
+
+-> 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv)
+
+-> 拼接下一页url：next_url = response.urljoin("body_url")    -暂时用不到
+
+-> 调试网站：scrapy shell url
+
+-> 生成未被渲染的html：scrapy view url
+
+-> 自定义爬取url格式：
+    - rules = {
+        # 提取匹配正则表达式'/group?f=index_group'链接，但是不能匹配'index.php'
+        # 并且会递归爬取，如果没有定义callback，默认follow=True
+        Rule(LinkExtractor(allow=('/group?f=index_group', ), deny=(index\.php, ))),
+        # 提取匹配'/article/\d+/\d+.html'的链接，并且用parse_item来解析下载的内容，不递归
+        # Rule(LinkExtractor(allow='/article/\d+/\d+\.html, '), callback='parse_item'),
+    }
+
+-> 下载管道
+    - def open_spider(self, ...):
+    - def close_spider(self, ...):
+    - def process_item(self, item, spider)
+
+-> 自带图片下载管道：自定义类需要继承ImagePipeline父类
+    - 重载类方法1：get_media_requests(self, item, info)：Pipline将从item中获取图片的urls并下载，
+    并返回一个Requests对象，这些请求对象将被Pipeline处理，当完成下载后，结果将发送到
+    item_completed方法。这些结果为一个二元组的list（success，image_info_or_failture）。
+    1. success：boolean值，true表示成功下载。
+    2. image_info_or_failture：如果success等于True，image_info_or_failture词典包含以下键值对，失败侧包含一些出错信息。
+    url：原始URl
+    path：本地存储路径
+    checksum：校验码
+    示例：
+    def get_media_requests(self, item, info):
+        for image_url in item['image_urls']:
+            self.default_headers['referer'] = image_url
+            yield Request(image_url, headers=self.default_headers)
+    - 重载类方法2：item_completed(self, results, items, info)
+    示例：
+    def item_completed(self, results, item, info):
+        image_paths = [x['path'] for ok, x in results if ok]
+            if not image_paths:
+                raise DropItem("Item contains no images")
+            item['image_paths'] = image_paths
+            return item
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

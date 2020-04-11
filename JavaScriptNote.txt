@@ -1,0 +1,65 @@
+-> 引入script
+    - <script>...</script>
+    - <script src=".js"></script>
+    - <script type="text/javascript">...</script>
+
+-> 注释：同C
+
+-> 字符串操作
+    - var str = "Miman"
+    str.charAt(索引位置)
+    str.substring(起始位置, 结束位置)
+    str.length 获取当前字符串长度
+
+-> 定时器
+    - setInterval("alert("Miman")", 间隔时间单位毫秒) return 实例句柄
+    - setTimeout("alert("Miman")", 多少时间后开始单位毫秒)
+
+-> splice()
+    - str.splice(获取索引， 替换个数（0个即在前面插入）， 替换内容)
+
+-> slice()
+    - str.slice(start, end)
+
+-> join类似python
+
+-> 字典同python
+
+-> 插入新标签
+    - 第一种：var tag = "<p><input type="text"/></p>";
+    document.getElementById("id").insertAdjacentHTML("beforeEnd", tag);
+    参数1：beforeBegin; 参数2：afterbegin; 参数3：beforeEnd; 参数4：afterEnd
+    - 第二种：var tag = document.createElementById("id");
+    tag.setAttribute("type", "text");
+    tag.style.fontSize = "16px";
+    tag.style.color = "blue";
+
+-> 提交标签或表单
+    - getElementById("id").submit()
+
+-> 确认框
+    - var val = confirm() -->true/false
+
+-> 当前页面网址
+    - localtion.href
+    - 刷新：localtion.href.reload()
+
+-> 事件
+    - tag.onmouseover：鼠标经过
+    - tag.onmouseout：鼠标离开
+    - tag.addEventListener("时间", 匿名函数, true/false（true：捕捉模型，false：冒泡模型）)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
