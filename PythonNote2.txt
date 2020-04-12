@@ -1,57 +1,90 @@
-��������
+﻿主线任务：
 -------------------------------------------------
-1��js����
+1、js解密
 <----------------------------------------------->
--> url���ı���   - urldecode
+-> url中文编码   - urldecode
 
--> json�ļ��������һ��
+-> json文件保存编码一致
     - with open(..., encoding='utf-8') as f:
-        f.write(json.dumps(�������ļ�, ensure_ascii=False) + '\n')
+        f.write(json.dumps(待保存文件, ensure_ascii=False) + '\n')
 
--> reģ��  # \s* ƥ��ո��𵽻�������
+-> re模块  # \s* 匹配空格，起到换行作用
     - ip_adress = re.compile(
                 '<td class="country"><img src="http://fs.xicidaili.com/images/flag/cn.png" alt="Cn" /></td>\s*<td>(.*?)</td>\s*<td>(.*?)</td>'
             )
 
--> scrapy��ʹ��FormRequest()��������data������
+-> scrapy中使用FormRequest()来发出带data的请求
 
--> ʱ������ת��
-    - time.strftime("%Y��%m��%d��"�� time.localtime(time.time() - ...))
+-> 时间类型转换
+    - time.strftime("%Y年%m月%d日"， time.localtime(time.time() - ...))
 
--> ���������н��
+######## os模块 ########
+
+-> 返回命令行结果
 res = os.popen("Command").read()
 
--> ��ȡ�ļ���С
-    - os.stat("�ļ�·�����ļ���").st_size
-    - os.path.getsize("�ļ�·�����ļ���")
+-> 获取文件大小
+    - os.stat("文件路径及文件名").st_size
+    - os.path.getsize("文件路径及文件名")
 
--> ·��env python�汾���Զ�̬���л�python�汾
--> �����̡����̣߳�ɵɵ�ֲ���
--> python �Ķ��߳������õ�CPU�������л���ͬһʱ��ֻ��һ�����Ͻ��в�����ʵ���ϻ��ǵ��̡߳�
--> python ��IO������ռ��CPU������ռ��CPU������python���߳��ʺ��ܼ���IO���񣬲��ʺ��ܼ���CPU����
--> �̵߳Ľ���ID���뷢����߳�����Ľ���ID���丸����ID�����г���Ա�����������ID
-    - ���������̣�PPID=None��PID=0��---> ���д�����̣�PPID=0, PID=1��---> ����Ա������̣�PPID=1, PID=2��---> A�̣߳�PID=1, PID=2��---> D�̣߳�PID=1, ID=2��
--> �̼߳�ͨ����queueģ���е�Queueʵ����һ��qȻ��Ը�q�����������ܺ����߳��ܹ���q
--> ����ͨ����multiprocessingģ���е�Queueʵ����һ��q�������̿�¡����q��Ȼ��Ҫ��q�����ӽ��̲��ܶ���q������ʵ���������ݵĴ��ݣ����ǹ�������
--> Ҫʵ�ֽ��̼����ݹ�����ʹ��multiprocessingģ���е�Managerʵ����һ�������ռ�m��ͨ�����е�m.list(...), m.dict(...)������������ʵ�����ݹ���
--> �ܵ�ͨ����multiprocessingģ���е�Pipeʵ��������ͨ�ŵĶ˿�A��B������ͨ���˿�A.send()��Ҳ��A.recv()�գ�B��Aһ��
--> multiprocessingģ���еĽ�����Lock���ô�1����ֹ�������ͬʱռ����Ļ���÷����߳������ƣ���ʵ����һ����lock����lock.acquire()��lock.release()
--> ����һ�����̻��¡�����̵����ݸ��ӽ����ã������ܴ�����н��̳�������   ����9
--> ���̳أ�multiprocessingģ���е�Pool��ʵ��������poolʱ����Pool�д���һ������������pool���첽async�������Դ���ص�����
-    - ע�⣺����Ҫ��pool.close()��pool.join()��˳���ܵߵ�
--> �ػ��̣߳����߳̽������������߳���û��ִ���꣬����ǿ�ƽ�������Threadʵ�����Ķ���th�е�setDaemon(True)�������߳�����Ϊ�ػ��̡߳�ע��Ҫ��start֮ǰ����
+-> 获取当前工作空间路径
+    - os.getcwd()
 
--> Э�̣�
-    - greenlet���ֶ���
-    - gevent: �Զ���
+-> 获取当前py文件路径
+    - os.path.abspath(__file__)
+
+-> 获取当前py文件父路径
+    - os.path.dirname(os.path.abspath(__file__))
+
+####### sys模块 ########
+
+-> 增加环境变量
+    - sys.path.append("path")
+
+######## 线程、进程、协程 ########
+
+-> 路径env python版本，可以动态的切换python版本
+-> 主进程、主线程，傻傻分不清
+-> python 的多线程是利用的CPU上下文切换，同一时刻只在一个核上进行操作，实质上还是单线程。
+-> python 的IO操作不占用CPU，计算占用CPU。所以python多线程适合密集型IO任务，不适合密集型CPU任务。
+-> 线程的进程ID是离发起该线程最近的进程ID，其父进程ID是运行程序员代码的主进程ID
+    - 编译器进程（PPID=None，PID=0）---> 运行代码进程（PPID=0, PID=1）---> 程序员发起进程（PPID=1, PID=2）---> A线程（PID=1, PID=2）---> D线程（PID=1, ID=2）
+-> 线程间通信用queue模块中的Queue实例化一个q然后对该q操作，进程能和其线程能共享q
+-> 进程通信用multiprocessing模块中的Queue实例化一个q（父进程克隆出的q）然后要把q传给子进程才能都对q操作，实质上是数据的传递，不是共享数据
+-> 要实现进程间数据共享，使用multiprocessing模块中的Manager实例化一个共享空间m，通过其中的m.list(...), m.dict(...)等数据类型来实现数据共享
+-> 管道通信用multiprocessing模块中的Pipe实例化两个通信的端口A、B，可以通过端口A.send()发也能A.recv()收，B和A一样
+-> multiprocessing模块中的进程锁Lock，用处1：防止多个进程同时占用屏幕，用法和线程锁类似，线实例化一把锁lock，再lock.acquire()和lock.release()
+-> 启用一个进程会克隆父进程的数据给子进程用，开销很大，因此有进程池来限制   见例9
+-> 进程池：multiprocessing模块中的Pool，实例化对象pool时可在Pool中传入一个最大进程数，pool的异步async方法可以传入回调函数
+    - 注意：必须要加pool.close()和pool.join()，顺序不能颠倒
+-> 守护线程：主线程结束，不管子线程有没有执行完，都将强制结束。用Thread实例化的对象th中的setDaemon(True)来将子线程设置为守护线程。注意要在start之前设置
+
+-> 协程：
+    - greenlet：手动的
+    - gevent: 自动的
+
+######## 其他 ########
 
 -> requests
-    - ���ڱ�����Ӧ���ݽϴ�����(����Ƶ)��Ӧһ��һ��Ķ�����б��棺
+    - 对于保存响应数据较大的情况(如视频)，应一点一点的对其进行保存：
     for chunk in response.iter_content(1024):
         f.write(chunk)
 
--> http://httpbin.org/ip            - �����ȡip
--> http://httpbin.org/cookie     - �����ȡcookie
+-> http://httpbin.org/ip            - 请求获取ip
+-> http://httpbin.org/cookie     - 请求获取cookie
+
+-> 安装pip
+    - python -m pip install pip==9.0.3
+
+-> 配置虚拟环境
+    - 1. pip install virtualenv -->virtualenv venv_name -->cd venv_name -->activate.bat -->deactivate.bat
+    - 2. python -m venv path\venv_name -->同-1
+
+-> 爬虫去重策略
+    - 将访问过的url经md5哈希后保存到set中
+    - bloomfilter方法对bitmap（将一条数据通过hash映射到某一位，非常节省内存，但冲突严重）进行改进，多重哈希函数降低冲突
+
+
 
 
 

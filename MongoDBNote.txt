@@ -1,45 +1,45 @@
-######## Ä¬ÈÏÁ¬½Ó¶Ë¿Ú£º27017 ########
+ï»¿######## é»˜è®¤è¿æ¥ç«¯å£ï¼š27017 ########
 
--> Ñ¡Ôñ¿â
-    - use ¿âÃû
+-> é€‰æ‹©åº“
+    - use åº“å
 
--> ÏÔÊ¾¿â
+-> æ˜¾ç¤ºåº“
     - show dbs
 
--> ÏÔÊ¾¿âÖĞÊı¾İÃû
+-> æ˜¾ç¤ºåº“ä¸­æ•°æ®å
     - show collections
 
 --------------------------------------------->
--> ²éÕÒ¿âÖĞµÄÊı¾İ
-    - ²éÕÒËùÓĞ
+-> æŸ¥æ‰¾åº“ä¸­çš„æ•°æ®
+    - æŸ¥æ‰¾æ‰€æœ‰
 db.user.find()
-    - ²éÕÒËùÓĞnameÊôĞÔ, Ä¬ÈÏ´øÓĞ_idÊôĞÔ
--> ²»´ø_id
+    - æŸ¥æ‰¾æ‰€æœ‰nameå±æ€§, é»˜è®¤å¸¦æœ‰_idå±æ€§
+-> ä¸å¸¦_id
     - db.user.find({}, {name:1})
--> ´ø_id
+-> å¸¦_id
     - db.user.find({}, {name:1, _id: 0})
-    - ²éÕÒËùÓĞÄêÁäÎª24µÄÈËµÄÃû×Ö
--> ²»´ø_id
+    - æŸ¥æ‰¾æ‰€æœ‰å¹´é¾„ä¸º24çš„äººçš„åå­—
+-> ä¸å¸¦_id
     - db.user.find({age: 24}, {name: 1, _id: 0})
--> goods_id²»µÈÓÚ3µÄÉÌÆ·
+-> goods_idä¸ç­‰äº3çš„å•†å“
     - db.user.find({goods_id: {$ne: 3}}, {goods_name: 1, goods_price: 1, _id: 0})
--> goods_priceĞ¡ÓÚµÈÓÚ100µÄÉÌÆ·
+-> goods_priceå°äºç­‰äº100çš„å•†å“
     - db.user.find({goods_price: {$lte: 100}}, {goods_name: 1, goods_id: 1, _id: 0})
--> goods_idÎª5ºÍ11µÄÉÌÆ·
+-> goods_idä¸º5å’Œ11çš„å•†å“
     - db.user.find({goods_id: {$in: [5, 11]}}, {goods_name: 1, goods_price: 1, _id: 0})
 -> 100<=goods_price<=500
     - db.user.find({$and: [goods_price: {$gte: 100}, goods_price: {$lte: 500}]}, {goods_name: 1, goods_id: 1, _id: 0})
--> goods_id != 3ÇÒgoods_id != 10
+-> goods_id != 3ä¸”goods_id != 10
     - db.user.find({$and: [goods_id: {$ne: 3}, goods_id: {$ne: 10}]}, {goods_name: 1, goods_id: 1, _id: 0})
     - db.user.find({goods_id: {$nin: [3, 10]}}, {goods_name: 1, goods_id: 1, _id: 0})
     - db.user.find({$nor: [{goods_id: 3}, {goods_id: 10}], {goods_name: 1, goods_id: 1, _id: 0})
--> ´æÔÚgoods_nameµÄÁĞ
+-> å­˜åœ¨goods_nameçš„åˆ—
     - db.user.find({goods_name: {$exists: 1}})
--> È¡³ögoods_id % 5 == 1µÄÁĞ
+-> å–å‡ºgoods_id % 5 == 1çš„åˆ—
     - db.user.find({goods_id: {$mod: [5, 1]}}, {goods_name: 1, goods_id: 1, _id: 0})
--> È¡³öÊı¾İÀàĞÍÎªÕûĞÍ»ò¸¡µãĞÍ»òË«¾«¶ÈĞÍµÄÄêÁäÁĞ
+-> å–å‡ºæ•°æ®ç±»å‹ä¸ºæ•´å‹æˆ–æµ®ç‚¹å‹æˆ–åŒç²¾åº¦å‹çš„å¹´é¾„åˆ—
     - db.user.find({age: {$type: 1}})
-±¸×¢:
+å¤‡æ³¨:
 1. Double
 2. String
 3. Object
@@ -54,59 +54,59 @@ db.user.find()
 ...
 13. JavaScript
 14. symbol
--> °üº¬Ö¸¶¨ÄÚÈİµÄÁĞ£¨°®ºÃÎªa, b, c£©
+-> åŒ…å«æŒ‡å®šå†…å®¹çš„åˆ—ï¼ˆçˆ±å¥½ä¸ºa, b, cï¼‰
     - db.user.find({hobby: {$all: [a, b, c]})
--> $where ºÍ $regex
+-> $where å’Œ $regex
     - db.user.find({$where: "this.goods_price > 200"})
-    - db.user.find({goods_name: {$regex: /^ÁãÊ³.*/}}, {goods_name:1, _id: 0})
+    - db.user.find({goods_name: {$regex: /^é›¶é£Ÿ.*/}}, {goods_name:1, _id: 0})
 ---------------------------------------------<
 
--> ±£´æÊı¾İ
+-> ä¿å­˜æ•°æ®
     - db.user.save({name: "name", age: "age"})
 
 --------------------------------------------->
--> ĞŞ¸ÄÊı¾İ
+-> ä¿®æ”¹æ•°æ®
     - db.user.update(_id: ..., {$set: {name: "newname"}})
-    - $set               £ºĞŞ¸ÄÄ³¸öÁĞµÄÖµ
-    - $unset           £ºÉ¾³ıÄ³¸öÁĞ
-    - $rename        £ºÖØÃüÃûÄ³¸öÁĞ
-    - $inc               £ºÔö³¤Ä³¸öÁĞ
-    - $setOnInsert  £ºµ±upsertÎªtrueÊ±£¬²¢ÇÒ·¢ÉúÁËinsert²Ù×÷Ê±£¬¿ÉÒÔ²¹³äµÄ×Ö¶Î¡£
--> ¿ÉÑ¡²ÎÊı£º(multi: true flase, upset: true false)
-    - multi: ÊÇ·ñ¶àĞĞ£¬ÊÇ true£¬·ñfalse
-    - upsert: ÎªtrueÊ±£ºÓĞËùÒª²éÑ¯µÄÊı¾İÔòĞŞ¸Ä£¬·ñÔòÌí¼Ó£¨ÎªfalseÊ±²»Ìí¼Ó£©
+    - $set               ï¼šä¿®æ”¹æŸä¸ªåˆ—çš„å€¼
+    - $unset           ï¼šåˆ é™¤æŸä¸ªåˆ—
+    - $rename        ï¼šé‡å‘½åæŸä¸ªåˆ—
+    - $inc               ï¼šå¢é•¿æŸä¸ªåˆ—
+    - $setOnInsert  ï¼šå½“upsertä¸ºtrueæ—¶ï¼Œå¹¶ä¸”å‘ç”Ÿäº†insertæ“ä½œæ—¶ï¼Œå¯ä»¥è¡¥å……çš„å­—æ®µã€‚
+-> å¯é€‰å‚æ•°ï¼š(multi: true flase, upset: true false)
+    - multi: æ˜¯å¦å¤šè¡Œï¼Œæ˜¯ trueï¼Œå¦false
+    - upsert: ä¸ºtrueæ—¶ï¼šæœ‰æ‰€è¦æŸ¥è¯¢çš„æ•°æ®åˆ™ä¿®æ”¹ï¼Œå¦åˆ™æ·»åŠ ï¼ˆä¸ºfalseæ—¶ä¸æ·»åŠ ï¼‰
 ---------------------------------------------<
 
--> É¾³ıÊı¾İ
+-> åˆ é™¤æ•°æ®
     - db.user.remove({name: "Miman"})
-    - db.user.remove({name: "Miman"}, true)  -> ÓĞÏàÍ¬Ê±Ö»É¾³ıÒ»¸ö
+    - db.user.remove({name: "Miman"}, true)  -> æœ‰ç›¸åŒæ—¶åªåˆ é™¤ä¸€ä¸ª
 
--> ÒÆ³ıÊı¾İÃû
+-> ç§»é™¤æ•°æ®å
     - db.user.drop()
 
--> ÒÆ³ıÊı¾İ¿â
+-> ç§»é™¤æ•°æ®åº“
     - db.dropDatabase()
 
 --------------------------------------------->
--> ´´½¨¼¯ºÏ
+-> åˆ›å»ºé›†åˆ
     - db.createCollection(name, opions) 
-    - 1. options->>¿ÉÑ¡²ÎÊı£¬Ö¸¶¨ÓĞ¹ØÄÚ´æ´óĞ¡¼°Ë÷ÒıµÄÑ¡Ïî
-    - 2. options¿ÉÒÔÊÇÈçÏÂ²ÎÊı£º
-	1. capped  boolĞÍ  trueÎª¹Ì¶¨´óĞ¡£¬ÎªtrueÊ±±ØĞëÖ¸¶¨size²ÎÊı¡£
-	2. autoIndexId  boolĞÍ  Îªtrue£¬×Ô¶¯ÔÚ_id×Ö¶Î´´½¨Ë÷Òı£¬Ä¬ÈÏÎªflase¡£
-	3. size  ÒÔÇ§×Ö½Ú¼Æ£¨KB£©¡£
-	4. max  °üº¬ÎÄµµµÄ×î´óÊıÁ¿¡£
--> ×Ô¶¯´´½¨¼¯ºÏ
+    - 1. options->>å¯é€‰å‚æ•°ï¼ŒæŒ‡å®šæœ‰å…³å†…å­˜å¤§å°åŠç´¢å¼•çš„é€‰é¡¹
+    - 2. optionså¯ä»¥æ˜¯å¦‚ä¸‹å‚æ•°ï¼š
+	1. capped  boolå‹  trueä¸ºå›ºå®šå¤§å°ï¼Œä¸ºtrueæ—¶å¿…é¡»æŒ‡å®šsizeå‚æ•°ã€‚
+	2. autoIndexId  boolå‹  ä¸ºtrueï¼Œè‡ªåŠ¨åœ¨_idå­—æ®µåˆ›å»ºç´¢å¼•ï¼Œé»˜è®¤ä¸ºflaseã€‚
+	3. size  ä»¥åƒå­—èŠ‚è®¡ï¼ˆKBï¼‰ã€‚
+	4. max  åŒ…å«æ–‡æ¡£çš„æœ€å¤§æ•°é‡ã€‚
+-> è‡ªåŠ¨åˆ›å»ºé›†åˆ
     - db.coll.insert({name: "Miman"})
 ---------------------------------------------<
 
 ######## pymongo ########
 
-    - update_one or update_many£º
-    - return.matched_count: Æ¥ÅäÊı
-    - return.modified_count: ĞŞ¸ÄÊı
+    - update_one or update_manyï¼š
+    - return.matched_count: åŒ¹é…æ•°
+    - return.modified_count: ä¿®æ”¹æ•°
 
     - delete_one or delete_many:
-    - return.deleted_count: É¾³ıÊıÄ¿
-    - db.col.count_documents({name: "Miman"}): Í³¼Æ·ûºÏÌõ¼şµÄÊıÄ¿
+    - return.deleted_count: åˆ é™¤æ•°ç›®
+    - db.col.count_documents({name: "Miman"}): ç»Ÿè®¡ç¬¦åˆæ¡ä»¶çš„æ•°ç›®
 

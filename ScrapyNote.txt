@@ -1,50 +1,62 @@
--> ³õÊ¼»¯ÏîÄ¿£ºscrapy startproject project_name
-    - scrapy genspider spider_name(²»¿ÉÓëÏîÄ¿ÃûÏàÍ¬) allow_spider_domain_name(ÔÊÐíÅÀµÄÓòÃû)
+ï»¿-> åˆå§‹åŒ–é¡¹ç›®ï¼šscrapy startproject project_name
+    - scrapy genspider spider_name(ä¸å¯ä¸Žé¡¹ç›®åç›¸åŒ) allow_spider_domain_name(å…è®¸çˆ¬çš„åŸŸå)
 
--> ÅÀÈ¡Êý¾ÝÐ´ÈëÎÄ¼þ£ºscrapy crawl spider.py -o xxx.(json or xml or csv)
+-> çˆ¬å–æ•°æ®å†™å…¥æ–‡ä»¶ï¼šscrapy crawl spider.py -o xxx.(json or xml or csv)
 
--> Æ´½ÓÏÂÒ»Ò³url£ºnext_url = response.urljoin("body_url")    -ÔÝÊ±ÓÃ²»µ½
+-> æ‹¼æŽ¥ä¸‹ä¸€é¡µurlï¼šnext_url = response.urljoin("body_url")    -æš‚æ—¶ç”¨ä¸åˆ°
 
--> µ÷ÊÔÍøÕ¾£ºscrapy shell url
+-> è°ƒè¯•ç½‘ç«™ï¼šscrapy shell url
 
--> Éú³ÉÎ´±»äÖÈ¾µÄhtml£ºscrapy view url
+-> ç”Ÿæˆæœªè¢«æ¸²æŸ“çš„htmlï¼šscrapy view url
 
--> ×Ô¶¨ÒåÅÀÈ¡url¸ñÊ½£º
+-> è‡ªå®šä¹‰çˆ¬å–urlæ ¼å¼ï¼š
     - rules = {
-        # ÌáÈ¡Æ¥ÅäÕýÔò±í´ïÊ½'/group?f=index_group'Á´½Ó£¬µ«ÊÇ²»ÄÜÆ¥Åä'index.php'
-        # ²¢ÇÒ»áµÝ¹éÅÀÈ¡£¬Èç¹ûÃ»ÓÐ¶¨Òåcallback£¬Ä¬ÈÏfollow=True
+        # æå–åŒ¹é…æ­£åˆ™è¡¨è¾¾å¼'/group?f=index_group'é“¾æŽ¥ï¼Œä½†æ˜¯ä¸èƒ½åŒ¹é…'index.php'
+        # å¹¶ä¸”ä¼šé€’å½’çˆ¬å–ï¼Œå¦‚æžœæ²¡æœ‰å®šä¹‰callbackï¼Œé»˜è®¤follow=True
         Rule(LinkExtractor(allow=('/group?f=index_group', ), deny=(index\.php, ))),
-        # ÌáÈ¡Æ¥Åä'/article/\d+/\d+.html'µÄÁ´½Ó£¬²¢ÇÒÓÃparse_itemÀ´½âÎöÏÂÔØµÄÄÚÈÝ£¬²»µÝ¹é
+        # æå–åŒ¹é…'/article/\d+/\d+.html'çš„é“¾æŽ¥ï¼Œå¹¶ä¸”ç”¨parse_itemæ¥è§£æžä¸‹è½½çš„å†…å®¹ï¼Œä¸é€’å½’
         # Rule(LinkExtractor(allow='/article/\d+/\d+\.html, '), callback='parse_item'),
     }
 
--> ÏÂÔØ¹ÜµÀ
+-> ä¸‹è½½ç®¡é“
     - def open_spider(self, ...):
     - def close_spider(self, ...):
     - def process_item(self, item, spider)
 
--> ×Ô´øÍ¼Æ¬ÏÂÔØ¹ÜµÀ£º×Ô¶¨ÒåÀàÐèÒª¼Ì³ÐImagePipeline¸¸Àà
-    - ÖØÔØÀà·½·¨1£ºget_media_requests(self, item, info)£ºPipline½«´ÓitemÖÐ»ñÈ¡Í¼Æ¬µÄurls²¢ÏÂÔØ£¬
-    ²¢·µ»ØÒ»¸öRequests¶ÔÏó£¬ÕâÐ©ÇëÇó¶ÔÏó½«±»Pipeline´¦Àí£¬µ±Íê³ÉÏÂÔØºó£¬½á¹û½«·¢ËÍµ½
-    item_completed·½·¨¡£ÕâÐ©½á¹ûÎªÒ»¸ö¶þÔª×éµÄlist£¨success£¬image_info_or_failture£©¡£
-    1. success£ºbooleanÖµ£¬true±íÊ¾³É¹¦ÏÂÔØ¡£
-    2. image_info_or_failture£ºÈç¹ûsuccessµÈÓÚTrue£¬image_info_or_failture´Êµä°üº¬ÒÔÏÂ¼üÖµ¶Ô£¬Ê§°Ü²à°üº¬Ò»Ð©³ö´íÐÅÏ¢¡£
-    url£ºÔ­Ê¼URl
-    path£º±¾µØ´æ´¢Â·¾¶
-    checksum£ºÐ£ÑéÂë
-    Ê¾Àý£º
+-> è‡ªå¸¦å›¾ç‰‡ä¸‹è½½ç®¡é“ï¼šè‡ªå®šä¹‰ç±»éœ€è¦ç»§æ‰¿ImagePipelineçˆ¶ç±»
+    - é‡è½½ç±»æ–¹æ³•1ï¼šget_media_requests(self, item, info)ï¼šPiplineå°†ä»Žitemä¸­èŽ·å–å›¾ç‰‡çš„urlså¹¶ä¸‹è½½ï¼Œ
+    å¹¶è¿”å›žä¸€ä¸ªRequestså¯¹è±¡ï¼Œè¿™äº›è¯·æ±‚å¯¹è±¡å°†è¢«Pipelineå¤„ç†ï¼Œå½“å®Œæˆä¸‹è½½åŽï¼Œç»“æžœå°†å‘é€åˆ°
+    item_completedæ–¹æ³•ã€‚è¿™äº›ç»“æžœä¸ºä¸€ä¸ªäºŒå…ƒç»„çš„listï¼ˆsuccessï¼Œimage_info_or_failtureï¼‰ã€‚
+    1. successï¼šbooleanå€¼ï¼Œtrueè¡¨ç¤ºæˆåŠŸä¸‹è½½ã€‚
+    2. image_info_or_failtureï¼šå¦‚æžœsuccessç­‰äºŽTrueï¼Œimage_info_or_failtureè¯å…¸åŒ…å«ä»¥ä¸‹é”®å€¼å¯¹ï¼Œå¤±è´¥ä¾§åŒ…å«ä¸€äº›å‡ºé”™ä¿¡æ¯ã€‚
+    urlï¼šåŽŸå§‹URl
+    pathï¼šæœ¬åœ°å­˜å‚¨è·¯å¾„
+    checksumï¼šæ ¡éªŒç 
+    ç¤ºä¾‹ï¼š
     def get_media_requests(self, item, info):
         for image_url in item['image_urls']:
             self.default_headers['referer'] = image_url
             yield Request(image_url, headers=self.default_headers)
-    - ÖØÔØÀà·½·¨2£ºitem_completed(self, results, items, info)
-    Ê¾Àý£º
+    - é‡è½½ç±»æ–¹æ³•2ï¼šitem_completed(self, results, items, info)
+    ç¤ºä¾‹ï¼š
     def item_completed(self, results, item, info):
         image_paths = [x['path'] for ok, x in results if ok]
             if not image_paths:
                 raise DropItem("Item contains no images")
             item['image_paths'] = image_paths
             return item
+
+-> åœ¨pycharmä¸­è°ƒè¯•scrapyçˆ¬è™«
+    - from scrapy.cmdline import execute
+    - import sys, os
+    - sys.path.append(os.path.dirname(os.path.abspath(__file__)))  # é…ç½®è·¯å¾„
+    - execute(["scrapy", "crawl", "çˆ¬è™«å"])  # è¿è¡Œçˆ¬è™«
+
+-> è¿è¡Œçˆ¬è™«
+    - scrapy crawl çˆ¬è™«å
+    - æŠ¥é”™ï¼šNo module named "win32api"è§£å†³ï¼špip install -i ä¸´æ—¶é•œåƒåœ°å€ï¼ˆé…ç½®äº†æ°¸ä¹…çš„å°±ä¸éœ€è¦ï¼‰pypiwin32
+
+-> 
 
 
 

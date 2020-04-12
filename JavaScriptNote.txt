@@ -1,53 +1,53 @@
--> ÒıÈëscript
+ï»¿-> å¼•å…¥script
     - <script>...</script>
     - <script src=".js"></script>
     - <script type="text/javascript">...</script>
 
--> ×¢ÊÍ£ºÍ¬C
+-> æ³¨é‡Šï¼šåŒC
 
--> ×Ö·û´®²Ù×÷
+-> å­—ç¬¦ä¸²æ“ä½œ
     - var str = "Miman"
-    str.charAt(Ë÷ÒıÎ»ÖÃ)
-    str.substring(ÆğÊ¼Î»ÖÃ, ½áÊøÎ»ÖÃ)
-    str.length »ñÈ¡µ±Ç°×Ö·û´®³¤¶È
+    str.charAt(ç´¢å¼•ä½ç½®)
+    str.substring(èµ·å§‹ä½ç½®, ç»“æŸä½ç½®)
+    str.length è·å–å½“å‰å­—ç¬¦ä¸²é•¿åº¦
 
--> ¶¨Ê±Æ÷
-    - setInterval("alert("Miman")", ¼ä¸ôÊ±¼äµ¥Î»ºÁÃë) return ÊµÀı¾ä±ú
-    - setTimeout("alert("Miman")", ¶àÉÙÊ±¼äºó¿ªÊ¼µ¥Î»ºÁÃë)
+-> å®šæ—¶å™¨
+    - setInterval("alert("Miman")", é—´éš”æ—¶é—´å•ä½æ¯«ç§’) return å®ä¾‹å¥æŸ„
+    - setTimeout("alert("Miman")", å¤šå°‘æ—¶é—´åå¼€å§‹å•ä½æ¯«ç§’)
 
 -> splice()
-    - str.splice(»ñÈ¡Ë÷Òı£¬ Ìæ»»¸öÊı£¨0¸ö¼´ÔÚÇ°Ãæ²åÈë£©£¬ Ìæ»»ÄÚÈİ)
+    - str.splice(è·å–ç´¢å¼•ï¼Œ æ›¿æ¢ä¸ªæ•°ï¼ˆ0ä¸ªå³åœ¨å‰é¢æ’å…¥ï¼‰ï¼Œ æ›¿æ¢å†…å®¹)
 
 -> slice()
     - str.slice(start, end)
 
--> joinÀàËÆpython
+-> joinç±»ä¼¼python
 
--> ×ÖµäÍ¬python
+-> å­—å…¸åŒpython
 
--> ²åÈëĞÂ±êÇ©
-    - µÚÒ»ÖÖ£ºvar tag = "<p><input type="text"/></p>";
+-> æ’å…¥æ–°æ ‡ç­¾
+    - ç¬¬ä¸€ç§ï¼švar tag = "<p><input type="text"/></p>";
     document.getElementById("id").insertAdjacentHTML("beforeEnd", tag);
-    ²ÎÊı1£ºbeforeBegin; ²ÎÊı2£ºafterbegin; ²ÎÊı3£ºbeforeEnd; ²ÎÊı4£ºafterEnd
-    - µÚ¶şÖÖ£ºvar tag = document.createElementById("id");
+    å‚æ•°1ï¼šbeforeBegin; å‚æ•°2ï¼šafterbegin; å‚æ•°3ï¼šbeforeEnd; å‚æ•°4ï¼šafterEnd
+    - ç¬¬äºŒç§ï¼švar tag = document.createElementById("id");
     tag.setAttribute("type", "text");
     tag.style.fontSize = "16px";
     tag.style.color = "blue";
 
--> Ìá½»±êÇ©»ò±íµ¥
+-> æäº¤æ ‡ç­¾æˆ–è¡¨å•
     - getElementById("id").submit()
 
--> È·ÈÏ¿ò
+-> ç¡®è®¤æ¡†
     - var val = confirm() -->true/false
 
--> µ±Ç°Ò³ÃæÍøÖ·
+-> å½“å‰é¡µé¢ç½‘å€
     - localtion.href
-    - Ë¢ĞÂ£ºlocaltion.href.reload()
+    - åˆ·æ–°ï¼šlocaltion.href.reload()
 
--> ÊÂ¼ş
-    - tag.onmouseover£ºÊó±ê¾­¹ı
-    - tag.onmouseout£ºÊó±êÀë¿ª
-    - tag.addEventListener("Ê±¼ä", ÄäÃûº¯Êı, true/false£¨true£º²¶×½Ä£ĞÍ£¬false£ºÃ°ÅİÄ£ĞÍ£©)
+-> äº‹ä»¶
+    - tag.onmouseoverï¼šé¼ æ ‡ç»è¿‡
+    - tag.onmouseoutï¼šé¼ æ ‡ç¦»å¼€
+    - tag.addEventListener("æ—¶é—´", åŒ¿åå‡½æ•°, true/falseï¼ˆtrueï¼šæ•æ‰æ¨¡å‹ï¼Œfalseï¼šå†’æ³¡æ¨¡å‹ï¼‰)
 
 
 

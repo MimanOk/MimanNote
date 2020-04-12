@@ -1,55 +1,55 @@
--> ×¢ÊÍ
-    - /* ×¢ÊÍÄÚÈİ */
+ï»¿-> æ³¨é‡Š
+    - /* æ³¨é‡Šå†…å®¹ */
 
--> ÒıÓÃCSSÑùÊ½ÎÄ¼ş
-    - <link rel="stylesheet" href="filepath/CSSÎÄ¼ş">
+-> å¼•ç”¨CSSæ ·å¼æ–‡ä»¶
+    - <link rel="stylesheet" href="filepath/CSSæ–‡ä»¶">
 
--> ¾ÓÖĞÏÔÊ¾
-    - Ë®Æ½¾ÓÖĞ£ºtext-align: center;
-    - ´¹Ö±¾ÓÖĞ£ºline-height: ¶àÉÙpx£¨¶àÉÙpxÖĞ¼ä£©
+-> å±…ä¸­æ˜¾ç¤º
+    - æ°´å¹³å±…ä¸­ï¼štext-align: center;
+    - å‚ç›´å±…ä¸­ï¼šline-height: å¤šå°‘pxï¼ˆå¤šå°‘pxä¸­é—´ï¼‰
 
--> Æ¯
-    - ×ó/ÓÒÆ¯£ºfloat: left/right
+-> æ¼‚
+    - å·¦/å³æ¼‚ï¼šfloat: left/right
     - <div style="border: 1px; solid: red">
-          <div style="float: left"></div> ¶ù×ÓÆ¯
-          <div style="float: left"></div> ¶ù×ÓÆ¯
-          <div style="clear: both"></div> °Ñ¸¸Ç×³ÅÆğÀ´
+          <div style="float: left"></div> å„¿å­æ¼‚
+          <div style="float: left"></div> å„¿å­æ¼‚
+          <div style="clear: both"></div> æŠŠçˆ¶äº²æ’‘èµ·æ¥
       </div>
-    - Æ¯ºó¿é¼¶±êÇ©»áÒÔinlineµÄÊôĞÔÏÔÊ¾
+    - æ¼‚åå—çº§æ ‡ç­¾ä¼šä»¥inlineçš„å±æ€§æ˜¾ç¤º
 
--> ĞĞÄÚ±êÇ©ÎŞ·¨ÉèÖÃ¸ß¿í
--> ¿é¼¶±êÇ©¿ÉÒÔÉèÖÃ¸ß¿í
+-> è¡Œå†…æ ‡ç­¾æ— æ³•è®¾ç½®é«˜å®½
+-> å—çº§æ ‡ç­¾å¯ä»¥è®¾ç½®é«˜å®½
 
 -> display
-    - none£º±êÇ©ÏûÊ§
-    - inline£ºÄ¬ÈÏ×Ô¼ºÓĞ¶àÉÙÕ¼¶àÉÙ£¬²»¿ÉÉèÖÃ¸ß¿í
-    - block£ºÄ¬ÈÏÕ¼ÕûĞĞ£¬¿ÉÒÔÉèÖÃ¸ß¿í
-    - inline-block£ºÄ¬ÈÏ×Ô¼ºÓĞ¶àÉÙÕ¼¶àÉÙ£¬¿ÉÒÔÉèÖÃ¸ß¿í
+    - noneï¼šæ ‡ç­¾æ¶ˆå¤±
+    - inlineï¼šé»˜è®¤è‡ªå·±æœ‰å¤šå°‘å å¤šå°‘ï¼Œä¸å¯è®¾ç½®é«˜å®½
+    - blockï¼šé»˜è®¤å æ•´è¡Œï¼Œå¯ä»¥è®¾ç½®é«˜å®½
+    - inline-blockï¼šé»˜è®¤è‡ªå·±æœ‰å¤šå°‘å å¤šå°‘ï¼Œå¯ä»¥è®¾ç½®é«˜å®½
 
--> ±ß¾à
-    - ÄÚ±ß¾à£ºpadding
-    - Íâ±ß¾à£ºmargin(0, auto)
+-> è¾¹è·
+    - å†…è¾¹è·ï¼špadding
+    - å¤–è¾¹è·ï¼šmargin(0, auto)
 
--> ¹Ì¶¨±êÇ©
-    - ¾ø¶Ô±êÇ©£ºstyle="position: fixed; top: 0; left: 0; right: 0; buttom: 0"
-    - Ïà¶Ô±êÇ©£ºstyle="position: relative; Í¨³£relativeºÍabsolute ÁªºÏÊ¹ÓÃ£¨Íâ²ãÊ¹ÓÃrelative£¬ÄÚ²ãÊ¹ÓÃabsoluteÀ´Ïà¶ÔÓÚÍâ²ã¶¨Î»£©
-    - positionºó¿é¼¶±êÇ©»áÒÔinlineµÄÊôĞÔÏÔÊ¾
-    - opacity£ºÍ¸Ã÷ÊôĞÔ£¬·¶Î§0-1
-    - ·Ö²ãÏÔÊ¾ÓÅÏÈ¼¶£ºz-index£ºÖµÔ½´ó£¬Ô½ÉÏ²ã
+-> å›ºå®šæ ‡ç­¾
+    - ç»å¯¹æ ‡ç­¾ï¼šstyle="position: fixed; top: 0; left: 0; right: 0; buttom: 0"
+    - ç›¸å¯¹æ ‡ç­¾ï¼šstyle="position: relative; é€šå¸¸relativeå’Œabsolute è”åˆä½¿ç”¨ï¼ˆå¤–å±‚ä½¿ç”¨relativeï¼Œå†…å±‚ä½¿ç”¨absoluteæ¥ç›¸å¯¹äºå¤–å±‚å®šä½ï¼‰
+    - positionåå—çº§æ ‡ç­¾ä¼šä»¥inlineçš„å±æ€§æ˜¾ç¤º
+    - opacityï¼šé€æ˜å±æ€§ï¼ŒèŒƒå›´0-1
+    - åˆ†å±‚æ˜¾ç¤ºä¼˜å…ˆçº§ï¼šz-indexï¼šå€¼è¶Šå¤§ï¼Œè¶Šä¸Šå±‚
 
 -> overflow
-    - Íâ²¿ÉèÖÃoverflowÊôĞÔ£¬ÄÚ²¿ÄÚÈİ³¬³öºó
-        - £ºoverflow: hidden£¨³¬³ö²¿·ÖÒş²Ø£©
-        - £ºoverflow: hidden£¨³¬³ö²¿·ÖÓÃ»¬ÂÖ£©
+    - å¤–éƒ¨è®¾ç½®overflowå±æ€§ï¼Œå†…éƒ¨å†…å®¹è¶…å‡ºå
+        - ï¼šoverflow: hiddenï¼ˆè¶…å‡ºéƒ¨åˆ†éšè—ï¼‰
+        - ï¼šoverflow: hiddenï¼ˆè¶…å‡ºéƒ¨åˆ†ç”¨æ»‘è½®ï¼‰
 
--> .a .b:hover{cssÑùÊ½}
-    - ¼ÓÉÏhoverºóÊó±ê·ÅÉÏÃæÊ±{ÖĞµÄÑùÊ½»áÖ´ĞĞ}
+-> .a .b:hover{cssæ ·å¼}
+    - åŠ ä¸Šhoveråé¼ æ ‡æ”¾ä¸Šé¢æ—¶{ä¸­çš„æ ·å¼ä¼šæ‰§è¡Œ}
 
--> ÓÃbackground²åÍ¼Æ¬
+-> ç”¨backgroundæ’å›¾ç‰‡
     - <div style="background-image: url(image_url)">
-    -  background-repeat: no-repeat£º no_repeat: ²»ÖØµş
-    -  background-position-x: x·½ÏòÒÆ¶¯¾àÀë
-    -  background-position-x: y·½ÏòÒÆ¶¯¾àÀë
+    -  background-repeat: no-repeatï¼š no_repeat: ä¸é‡å 
+    -  background-position-x: xæ–¹å‘ç§»åŠ¨è·ç¦»
+    -  background-position-x: yæ–¹å‘ç§»åŠ¨è·ç¦»
 
 
 

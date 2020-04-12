@@ -1,165 +1,170 @@
-######## Ä¬ÈÏÁ¬½Ó¶Ë¿Ú£º3306 ########
+ï»¿######## é»˜è®¤è¿æ¥ç«¯å£ï¼š3306 ########
+######## navicatæ˜¯mysqlçš„å›¾å½¢è¾…åŠ©å·¥å…· ########
 
--> ÉèÖÃÈ¨ÓÃ»§ÏŞ
-    - È¨ÏŞÓĞ£ºexecute,create,select,insert,update,delete¡£
-    - grant execute,insert,select,update on ¿â.* to 'root'@'%';
+-> è®¾ç½®æƒç”¨æˆ·é™
+    - æƒé™æœ‰ï¼šexecute,create,select,insert,update,deleteã€‚
+    - grant execute,insert,select,update on åº“.* to 'root'@'%';
     - grant all on db.* to 'user'@'%';
 
--> ²é¿´ÓÃ»§Ä¿Ç°È¨ÏŞ£º
+-> ç»™rootç”¨æˆ·è®¾ç½®å¯è¿œç¨‹è®¿é—®æƒé™
+    - GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+    - flush privileges;
+
+-> æŸ¥çœ‹ç”¨æˆ·ç›®å‰æƒé™ï¼š
     - show grants for root;
 
--> ²é¿´ÓÃ»§×ÊÁÏ
+-> æŸ¥çœ‹ç”¨æˆ·èµ„æ–™
     - select * from user where user="root";
-    - select Host,User from user where user="root";(²é¿´µ¥¸öÓÃ»§)
-    - select User,Host from mysql.user;£¨²é¿´È«²¿ÓÃ»§£©
+    - select Host,User from user where user="root";(æŸ¥çœ‹å•ä¸ªç”¨æˆ·)
+    - select User,Host from mysql.user;ï¼ˆæŸ¥çœ‹å…¨éƒ¨ç”¨æˆ·ï¼‰
 
--> Ê¹ÓÃÄÄ¸ö¿â
+-> ä½¿ç”¨å“ªä¸ªåº“
     - use mysql;
 
--> mysql °²×°³É¹¦ºó´´½¨rootÃÜÂë
+-> mysql å®‰è£…æˆåŠŸååˆ›å»ºrootå¯†ç 
 `mysqladmin -u root -p pass;
--> ´´½¨ÓÃ»§£º
+-> åˆ›å»ºç”¨æˆ·ï¼š
     - create user 'root'@'%' identified by 'pass';
 
--> É¾³ıÓÃ»§£º
+-> åˆ é™¤ç”¨æˆ·ï¼š
     - delete from user where user="root" and host="%"
     - drop user username@localhost;
 
--> ĞŞ¸ÄHostÎª%£¬´ú±íÍâÍø¿ÉÒÔÁ¬½ÓºÍË¢ĞÂ£º
+-> ä¿®æ”¹Hostä¸º%ï¼Œä»£è¡¨å¤–ç½‘å¯ä»¥è¿æ¥å’Œåˆ·æ–°ï¼š
     - update user set Host="%" where user="root"
 
--> ÊÚÈ¨Óï¾ä£º
+-> æˆæƒè¯­å¥ï¼š
     - grant all privileges on *.* to 'root'@'%' with grant option;
 
--> È¡ÏûÓÃ»§²éÑ¯È¨ÏŞ£º
+-> å–æ¶ˆç”¨æˆ·æŸ¥è¯¢æƒé™ï¼š
     - revoke select on what from 'root';
 
--> ²éÑ¯ÓÃ»§ÃÜÂë£º
-¡¤select host,user,authentication_string from mysql.user;
+-> æŸ¥è¯¢ç”¨æˆ·å¯†ç ï¼š
+Â·select host,user,authentication_string from mysql.user;
 
--> ĞŞ¸ÄÊı¾İ¿âµÇÂ¼ÃÜÂë£º
+-> ä¿®æ”¹æ•°æ®åº“ç™»å½•å¯†ç ï¼š
     - alter user 'root'@'localhost' identified by 'youpassword';
-    - alter user "Miman"@"%" identified by "ÃÜÂë" password expire never;
-    - alter user "Miman"@"%" identified with mysql_native_password by "ÃÜÂë";
+    - alter user "Miman"@"%" identified by "å¯†ç " password expire never;
+    - alter user "Miman"@"%" identified with mysql_native_password by "å¯†ç ";
 
--> ĞÂÓÃ»§ÃûÌæ»»¾ÉÓÃ»§Ãû£º
+-> æ–°ç”¨æˆ·åæ›¿æ¢æ—§ç”¨æˆ·åï¼š
     - use mysql;
     - update user set user="new" where user="old";
 
--> Ë¢ĞÂÓÃ»§È¨ÏŞ£º
+-> åˆ·æ–°ç”¨æˆ·æƒé™ï¼š
     - flush privileges;
 
--> ´´½¨¿â£º
-    - create database ¿âÃû
-    - create database ¿âÃû charset utf8;
+-> åˆ›å»ºåº“ï¼š
+    - create database åº“å
+    - create database åº“å charset utf8;
 
--> ²é¿´´´½¨µÄ¿â
-    - show create database ¿âÃû
+-> æŸ¥çœ‹åˆ›å»ºçš„åº“
+    - show create database åº“å
 
--> É¾³ı¿â£º
-    - drop database ¿âÃû;
+-> åˆ é™¤åº“ï¼š
+    - drop database åº“å;
 
--> ²é¿´Ê¹ÓÃÊ±¼ä¸ñÊ½£º
+-> æŸ¥çœ‹ä½¿ç”¨æ—¶é—´æ ¼å¼ï¼š
     - show variables like '%time_zone%';
 
--> ĞŞ¸ÄÊ±¼ä¸ñÊ½£º
+-> ä¿®æ”¹æ—¶é—´æ ¼å¼ï¼š
     - set global time_zone='+8:00';
 
--> ²é¿´±í½á¹¹:
-    - describe ±íÃû| desc ±íÃû;
+-> æŸ¥çœ‹è¡¨ç»“æ„:
+    - describe è¡¨å| desc è¡¨å;
 
--> Êı¾İÈ¥ÖØ£º
-    - select distinct ÁĞ¡­. From ±íÃû;
+-> æ•°æ®å»é‡ï¼š
+    - select distinct åˆ—â€¦. From è¡¨å;
 
--> Êı¾İÆ´½Ó£º
-    - select concat(ÁĞ1,ÁĞ2) from ±íÃû;
+-> æ•°æ®æ‹¼æ¥ï¼š
+    - select concat(åˆ—1,åˆ—2) from è¡¨å;
 
--> Ä£ºı²éÑ¯:
-    - select * from movies where name like "¿Æ»Ã%";
+-> æ¨¡ç³ŠæŸ¥è¯¢:
+    - select * from movies where name like "ç§‘å¹»%";
 
 -------------------------------------------
     - drop table book;
     - create table movies(id int auto_increment primary key, name varchar(20), url varchar(200));
-    - insert into movies(name, url) values("¶·ÂŞ´óÂ½94¼¯", "https://v.qq.com/x/cover/m441e3rjq9kwpsc/n0033turevc.html");
+    - insert into movies(name, url) values("æ–—ç½—å¤§é™†94é›†", "https://v.qq.com/x/cover/m441e3rjq9kwpsc/n0033turevc.html");
     - select name,url from movies;
     - select * from movies;
-    - select * from movies order by id desc£¨½µĞò£©asc£¨ÉıĞò£©;
-    - select * from ipPool limit 10£¨ÊıÁ¿£© offset 5£¨Æ«ÒÆÁ¿£©;
+    - select * from movies order by id descï¼ˆé™åºï¼‰ascï¼ˆå‡åºï¼‰;
+    - select * from ipPool limit 10ï¼ˆæ•°é‡ï¼‰ offset 5ï¼ˆåç§»é‡ï¼‰;
     - select name,url from movies;
     - select * from movies where id > 0;
     - delete from movies where id=3;
--> ĞŞ¸Ä±íÃû
+-> ä¿®æ”¹è¡¨å
     - rename table name to new_name;
--> ĞŞ¸Ä±í
+-> ä¿®æ”¹è¡¨
     - update movies set id=3 where id=4;
     - alter table ipPool change protocal http varchar(5);
     - alter table ipPool change protocal http varchar(5) not null default "http";
-    - alter table ipPool add sex enum("ÄĞ", "Å®");
+    - alter table ipPool add sex enum("ç”·", "å¥³");
     - alter table ipPool drop column;
-    - alter table ipPool modify sex enum("ÄĞ", "Å®") not null;  -> ĞŞ¸ÄÊı¾İÀàĞÍ
+    - alter table ipPool modify sex enum("ç”·", "å¥³") not null;  -> ä¿®æ”¹æ•°æ®ç±»å‹
     - alter table ipPool add column https varchar(5) after http;
     - alter table ipPool change port port varchar(5) not null;
     - update ipPool set ID = ID - 3 where ID > 3;
     - select count(*) from ipPool
--> ÃüÁîĞĞÖĞ£º
-    - select * from tables \G£ºÊú×ÅÏÔÊ¾
+-> å‘½ä»¤è¡Œä¸­ï¼š
+    - select * from tables \Gï¼šç«–ç€æ˜¾ç¤º
 
--> ²é¿´±í´´½¨¹ı³Ì
+-> æŸ¥çœ‹è¡¨åˆ›å»ºè¿‡ç¨‹
     - show create table name;
 
--> ·Ö×é²é¿´
+-> åˆ†ç»„æŸ¥çœ‹
     - select port, count(*) from ipPool group by port;
     - select port, count(*) as alias from ipPool group by port;
 
--> ÇóºÍ
+-> æ±‚å’Œ
     - select name, sum(age) as sum_age from student;
 
--> ·Ö×éÇóºÍ
+-> åˆ†ç»„æ±‚å’Œ
     - select name, sum(age) as sum_age from student group by name;
 
--> ·Ö×éÇóºÍ´ø×ÜºÍ
+-> åˆ†ç»„æ±‚å’Œå¸¦æ€»å’Œ
     - select name, sum(age) as sum_age from student group by name with rollup;
-×ÜºÍÉèÖÃ±ğÃû
-    - select coalesce(name, ±ğÃû), sum(age) as sum_age from student group by name with rollup;
+æ€»å’Œè®¾ç½®åˆ«å
+    - select coalesce(name, åˆ«å), sum(age) as sum_age from student group by name with rollup;
 
--> Íâ¼ü¹ØÁª
+-> å¤–é”®å…³è”
     - create table student(id int(11) auto_increment, primary key (id), day int not null, stu_id int(11) not null,
     - key fk_student_key (stu_id), constraint fk_student_key foreign key (stu_id) references student (id));
 
--> ±íAÖĞaÁĞÓë±íBÖĞbÁĞ½»¼¯
-    - 1.select * from A inner join B on A.a=B.b;£¨³£ÓÃ£©
+-> è¡¨Aä¸­aåˆ—ä¸è¡¨Bä¸­båˆ—äº¤é›†
+    - 1.select * from A inner join B on A.a=B.b;ï¼ˆå¸¸ç”¨ï¼‰
     - 2.select A.*,B.* from A,B where A.a=B.b;
 
--> ±íAÖĞaÁĞÓë±íBÖĞbÁĞ²î¼¯
+-> è¡¨Aä¸­aåˆ—ä¸è¡¨Bä¸­båˆ—å·®é›†
     - 1.select * from A left join B on A.a=B.b;
     - 2.select * from A right join B on A.a=B.b;
 
--> ±íAÖĞaÁĞÓë±íBÖĞbÁĞ²¢¼¯
+-> è¡¨Aä¸­aåˆ—ä¸è¡¨Bä¸­båˆ—å¹¶é›†
     - select * from A left join B on A.a=B.b union select * from A right join B on A.a=B.b;
 
--> ÊÂÎñ
-    - ¿ªÆôÒ»¸öÊÂÎñ£ºbegein£»
-    - ³öÏÖÎÊÌâ»Ø¹ö£ºrollback;  -> »Ø¹öºóÊÂÎñ½áÊø
-    - Ìá½»Êı¾İ£ºcommit£»Ìá½»ºó²»¿É»Ø¹ö
+-> äº‹åŠ¡
+    - å¼€å¯ä¸€ä¸ªäº‹åŠ¡ï¼šbegeinï¼›
+    - å‡ºç°é—®é¢˜å›æ»šï¼šrollback;  -> å›æ»šåäº‹åŠ¡ç»“æŸ
+    - æäº¤æ•°æ®ï¼šcommitï¼›æäº¤åä¸å¯å›æ»š
 
--> ´´½¨Ë÷Òı
-    - ²é¿´±íË÷Òı£ºshow index from my_table;
-    - ´´½¨±íË÷Òı£ºcreate index indexName£¨ÀàËÆkey_name:primary key£© on my_table(user_name(length));  -> user_name£º×Ö¶ÎÃû
-Èç¹ûÊÇcharºÍvarcharÀàĞÍ£¬length¿ÉÒÔĞ¡ÓÚ×Ö¶ÎÊµ¼Ê³¤¶È£¬ Èç¹ûÊÇblobºÍtextÀàĞÍ£¬±ØĞëÖ¸¶¨length£»
-    - ´´½¨Î¨Ò»Ë÷Òı£ºcreate unique index indexName£¨ÀàËÆkey_name:primary key£© on my_table(user_name(length));
+-> åˆ›å»ºç´¢å¼•
+    - æŸ¥çœ‹è¡¨ç´¢å¼•ï¼šshow index from my_table;
+    - åˆ›å»ºè¡¨ç´¢å¼•ï¼šcreate index indexNameï¼ˆç±»ä¼¼key_name:primary keyï¼‰ on my_table(user_name(length));  -> user_nameï¼šå­—æ®µå
+å¦‚æœæ˜¯charå’Œvarcharç±»å‹ï¼Œlengthå¯ä»¥å°äºå­—æ®µå®é™…é•¿åº¦ï¼Œ å¦‚æœæ˜¯blobå’Œtextç±»å‹ï¼Œå¿…é¡»æŒ‡å®šlengthï¼›
+    - åˆ›å»ºå”¯ä¸€ç´¢å¼•ï¼šcreate unique index indexNameï¼ˆç±»ä¼¼key_name:primary keyï¼‰ on my_table(user_name(length));
 
-#ĞŞ¸Ä±í½á¹¹
+#ä¿®æ”¹è¡¨ç»“æ„
     - alter table my_table add index indexName on (user_name(length));
 
--> É¾³ıË÷Òı
+-> åˆ é™¤ç´¢å¼•
     - drop index indexName on my_table;
 
--> pycharmÖĞ python3.6.5
-    - pycharmÖĞÄ¬ÈÏ¿ªÆôÊÂÎñ
+-> pycharmä¸­ python3.6.5
+    - pycharmä¸­é»˜è®¤å¼€å¯äº‹åŠ¡
 	- import pymysql
 	- conn = pymysql.connect(port="", user="", password="", port=3306, db="", charset="utf8")
 	- cur = coon.cursor()
-	- cur.execute("ÃüÁîĞĞÖĞ")
+	- cur.execute("å‘½ä»¤è¡Œä¸­")
 	- conn.rollback()
 	- conn.commit()
 	- conn.close()

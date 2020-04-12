@@ -1,19 +1,42 @@
--> ²é¿´¾µÏñÔ´
-    - /etc/apt/sources.list.parrotÎÄ¼þÏÂËµ¿ÉÒÔÓÃ¡±parrot-mirror-selector¡°È¥²é¿´»òÐÞ¸Ä¾µÏñÔ´¡£
--> ÐÞ¸Ä¾µÏñÔ´
-    - vim /etc/apt/sources.list.d/parrot.list
-    - Ô´1£¨ÖÐ¹ú¿Æ¼¼´óÑ§£©£ºdeb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
-    - Ô´2£¨±±¾©Çå»ª´óÑ§£©£ºdeb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
+ï»¿-> æŸ¥çœ‹é•œåƒæº
+    - /etc/apt/sources.list.parrotæ–‡ä»¶ä¸‹è¯´å¯ä»¥ç”¨â€parrot-mirror-selectorâ€œåŽ»æŸ¥çœ‹æˆ–ä¿®æ”¹é•œåƒæºã€‚
 
--> vimÇ¿ÖÆÐÞ¸ÄÖ»¶ÁÎÄ¼þ
+-> ä¿®æ”¹é•œåƒæº
+    - vim /etc/apt/sources.list.d/parrot.list
+    - æº1ï¼ˆä¸­å›½ç§‘æŠ€å¤§å­¦ï¼‰ï¼šdeb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
+    - æº2ï¼ˆåŒ—äº¬æ¸…åŽå¤§å­¦ï¼‰ï¼šdeb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
+
+-> vimå¼ºåˆ¶ä¿®æ”¹åªè¯»æ–‡ä»¶
     - w !sudo tee %
--> ÐÞ¸ÄÎÄ¼þÊôÐÔ
+
+-> ä¿®æ”¹æ–‡ä»¶å±žæ€§
    - sudo chmod a+w file_name
 
 -> ssh
-    - ÔÊÐíÔ¶³ÌÁ¬½Ó£ºvim /etc/ssh/sshd_config -->PermitRootLogin yes
+    - å…è®¸è¿œç¨‹è¿žæŽ¥ï¼švim /etc/ssh/sshd_config -->PermitRootLogin yes
 
--> ÔÚ.bashrcÎÄ¼þÖÐÌí¼ÓÒ»¸öpythonÎÄ¼þÔÙsource .bashrcÔËÐÐ£¬±»Ìí¼ÓµÄpythonÎÄ¼þ»á±»Ö´ÐÐ
+-> åœ¨.bashrcæ–‡ä»¶ä¸­æ·»åŠ ä¸€ä¸ªpythonæ–‡ä»¶å†source .bashrcè¿è¡Œï¼Œè¢«æ·»åŠ çš„pythonæ–‡ä»¶ä¼šè¢«æ‰§è¡Œ
+
+-> é…ç½®å¿«æ·æ–¹å¼ï¼švim ~/.bashrc -->alias ç®€å†™å‘½ä»¤="bash è¦æ‰§è¡Œçš„å‘½ä»¤"
+    - ç¤ºä¾‹ï¼šalias pycharm="bash /home/bobby/Downloads/pycharm-2020.1/bin/pycharm.sh"
+    - å†æ‰§è¡Œsource ~/.bashrcä½¿æ”¹åŠ¨åŽçš„.bashrcæ–‡ä»¶ç”Ÿæ•ˆ
+    - åœ¨è¾“å…¥pycharmå³å¯ä»¥å¿«æ·æ–¹å¼å¯åŠ¨pycharm
+
+-> å®‰è£…MySQLï¼šsudo apt-get install mysql-server
+-> åˆ¤æ–­mysqlæ˜¯å¦å¯åŠ¨ï¼šps aux|grep mysqld
+-> é…ç½®mysqlå¯ä»¥è¿œç¨‹è¿žæŽ¥ï¼švim /etc/mysql/mysql.conf.d/mysqld.cnf
+    - å°†bind-addressçš„å€¼ï¼ˆåªåœ¨æœ¬åœ°ipç›‘å¬127.0.0.1ï¼‰æ”¹ä¸ºï¼š0.0.0.0ï¼Œç›‘å¬å¤–éƒ¨ip
+    - å†é‡å¯mysqlï¼šsudo service mysql restart
+
+-> å®‰è£…python3.6ï¼šsudo apt-get install python3.6
+
+
+
+
+
+
+
+
 
 
 

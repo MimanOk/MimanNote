@@ -1,96 +1,132 @@
-######## Ä¬ÈÏÁ¬½Ó¶Ë¿Ú£º6379 ########
-ÃüÁîĞĞÏÂ£º
-    -Á¬½Óredis£º redis-cli
-    -help Ö¸Áî£ºÁĞ³ö°ïÖúĞÅÏ¢
-    -ÓÃ»§ÑéÖ¤£º auth pass
+ï»¿######## é»˜è®¤è¿æ¥ç«¯å£ï¼š6379 ########
+å‘½ä»¤è¡Œä¸‹ï¼š
+    - è¿æ¥redisï¼š redis-cli
+    - help æŒ‡ä»¤ï¼šåˆ—å‡ºå¸®åŠ©ä¿¡æ¯
+    - ç”¨æˆ·éªŒè¯ï¼š auth pass
 
-->×Ö·û´®
-    -ÉèÖÃµ¥¸öset£º  set key value ex£¨´æ»îÊ±¼ä£¬µ¥Î»Ãë£©px£¨´æ»îÊ±¼ä£¬µ¥Î»ºÁÃë£©nx£¨key´æÔÚ¾Í²»ÉèÖÃ£©xx£¨key²»´æÔÚ¾ÍÉèÖÃ£©
-    -ÉèÖÃ¶à¸öset£º mset key1 value key2 value...
-    -»ñÈ¡¶à¸öset£º mget key1 key2
-    -ÉèÖÃÎ»setbit£º  setbit offset 0»ò1
-    -del£ºÉ¾³ıkey
-    -append£º×·¼Ó
-    -select£ºÇĞ»»¿â
-    -keys *£ºÁĞ³öµ±Ç°¿âÖĞËùÓĞkey
-    -»ñÈ¡²¢ÉèÖÃgetset£º getset key new_value
-    -ÀàËÆÇĞÆ¬getrange£º getrange key start end
-    -¼ÆËãÎ»ÖĞµÄ1£º  countbit
-    -×ÔÔöincr£º  incr key
-    -×ÔÔöincrby£º incrby key increment
-    -×ÔÔöincrbyfloat£º incrbyfloat key floatnum
-    -×Ô¼õdecr£º decr key
+->å­—ç¬¦ä¸²
+    - è®¾ç½®å•ä¸ªsetï¼š  set key value exï¼ˆå­˜æ´»æ—¶é—´ï¼Œå•ä½ç§’ï¼‰pxï¼ˆå­˜æ´»æ—¶é—´ï¼Œå•ä½æ¯«ç§’ï¼‰nxï¼ˆkeyå­˜åœ¨å°±ä¸è®¾ç½®ï¼‰xxï¼ˆkeyä¸å­˜åœ¨å°±è®¾ç½®ï¼‰
+    - è®¾ç½®å¤šä¸ªsetï¼š mset key1 value key2 value...
+    - è·å–å¤šä¸ªsetï¼š mget key1 key2
+    - è®¾ç½®ä½setbitï¼š  setbit offset 0æˆ–1
+    - delï¼šåˆ é™¤key
+    - appendï¼šè¿½åŠ 
+    - selectï¼šåˆ‡æ¢åº“
+    - keys *ï¼šåˆ—å‡ºå½“å‰åº“ä¸­æ‰€æœ‰key
+    - è·å–å¹¶è®¾ç½®getsetï¼š getset key new_value
+    - ç±»ä¼¼åˆ‡ç‰‡getrangeï¼š getrange key start end
+    - è®¡ç®—ä½ä¸­çš„1ï¼š  countbit
+    - è‡ªå¢incrï¼š  incr key
+    - è‡ªå¢incrbyï¼š incrby key increment
+    - è‡ªå¢incrbyfloatï¼š incrbyfloat key floatnum
+    - è‡ªå‡decrï¼š decr key
 
 ->hash
-    -µ¥¸öhashÉèÖÃ£º hset key field1 value
-    -µ¥¸öhash»ñÈ¡£ºhget key field1 value  £»  hgetall key  £»  hkeys key  £»  hvals value
-    -¶à¸öhashÉèÖÃ£ºhmset key field1 value field2 value...
-    -¶à¸öhash»ñÈ¡£ºhget key field1 field2
-    -hlen£º»ñÈ¡ÓĞ¼¸¸ökey
-    -ÅĞ¶ÏÊÇ·ñ´æÔÚkey£ºhexists key
-    -É¾³ıfield£ºhdel key field1 field2
-    -×ÔÔö£ºhincrby key field increment
-    -×ÔÔöhincrbyfloat£º hincrbyfloat key floatnum
-    -hkeys key
-    -ÕıÔò²éÕÒ£ºhscan key start match M*
-    -ÕıÔò²éÕÒ²¢ÉèÖÃ²éÕÒ½á¹ûÎªiter£ºhscan_iter key start match M*£¨pycharmÖĞÊ¹ÓÃ£©
+    - å•ä¸ªhashè®¾ç½®ï¼š hset key field1 value
+    - å•ä¸ªhashè·å–ï¼šhget key field1 value  ï¼›  hgetall key  ï¼›  hkeys key  ï¼›  hvals value
+    - å¤šä¸ªhashè®¾ç½®ï¼šhmset key field1 value field2 value...
+    - å¤šä¸ªhashè·å–ï¼šhget key field1 field2
+    - hlenï¼šè·å–æœ‰å‡ ä¸ªkey
+    - åˆ¤æ–­æ˜¯å¦å­˜åœ¨keyï¼šhexists key
+    - åˆ é™¤fieldï¼šhdel key field1 field2
+    - è‡ªå¢ï¼šhincrby key field increment
+    - è‡ªå¢hincrbyfloatï¼š hincrbyfloat key floatnum
+    - hkeys key
+    - æ­£åˆ™æŸ¥æ‰¾ï¼šhscan key start match M*
+    - æ­£åˆ™æŸ¥æ‰¾å¹¶è®¾ç½®æŸ¥æ‰¾ç»“æœä¸ºiterï¼šhscan_iter key start match M*ï¼ˆpycharmä¸­ä½¿ç”¨ï¼‰
 
-->ÁĞ±í
-    -ÍùÁĞ±í×ó±ß·ÅÊı¾İ£ºlpush name 1 2 3
-    -ÍùÁĞ±íÓÒ±ß·ÅÊı¾İ£ºrpush name 1 2 3
-    -È¡È«²¿Êı¾İ£ºlrange name 0 -1
-    -llen£º»ñÈ¡ÁĞ±í³¤¶È
-    -linsert name before|afer pivot value
-    -°´Ë÷ÒıÉèÖÃlset£ºlset name index value
-    -lrem name£¨ÁĞ±íÃû£© count£¨É¾³ıÊıÁ¿£© value£¨ÒªÉ¾³ıµÄÖµ£©
-    -lpop£º´Ó×ó²à»ñÈ¡µÚÒ»¸öÔªËØ²¢ÒÆ³ı
-    -ÒÆ³ıÑ¡¶¨·¶Î§ÍâµÄÔªËØ£ºltrim start end
-    -blpop key timeout£ºÔÚÖ¸¶¨Ê±¼äÄÚ´ÓÁĞ±í×ó±ßÈ¡³öÔªËØ²¢·µ»Ø
-    -´ÓÁĞ±í1ÓÒ±ßÈ¡³öÒ»¸öÔªËØ·Åµ½ÁĞ±í2×ó±ß£ºrpoplpush list1 list2
-    -Ö¸¶¨Ê±¼äÄÚ´ÓÁĞ±í1ÓÒ±ßÈ¡³öÒ»¸öÔªËØ·Åµ½ÁĞ±í2×ó±ß£ºbrpoplpush list1 list2 timeout £¨¿ÉÒÔ´ÓÁíÒ»¸öÏß³ÌÖĞgetÊı¾İµ½µ±Ç°Ïß³Ì£©
+->åˆ—è¡¨ï¼ˆå‘½ä»¤è¡Œï¼‰
+    - å¾€åˆ—è¡¨å·¦è¾¹æ”¾æ•°æ®ï¼šlpush name 1 2 3
+    - å¾€åˆ—è¡¨å³è¾¹æ”¾æ•°æ®ï¼šrpush name 1 2 3
+    - å–å…¨éƒ¨æ•°æ®ï¼šlrange name 0 - 1
+    - llenï¼šè·å–åˆ—è¡¨é•¿åº¦
+    - linsert name before|afer pivot value
+    - æŒ‰ç´¢å¼•è®¾ç½®lsetï¼šlset name index value
+    - lrem nameï¼ˆåˆ—è¡¨åï¼‰ countï¼ˆåˆ é™¤æ•°é‡ï¼‰ valueï¼ˆè¦åˆ é™¤çš„å€¼ï¼‰
+    - lpopï¼šä»å·¦ä¾§è·å–ç¬¬ä¸€ä¸ªå…ƒç´ å¹¶ç§»é™¤
+    - ç§»é™¤é€‰å®šèŒƒå›´å¤–çš„å…ƒç´ ï¼šltrim start end
+    - blpop key timeoutï¼šåœ¨æŒ‡å®šæ—¶é—´å†…ä»åˆ—è¡¨å·¦è¾¹å–å‡ºå…ƒç´ å¹¶è¿”å›
+    - ä»åˆ—è¡¨1å³è¾¹å–å‡ºä¸€ä¸ªå…ƒç´ æ”¾åˆ°åˆ—è¡¨2å·¦è¾¹ï¼šrpoplpush list1 list2
+    - æŒ‡å®šæ—¶é—´å†…ä»åˆ—è¡¨1å³è¾¹å–å‡ºä¸€ä¸ªå…ƒç´ æ”¾åˆ°åˆ—è¡¨2å·¦è¾¹ï¼šbrpoplpush list1 list2 timeout ï¼ˆå¯ä»¥ä»å¦ä¸€ä¸ªçº¿ç¨‹ä¸­getæ•°æ®åˆ°å½“å‰çº¿ç¨‹ï¼‰
+->åˆ—è¡¨ï¼ˆredisæ¨¡å—ï¼‰
+    -  db.blpop("æ ‡è¯†", 0)[1]ï¼šå–ä»¥"æ ‡è¯†"å¼€å¤´çš„æ•°æ®ï¼Œrpushæ—¶"æ ‡è¯†"ä¸æ•°æ®ç”¨ç©ºæ ¼éš”å¼€
 
-->¼¯ºÏ
-    -Ôö¼Ó¼¯ºÏÔªËØ£ºsadd key value1 value2...
-    -²é¿´¼¯ºÏÔªËØ£ºsmembers key
-    -»ñÈ¡¶ÔÓ¦¼¯ºÏÖĞÔªËØ¸öÊı£ºscard key
-    -£¨²î¼¯£©µÚÒ»¸ökeyºÍÆäËûkeyµÄ²»Í¬ÔªËØ£ºsdiff key1 key2...
-    -£¨²î¼¯£©µÚÒ»¸ökeyºÍÆäËûkeyµÄ²»Í¬ÔªËØ´æµ½ĞÂµÄ¼¯ºÏÖĞ£ºsdiffstore new_key key1 key2...
-    -£¨½»¼¯£©¶¼ÓĞµÄÔªËØ£ºsinter key1 key2...
-    -£¨²¢¼¯£©Ïàµ±ÓÚ¼¯ºÏ¼äÏà¼Ó£ºsunion key1 key2
-    -£¨²¢¼¯²¢´æ´¢£©£ºsunionstore key key1 key2
-    -²é¿´ÊÇ·ñÓĞ¸Ã³ÉÔ±£ºsismember key value
-    -somve source destination member£º½«Ä³¸ö³ÉÔ±´ÓÒ»¸ö¼¯ºÏÖĞÒÆ¶¯µ½ÁíÒ»¸ö¼¯ºÏÖĞ
-    -spop key£º´Ó¼¯ºÏµÄÓÒ²àÒÆ³ıÒ»¸öÔªËØ²¢½«Æä·µ»Ø
-    -srandmember key numbers£º´Ó¼¯ºÏÖĞËæ»ú»ñÈ¡numbers¸öÔªËØ
-    -srem key values£º´ÓkeyÖĞÉ¾³ıÖ¸¶¨µÄÄ³Ğ©Öµ
-    -ÕıÔò²éÕÒ£ºsscan key start match M*
-    -ÕıÔò²éÕÒ²¢ÉèÖÃ²éÕÒ½á¹ûÎªiter£ºsscan_iter key start match M*£¨pycharmÖĞÊ¹ÓÃ£©
+->é›†åˆ
+    - å¢åŠ é›†åˆå…ƒç´ ï¼šsadd key value1 value2...
+    - æŸ¥çœ‹é›†åˆå…ƒç´ ï¼šsmembers key
+    - è·å–å¯¹åº”é›†åˆä¸­å…ƒç´ ä¸ªæ•°ï¼šscard key
+    - ï¼ˆå·®é›†ï¼‰ç¬¬ä¸€ä¸ªkeyå’Œå…¶ä»–keyçš„ä¸åŒå…ƒç´ ï¼šsdiff key1 key2...
+    - ï¼ˆå·®é›†ï¼‰ç¬¬ä¸€ä¸ªkeyå’Œå…¶ä»–keyçš„ä¸åŒå…ƒç´ å­˜åˆ°æ–°çš„é›†åˆä¸­ï¼šsdiffstore new_key key1 key2...
+    - ï¼ˆäº¤é›†ï¼‰éƒ½æœ‰çš„å…ƒç´ ï¼šsinter key1 key2...
+    - ï¼ˆå¹¶é›†ï¼‰ç›¸å½“äºé›†åˆé—´ç›¸åŠ ï¼šsunion key1 key2
+    - ï¼ˆå¹¶é›†å¹¶å­˜å‚¨ï¼‰ï¼šsunionstore key key1 key2
+    - æŸ¥çœ‹æ˜¯å¦æœ‰è¯¥æˆå‘˜ï¼šsismember key value
+    - somve source destination memberï¼šå°†æŸä¸ªæˆå‘˜ä»ä¸€ä¸ªé›†åˆä¸­ç§»åŠ¨åˆ°å¦ä¸€ä¸ªé›†åˆä¸­
+    - spop keyï¼šä»é›†åˆçš„å³ä¾§ç§»é™¤ä¸€ä¸ªå…ƒç´ å¹¶å°†å…¶è¿”å›
+    - srandmember key numbersï¼šä»é›†åˆä¸­éšæœºè·å–numbersä¸ªå…ƒç´ 
+    - srem key valuesï¼šä»keyä¸­åˆ é™¤æŒ‡å®šçš„æŸäº›å€¼
+    - æ­£åˆ™æŸ¥æ‰¾ï¼šsscan key start match M*
+    - æ­£åˆ™æŸ¥æ‰¾å¹¶è®¾ç½®æŸ¥æ‰¾ç»“æœä¸ºiterï¼šsscan_iter key start match M*ï¼ˆpycharmä¸­ä½¿ç”¨ï¼‰
 
-->ÓĞĞò¼¯ºÏ
-    -Ìí¼ÓÔªËØ»ò¸üĞÂÔªËØÈ¨ÖØ£ºzadd key È¨ÖØÖµ value1 È¨ÖØÖµ value2
-    -²é¿´ÔªËØ£ºzrange key 0 -1 withscore
-    -zcard£º»ñÈ¡¼¯ºÏÊıÁ¿£¬Í¬ÉÏ
-    -zcount key min max£º»ñÈ¡keyÖĞÈ¨ÖØÎªminµ½maxÖ®¼äµÄÔªËØ
-    -zincrby£ºÍ¬ÉÏ
-    -zrank key value£ºÉıĞòÅÅĞò
-    -zrevrank key value£º½µĞòÅÅĞò
-    -zrem£ºÍ¬ÉÏ£¬É¾³ı
-    -zremrangebyrank£º¸ù¾İÅÅĞĞ·¶Î§É¾³ı
-    -zremrangebyscore£º¸ù¾İÈ¨ÖØÅÅĞĞÉ¾³ı
-    -zremrangebylex£º¸ù¾İÖµ·µ»ØÉ¾³ı
-    -zsore key value£º¸ù¾İvalue»ñÈ¡È¨ÖØÖµ
-    -zinterstore£º»ñÈ¡Á½¸öÓĞĞò¼¯ºÏµÄ½»¼¯£¬Èç¹ûÓöµ½ÏàÍ¬Öµ²»Í¬·ÖÊı£¬Ôò°´ÕÕaggÀ´½øĞĞÉ¸Ñ¡£¬agg£ºsum£¬min£¬max
-    ÓÃ·¨£ºzinterstore new_key count£¨²Î¼Ó½»¼¯µÄ¼¯ºÏÊı£© ¼¯ºÏ1 ¼¯ºÏ2 £ºÄ¬ÈÏÈ¨ÖØÖµÏà¼Ó£¬¼°aggÎªsum£» minÈ¡È¨ÖØÖµĞ¡µÄ£¬ maxÈ¡´óµÄ
-    -zunionstore£º»ñÈ¡Á½¸öÓĞĞò¼¯ºÏµÄ²¢¼¯£¬Èç¹ûÓöµ½ÏàÍ¬Öµ²»Í¬·ÖÊı£¬Ôò°´ÕÕaggÀ´½øĞĞÉ¸Ñ¡£¬agg£ºsum£¬min£¬max
-    ÓÃ·¨Í¬ÉÏ
-    -zscan£ºÍ¬ÉÏ
-    -del key vaule£ºÉ¾³ı
-    -keys in*£ºÁĞ³öÒÔin¿ªÍ·µÄÔªËØ
-    -expire key value£ºÉèÖÃ¹ıÆÚÊ±¼ä
-    -move key db£º°ÑkeyÒÆ¶¯µ½ÁíÒ»¸ö¿â£¨ÁíÒ»¸ö¿âÓĞ¸ÃkeyÔò²»ÒÆ£©
-    -randomkey£ºËæ»ú»ñÈ¡Ò»¸ökey£¨²»É¾³ı£©
-    -type key£º»ñÈ¡key¶ÔÓ¦ÖµµÄÀàĞÍ
+->æœ‰åºé›†åˆ
+    - æ·»åŠ å…ƒç´ æˆ–æ›´æ–°å…ƒç´ æƒé‡ï¼šzadd key æƒé‡å€¼ value1 æƒé‡å€¼ value2
+    - æŸ¥çœ‹å…ƒç´ ï¼šzrange key 0 - 1 withscore
+    - zcardï¼šè·å–é›†åˆæ•°é‡ï¼ŒåŒä¸Š
+    - zcount key min maxï¼šè·å–keyä¸­æƒé‡ä¸ºminåˆ°maxä¹‹é—´çš„å…ƒç´ 
+    - zincrbyï¼šåŒä¸Š
+    - zrank key valueï¼šå‡åºæ’åº
+    - zrevrank key valueï¼šé™åºæ’åº
+    - zremï¼šåŒä¸Šï¼Œåˆ é™¤
+    - zremrangebyrankï¼šæ ¹æ®æ’è¡ŒèŒƒå›´åˆ é™¤
+    - zremrangebyscoreï¼šæ ¹æ®æƒé‡æ’è¡Œåˆ é™¤
+    - zremrangebylexï¼šæ ¹æ®å€¼è¿”å›åˆ é™¤
+    - zsore key valueï¼šæ ¹æ®valueè·å–æƒé‡å€¼
+    - zinterstoreï¼šè·å–ä¸¤ä¸ªæœ‰åºé›†åˆçš„äº¤é›†ï¼Œå¦‚æœé‡åˆ°ç›¸åŒå€¼ä¸åŒåˆ†æ•°ï¼Œåˆ™æŒ‰ç…§aggæ¥è¿›è¡Œç­›é€‰ï¼Œaggï¼šsumï¼Œminï¼Œmax
+    ç”¨æ³•ï¼šzinterstore new_key countï¼ˆå‚åŠ äº¤é›†çš„é›†åˆæ•°ï¼‰ é›†åˆ1 é›†åˆ2 ï¼šé»˜è®¤æƒé‡å€¼ç›¸åŠ ï¼ŒåŠaggä¸ºsumï¼› minå–æƒé‡å€¼å°çš„ï¼Œ maxå–å¤§çš„
+    - zunionstoreï¼šè·å–ä¸¤ä¸ªæœ‰åºé›†åˆçš„å¹¶é›†ï¼Œå¦‚æœé‡åˆ°ç›¸åŒå€¼ä¸åŒåˆ†æ•°ï¼Œåˆ™æŒ‰ç…§aggæ¥è¿›è¡Œç­›é€‰ï¼Œaggï¼šsumï¼Œminï¼Œmax
+    ç”¨æ³•åŒä¸Š
+    - zscanï¼šåŒä¸Š
+    - del key vauleï¼šåˆ é™¤
+    - keys in*ï¼šåˆ—å‡ºä»¥inå¼€å¤´çš„å…ƒç´ 
+    - expire key valueï¼šè®¾ç½®è¿‡æœŸæ—¶é—´
+    - move key dbï¼šæŠŠkeyç§»åŠ¨åˆ°å¦ä¸€ä¸ªåº“ï¼ˆå¦ä¸€ä¸ªåº“æœ‰è¯¥keyåˆ™ä¸ç§»ï¼‰
+    - randomkeyï¼šéšæœºè·å–ä¸€ä¸ªkeyï¼ˆä¸åˆ é™¤ï¼‰
+    - type keyï¼šè·å–keyå¯¹åº”å€¼çš„ç±»å‹
 
+-> å»ºç«‹redisæ± 
+    - pool = redis.ConnectionPool(host="localhost", port=6379, db=0)
+    - db = redis.Redis(connection_pool=pool)
+
+-> ä¸€æ¬¡æäº¤å¤šä¸ªå‘½ä»¤ï¼Œæå‡æ•ˆç‡
+    - db = redis.Redis(connection_pool=pool)
+    - db1 = db.pipline()
+    - æäº¤ï¼šdb1.execute()
+
+-> å‘å¸ƒä¸è®¢é˜…ï¼ˆredisæ¨¡å—ï¼‰
+    - å‘å¸ƒè€…ï¼šdb.publish(channel[int], "msg")
+    - è®¢é˜…è€…1ï¼š
+    pool = redis.ConnectionPool(host="localhost", port=6379, db=0)
+    db = redis.Redis(connection_pool=pool)
+    # å¼€å§‹è®¢é˜…ï¼Œç›¸å½“äºæ‰“å¼€æ”¶éŸ³æœº
+    pub = db.pubsub()
+    # è°ƒé¢‘é“
+    pub.subscribe(879.0)
+    # å‡†å¤‡æ¥æ”¶
+    pub.parse_response()
+    while True:
+        # å¼€å§‹æ¥å—æ¶ˆæ¯
+        res1 = pub.parse_response()
+        # res2 = pub.get_message()
+        if res1:
+            print(res1)
+    - è®¢é˜…è€…2ï¼š
+    # å¼€å§‹è®¢é˜…ï¼Œç›¸å½“äºæ‰“å¼€æ”¶éŸ³æœº
+    pub = db.pubsub()
+    # è°ƒé¢‘é“
+    pub.subscribe("ä¸­æ–‡é¢‘é“")
+    for i in pub.listen():  # ä¸€ç›´ç­‰å¾…ç›‘å¬
+        if i['type'] == "message":
+            print(i['data'])
 
 
 
