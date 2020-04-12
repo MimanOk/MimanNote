@@ -2,7 +2,9 @@
 -------------------------------------------------
 1、js解密
 <----------------------------------------------->
--> url中文编码   - urldecode
+-> url编码   -->urlencode
+
+-> 判断是否为Unicode编码 -->if isinstance("str", str)
 
 -> json文件保存编码一致
     - with open(..., encoding='utf-8') as f:

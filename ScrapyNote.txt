@@ -23,7 +23,30 @@
     - def close_spider(self, ...):
     - def process_item(self, item, spider)
 
--> 自带图片下载管道：自定义类需要继承ImagePipeline父类
+-> Spider中要自己导入Request、FormRequest等模块
+
+######## urllib ########
+
+-> .parse方法可以拼接url：parse.urljoin(response.url, body_url)
+
+######## end ########
+
+######## 图片下载 ########
+
+-> 自带图片下载管道：在piplines中自定义类需要继承ImagePipeline父类
+    - settings的ITEM_PIPLINES中配置：'scrapy.piplines.images.ImagesPipline': 301,
+    - settings中直接配置image下载链接字段：IMAGES_URLS_FIELD = "front_image_url"
+    - settings中直接配置图片保存路径：
+    os.mkdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "images"))
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+    IMAGES_STORE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+    - items中front_image_url = scrapy.Field()
+    - spider中给item的front_image_url键赋值时注意将爬到的front_image_url变成列表
+
+    - 过滤图片，settings中直接配置
+    - IMAGES_MIN_HEIGHT = size
+    - IMAGES_MIN_WIDTH = size
+
     - 重载类方法1：get_media_requests(self, item, info)：Pipline将从item中获取图片的urls并下载，
     并返回一个Requests对象，这些请求对象将被Pipeline处理，当完成下载后，结果将发送到
     item_completed方法。这些结果为一个二元组的list（success，image_info_or_failture）。
@@ -37,6 +60,7 @@
         for image_url in item['image_urls']:
             self.default_headers['referer'] = image_url
             yield Request(image_url, headers=self.default_headers)
+
     - 重载类方法2：item_completed(self, results, items, info)
     示例：
     def item_completed(self, results, item, info):
@@ -45,6 +69,9 @@
                 raise DropItem("Item contains no images")
             item['image_paths'] = image_paths
             return item
+    - 报错处理：PIL -->pip install pillow
+
+######## end ########
 
 -> 在pycharm中调试scrapy爬虫
     - from scrapy.cmdline import execute
@@ -56,7 +83,7 @@
     - scrapy crawl 爬虫名
     - 报错：No module named "win32api"解决：pip install -i 临时镜像地址（配置了永久的就不需要）pypiwin32
 
--> 
+-> url拼接：response.urljoin(body_url)
 
 
 
