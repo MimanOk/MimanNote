@@ -22,7 +22,7 @@
     - use mysql;
 
 -> mysql 安装成功后创建root密码
-`mysqladmin -u root -p pass;
+    - mysqladmin -u root -p pass;
 -> 创建用户：
     - create user 'root'@'%' identified by 'pass';
 
@@ -40,7 +40,7 @@
     - revoke select on what from 'root';
 
 -> 查询用户密码：
-·select host,user,authentication_string from mysql.user;
+    - select host,user,authentication_string from mysql.user;
 
 -> 修改数据库登录密码：
     - alter user 'root'@'localhost' identified by 'youpassword';

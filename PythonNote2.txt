@@ -1,6 +1,7 @@
 ﻿主线任务：
 -------------------------------------------------
 1、js解密
+2、django
 <----------------------------------------------->
 -> url编码   -->urlencode
 
@@ -18,7 +19,16 @@
 -> scrapy中使用FormRequest()来发出带data的请求
 
 -> 时间类型转换
-    - time.strftime("%Y年%m月%d日"， time.localtime(time.time() - ...))
+    - time.strftime("%Y-%m-%d"， time.localtime(time.time() - ...))
+
+######## datetime模块 ########
+
+-> 获取年月日时分秒
+    - datetime.datetime.now()
+-> 获取年月日
+    - datetime.datetime.now().date()
+
+######## end ########
 
 ######## os模块 ########
 
@@ -38,10 +48,14 @@ res = os.popen("Command").read()
 -> 获取当前py文件父路径
     - os.path.dirname(os.path.abspath(__file__))
 
+######## end ########
+
 ####### sys模块 ########
 
 -> 增加环境变量
     - sys.path.append("path")
+
+######## end ########
 
 ######## 线程、进程、协程 ########
 
@@ -65,6 +79,8 @@ res = os.popen("Command").read()
     - greenlet：手动的
     - gevent: 自动的
 
+######## end ########
+
 ######## 其他 ########
 
 -> requests
@@ -86,7 +102,7 @@ res = os.popen("Command").read()
     - 将访问过的url经md5哈希后保存到set中
     - bloomfilter方法对bitmap（将一条数据通过hash映射到某一位，非常节省内存，但冲突严重）进行改进，多重哈希函数降低冲突
 
-
+######## end ########
 
 
 

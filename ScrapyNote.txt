@@ -27,7 +27,7 @@
 
 ######## urllib ########
 
--> .parse方法可以拼接url：parse.urljoin(response.url, body_url)
+-> .parse方法可以拼接url：parse.urljoin(response.url, /body_url)
 
 ######## end ########
 
@@ -37,9 +37,9 @@
     - settings的ITEM_PIPLINES中配置：'scrapy.piplines.images.ImagesPipline': 301,
     - settings中直接配置image下载链接字段：IMAGES_URLS_FIELD = "front_image_url"
     - settings中直接配置图片保存路径：
-    os.mkdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "images"))
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
-    IMAGES_STORE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+    path = os.mkdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "images"))
+    os.path.join(os.path.dirname(path, "images")
+    IMAGES_STORE = os.path.join(path, "images")
     - items中front_image_url = scrapy.Field()
     - spider中给item的front_image_url键赋值时注意将爬到的front_image_url变成列表
 
@@ -83,7 +83,85 @@
     - scrapy crawl 爬虫名
     - 报错：No module named "win32api"解决：pip install -i 临时镜像地址（配置了永久的就不需要）pypiwin32
 
--> url拼接：response.urljoin(body_url)
+-> url拼接：response.urljoin(/body_url)
+
+-> response.meta.get("key", "")：为避免报错，在meta中取值时最好用get，第二个参数为默认为空
+
+-> 将数据以json格式保存至文件
+    - piplines中
+    class JsonWithEncodingPipeline(object):
+        def __init__(self):  # 打开文件可以用codecs包来打开文件，可以避免很多有关编码问题
+            self.file = codecs.open(r'file_path.json', 'w', encoding='utf-8')
+        def process_item(self, item, spider):
+            lines = json.dumps(dict(item), ensure_ascii=False) + '\n'
+            self.file.write(lines)
+            return item
+        def spider_closed(self, spider):
+            self.file.close()
+
+    - scrapy自带将item以各种格式写入文件（与上面方法不同之处是写入后的json文件以b"["开头，以b"]"结尾）
+    首先：from scrapy.exports import JsonItemExporter
+    class JsonExporterPipleline(object):
+        def __init__(self):
+            self.file = open(r'file_path.json', 'wb')
+            self.exporter = JsonItemExporter(self.file, ensure_ascii=False, encoding='utf-8')
+            self.exporter.start_exporting()
+        def process_item(self, item, spider):
+            self.exporter.export_item(item)
+            return item
+        def spider_closed(self):
+            self.exporter.finish_exporting()
+
+######## 创建异步数据库 ########
+
+-> from twisted.enterprise import adbapi
+    - class MysqlTwistedPipleline(object):
+    ''' 使用twisted将mysql插入变成异步执行 '''
+
+    def __init__(self, db_pool):
+        self.db_pool = db_pool
+
+    @classmethod
+    def from_settings(cls, setting):
+        dbparams = dict(
+            port=setting['PORT'],
+            user=setting['USER'],
+            passwd=setting['PASSWORD'],
+            # port=setting['PORT'],
+            db=setting['DB'],
+            charset=setting['CHARSET'],
+            use_unicode=True,
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
+        return cls(db_pool)
+
+    def process_item(self, item, spider):
+        query = self.db_pool.runInteraction(self.do_insert, item)
+        query.addErrback(self.handle_error)
+
+    def handle_error(self, failure):  # failture参数在调用时自动传入
+        # 处理异步插入的异常
+        print("->>异步插入异常：", failure)
+
+    def do_insert(self, cursor, item):
+        # 执行具体的插入操作
+        insert_sql = "insert into meitu(title, ins_time, image_paths, image_urls) VALUES(%s, %s, %s, %s) "
+        cursor.execute(insert_sql, (item['title'], item['ins_time'], item['image_paths'], item['image_urls'][0]))
+
+######## end ########
+
+######## 使用scrapy的ItemLoader ########
+
+-> from scrapy.loader import ItemLoader
+    - item_loader = ItemLoader(item=spiderItem(), response=response)
+      item_loader.add_css("field_name", "CSS表达式")
+      item_loader.add_xpath("field_name", "xpath表达式")
+      item_loader.add_value("field_name", "值，如response.url")
+      最后：submit_item = item_loader.load_item()
+
+######## end ########
+
 
 
 

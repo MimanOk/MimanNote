@@ -35,7 +35,8 @@
     - 1.先从远端pull一下，执行：git pull origin master -f：从master分支拉取
     - 2.先用git pull --rebase origin master ，再push提交，但此法可能会把你本地库的所有修改覆盖成远程库的老版本，丢失文件，慎用！！（亲测，此法有效！）
 
--> git clone 远程仓库地址：获取远程仓库
+-> git clone 本地仓库地址：获取本地仓库
+-> git clone username@host:远程仓库：获取远程仓库
 
 -> git fetch 远程仓库地址：获取远程仓库所有分支以及数据
 
@@ -57,13 +58,14 @@
 -> git checkout 分支名：切换分支
 
 -> git merge 分支名：将指定分支合并到当前分支
+-> git diff branch1 branch2：合并查看分支差异
 
 -> git branch -d 分支名：删除本地指定分支
 
 -> git push --delete origin 指定远程分支名：删除指定远程分支
 -> git push origin :指定远程分支名：删除指定远程分支
 
--> git tag -a v0 -m"tag for v0"：创建tag叫v0（用于分享）
+-> git tag -a v0 -m"tag for v0"：创建tag标签叫v0（用于分享）
     - git push --tags：将tag推送到远程服务上
 
 
