@@ -2,15 +2,23 @@
     - /etc/apt/sources.list.parrot文件下说可以用”parrot-mirror-selector“去查看或修改镜像源。
 
 -> 修改镜像源
-    - vim /etc/apt/sources.list.d/parrot.list
+    - sudo vim /etc/apt/sources.list.d/parrot.list
     - 源1（中国科技大学）：deb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
     - 源2（北京清华大学）：deb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
+	- 等完成后再输入 sudo apt-get dist-upgrade 生效
+	- 安装搜狗输入法
+	sudo apt --fix-broken install
+	等更新完 再次输入 apt-get update 然后输入 apt-get dist-upgrade
+	sudo apt-get install fcitx fcitx-frontend-gtk2 fcitx-module-dbus fcitx-bin fcitx-frontend-gtk3 fcitx-module-kimpanel fcitx-config-common fcitx-frontend-qt4 fcitx-module-lua fcitx-config-gtk fcitx-frontend-qt5 fcitx-modules fcitx-data fcitx-module-x11 fcitx-frontend-all fcitx-libs-dev fcitx-ui-classic
+	关机重启
 
 -> vim强制修改只读文件
     - w !sudo tee %
 
 -> 修改文件属性
    - sudo chmod a+w file_name
+   
+-> 挂载：sudo mount /dev/sr0 /mnt/cdrom -->将/dev/sr0挂载到/mnt/cdrom
 
 -> ssh
     - 允许远程连接：vim /etc/ssh/sshd_config -->PermitRootLogin yes
@@ -30,8 +38,31 @@
 
 -> 安装python3.6：sudo apt-get install python3.6
 
+-> 单纯复制虚拟机存储目录来复制出的虚拟机，下次打开的时候选择已复制的话，
+	虚拟机软件会自行更改该新虚拟机的MAC地址，但SID这个是不会更改的。
+	克隆道理也是和上面一样，完整克隆和手动复制本质没差别，操作逻辑和上面一样。
+	只有链接克隆实际上是保留母虚拟机状态，子虚拟机仅存储和母虚拟机不同的数据，
+	这种短时间内差异数据最小，占用磁盘空间最少。但SID还是一样的。
 
+-> 要更改SID，只能使用sysprep.exe做通用化处理，或者使用newsid之类的程序重新生成该系统的SID。
 
+-> 配置Fcitx选项：fcitx-config-gtk3
+
+-> 自动修复安装问题：sudo apt-get -f install
+
+-> sudo aptitude:找到损坏的软件再按修复命令
+
+-> 找到以so开头的安装包：sudo apt-get -l so*
+
+-> 卸载软件包：sudo apt-get remove  sougoupinyin
+
+-> 卸载并清除软件包配置：sudo apt-get purge sougoupinyin
+
+-> 下载所有自动安装及不再使用的软件包：sudo apt-get autoremove
+
+-> 自动清除：sudo apt-get autoclean
+
+-> 删除安装包后进不了桌面：ctrl+alt+f1进入tty1字符界面并登陆，然后删除/etc/X11/xini
 
 
 

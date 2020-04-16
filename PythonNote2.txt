@@ -20,6 +20,9 @@
 
 -> 时间类型转换
     - time.strftime("%Y-%m-%d"， time.localtime(time.time() - ...))
+	- datetime.datetime.now().strftime("%Y-%m-%d")  # -O->2020-04-16
+	- datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
+	- datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y-%m-%d")  # 转化成指定的格式
 
 ######## datetime模块 ########
 
@@ -30,6 +33,15 @@
 
 ######## end ########
 
+-> 打开图片文件并显示
+	- from PIL import Image
+	try:
+		im = Image.open("image_path_name")
+		im.show()
+		im.close()
+	except Exception:
+		pass
+
 ######## os模块 ########
 
 -> 返回命令行结果
@@ -38,6 +50,9 @@ res = os.popen("Command").read()
 -> 获取文件大小
     - os.stat("文件路径及文件名").st_size
     - os.path.getsize("文件路径及文件名")
+
+-> 获取所有文件
+    - os.listdir(file_path)
 
 -> 获取当前工作空间路径
     - os.getcwd()
@@ -50,10 +65,18 @@ res = os.popen("Command").read()
 
 ######## end ########
 
+######## shutil模块 ########
+
+-> shutil.move(old_path, new_path)：old_path格式的文件转换为new_path格式的文件
+
+####### end ########
+
 ####### sys模块 ########
 
 -> 增加环境变量
     - sys.path.append("path")
+-> 将路径加到pythonpath当中
+	- sys.path.insert("path")
 
 ######## end ########
 
@@ -89,7 +112,7 @@ res = os.popen("Command").read()
         f.write(chunk)
 
 -> http://httpbin.org/ip            - 请求获取ip
--> http://httpbin.org/cookie     - 请求获取cookie
+-> http://httpbin.org/cookies     - 请求获取cookie
 
 -> 安装pip
     - python -m pip install pip==9.0.3
@@ -103,6 +126,20 @@ res = os.popen("Command").read()
     - bloomfilter方法对bitmap（将一条数据通过hash映射到某一位，非常节省内存，但冲突严重）进行改进，多重哈希函数降低冲突
 
 ######## end ########
+
+-> 判断是否以Miman字符串开头："MimanOk".startswith("Miman")
+-> 判断是否以Miman字符串结尾："OkMiman".endswith("Miman")
+
+-> 移除网页标签
+	- from w3llib.html import remove_tags -->remove_tags("str")
+	
+
+
+
+
+
+
+
 
 
 

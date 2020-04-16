@@ -1,13 +1,26 @@
 ﻿-> 初始化项目：scrapy startproject project_name
     - scrapy genspider spider_name(不可与项目名相同) allow_spider_domain_name(允许爬的域名)
 
+-> 使用不同模板生成spider
+	- scrpay genspider -t crawl(还可以是其他的，默认base) spider_name domain
+
+-> 用户默认配置：custom_settings = {
+        'DEFAULT_REQUEST_HEADERS': {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en',
+            'User-Agent': generate_user_agent()
+        }
+    }
+
 -> 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv)
 
 -> 拼接下一页url：next_url = response.urljoin("body_url")    -暂时用不到
 
--> 调试网站：scrapy shell url
+-> 调试网站：scrapy shell -s USER_AGENT="" url
 
 -> 生成未被渲染的html：scrapy view url
+
+-> xsrf是服务器端防止攻击的一种握手方式，是服务器端生成的一段随机码
 
 -> 自定义爬取url格式：
     - rules = {
@@ -22,17 +35,58 @@
     - def open_spider(self, ...):
     - def close_spider(self, ...):
     - def process_item(self, item, spider)
+	
+######## 该框架中的各种请求 ########
+-> 由于scrapy基于twisted的异步框架，可以同时处理多个请求，故每个方法返回的
+	- 请求要么是生成器形式， 要么是列表形式
+from scrapy import Request
+from scrapy import FormRequest
+-> get请求
+	meta = {
+		'proxy': proxy,
+		'dont_retry': True,
+		'download_timeout': 10,
+	}
+	return [Request(url=url, headers=headers, meta=meta, callback=func)]
+	或:
+	yield Request(url=url, headers=headers, meta=meta, callback=func)
+	
+-> post请求
+	formdata = {
+		'_xsrf': xsrf,
+		'other': other,
+	}
+	return [FormRequest(url=url, formdata=formdata, headers=headers, callback=func)]
+	或：
+	yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
+	
+######## end ########
+
+######## 在items中做预处理 ########
+-> 在scrapy.Field()中添加预处理函数：
+    - 1. from scrapy.loader.processors import MapCompose, TakeFirst
+    scrapy.Field(input_processor=MapCompose(
+    调用函数或匿名函数1， 函数2， output_processor=TakeFirst()  # 取第一个))
+    - 2. 提取item中每个field中的第一个数据（原本数据可能是列表形式）
+    from scrapy.loader import ItemLoader
+    class ArticleItemLoader(ItemLoader):
+        deafault_out_processor = TakeFirst()
+    再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
+    - 3. 重点！！！
+    在配置2中的deafault_out_processor后，会将列表形式的图片url提取成字符串，在后续
+    保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
+    覆盖deafault_out_processor方法
+
+######## end ########
 
 -> Spider中要自己导入Request、FormRequest等模块
 
 ######## urllib ########
-
 -> .parse方法可以拼接url：parse.urljoin(response.url, /body_url)
 
 ######## end ########
 
 ######## 图片下载 ########
-
 -> 自带图片下载管道：在piplines中自定义类需要继承ImagePipeline父类
     - settings的ITEM_PIPLINES中配置：'scrapy.piplines.images.ImagesPipline': 301,
     - settings中直接配置image下载链接字段：IMAGES_URLS_FIELD = "front_image_url"
@@ -113,7 +167,6 @@
             self.exporter.finish_exporting()
 
 ######## 创建异步数据库 ########
-
 -> from twisted.enterprise import adbapi
     - class MysqlTwistedPipleline(object):
     ''' 使用twisted将mysql插入变成异步执行 '''
@@ -152,9 +205,8 @@
 ######## end ########
 
 ######## 使用scrapy的ItemLoader ########
-
 -> from scrapy.loader import ItemLoader
-    - item_loader = ItemLoader(item=spiderItem(), response=response)
+    - item_loader = ItemLoader(item=spiderItem(), response=response)  # 注意item=类实例
       item_loader.add_css("field_name", "CSS表达式")
       item_loader.add_xpath("field_name", "xpath表达式")
       item_loader.add_value("field_name", "值，如response.url")
@@ -162,12 +214,75 @@
 
 ######## end ########
 
+######## cookie配置 ########
+try:
+    import cookielib  # python2
+except Exception:
+    import http.cookiejar as cookielib  #python3
 
+session = requests.Session()
+session.cookies = cookielib.LWPCookieJar(filename="cookies.txt")
+try:
+    session.cookies.load(ignore_discard=True)
+except Exception:
+    print("cookies can't be loaded")
+session.cookies.save()
 
+######## end ########
 
+######## scrapy的Request请求验证码图片 ########
+-> yield [Request(url, headers, meta, callback)]，meta带着xsrf数据等信息
+	- 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
+	- 这样就保证了scrapy中请求登录时在同一个cookie下完成
 
+########  ########
 
+######## 不同item对同一个数据库做相同操作的通用item配置技巧 ########
+-> items中
+	class TempItem(scrapy.Item):
+		''' 小范围通用item配置技巧 '''
+		title = scrapy.Field()
+		content = scrapy.Field()
+		def insert_sql(self):
+		# 不同的item的类中根据需要定义不同的插入条件
+			sql_exp = "insert into table_name(col1, col2) VALUES(%s, %s)"
+			params = (self['title'], self['content'])
+			return sql_exp, params
+-> 在pipleline传入item的方法中
+	class TempPipleline(object):
+		''' 处理item的管道通用配置技巧 '''
+		def __init__(self, db_pool):
+        self.db_pool = db_pool
 
+		@classmethod
+		def from_settings(cls, setting):
+			dbparams = dict(
+				port=setting['PORT'],
+				user=setting['USER'],
+				passwd=setting['PASSWORD'],
+				# port=setting['PORT'],
+				db=setting['DB'],
+				charset=setting['CHARSET'],
+				use_unicode=True,
+				cursorclass=pymysql.cursors.DictCursor,
+			)
+			db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
+			return cls(db_pool)
+			
+		def process_item(self, item, spider):
+			query = self.db_pool.runInteraction(self.do_insert, item)
+			query.addErrback(self.handle_error, item, spider)
+
+		def handle_error(self, failure, item, spider):  # failture参数在调用时自动传入
+			# 处理异步插入的异常
+			print("->>异步插入异常：", failure)
+
+		def do_insert(self, cursor, item):
+			# 执行具体的插入操作
+			sql_exp, params = item.insert_sql()
+			cursor.execute(insert_sql, params)		
+	
+######## end ########
 
 
 

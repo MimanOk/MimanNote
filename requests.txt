@@ -1,0 +1,17 @@
+-> 保存cookies时需：先导入cookielib
+    - cookielib在python2和python下导入方法是不同的
+    - try:
+        import cookielib  # python2
+      except Exception:
+        import http.cookiejar as cookielib  #python3
+	session = requests.Session()
+	session.cookies = cookielib.LWPCookieJar(filename="cookies.txt")
+	session.cookies.save()
+	
+	- 本地保存cookies后可以免密登录
+	session = requests.Session()
+	session.cookies = cookielib.LWPCookieJar(filename="cookies.txt")
+	try:
+		session.cookies.load(ignore_discard=True)  # 加载cookies
+	except Exception:
+		print("cookies can't be loaded")
