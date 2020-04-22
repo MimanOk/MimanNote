@@ -1,5 +1,5 @@
-﻿######## 默认连接端口：3306 ########
-######## navicat是mysql的图形辅助工具 ########
+﻿## 默认连接端口：3306 ##
+## navicat是mysql的图形辅助工具 ##
 
 -> 设置权用户限
     - 权限有：execute,create,select,insert,update,delete。
@@ -81,6 +81,9 @@
 
 -> 模糊查询
     - select * from movies where name like "科幻%";
+	
+-> 随机取出一个值
+	- select ip, port from ippool ORDER BY RAND() LIMIT 1;
 	
 -> 主键插入冲突时启用更新指定值(存在就更新，不存在就直接插入)
 	- sql_exp = "insert into u_table(user_id, title, time) VALUES(%s, %s, %s) ON DUPLICATE KEY UPDATE time=VALUES(time)"

@@ -36,7 +36,7 @@
     - def close_spider(self, ...):
     - def process_item(self, item, spider)
 	
-######## 该框架中的各种请求 ########
+# 该框架中的各种请求 #
 -> 由于scrapy基于twisted的异步框架，可以同时处理多个请求，故每个方法返回的
 	- 请求要么是生成器形式， 要么是列表形式
 from scrapy import Request
@@ -60,16 +60,18 @@ from scrapy import FormRequest
 	或：
 	yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
 	
-######## end ########
+# end #
 
-######## 在items中做预处理 ########
+# 在items中做预处理 #
 -> 在scrapy.Field()中添加预处理函数：
-    - 1. from scrapy.loader.processors import MapCompose, TakeFirst
+    - 1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
     scrapy.Field(input_processor=MapCompose(
-    调用函数或匿名函数1， 函数2， output_processor=TakeFirst()  # 取第一个))
+		input_processor=TakeFirst()  # 取第一个
+		output_processor = Join(",")  # 用","拼接))
     - 2. 提取item中每个field中的第一个数据（原本数据可能是列表形式）
     from scrapy.loader import ItemLoader
     class ArticleItemLoader(ItemLoader):
+	""" 重载ItemLoader """
         deafault_out_processor = TakeFirst()
     再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
     - 3. 重点！！！
@@ -77,16 +79,16 @@ from scrapy import FormRequest
     保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
     覆盖deafault_out_processor方法
 
-######## end ########
+# end #
 
 -> Spider中要自己导入Request、FormRequest等模块
 
-######## urllib ########
+# urllib #
 -> .parse方法可以拼接url：parse.urljoin(response.url, /body_url)
 
-######## end ########
+# end #
 
-######## 图片下载 ########
+# 图片下载 #
 -> 自带图片下载管道：在piplines中自定义类需要继承ImagePipeline父类
     - settings的ITEM_PIPLINES中配置：'scrapy.piplines.images.ImagesPipline': 301,
     - settings中直接配置image下载链接字段：IMAGES_URLS_FIELD = "front_image_url"
@@ -125,7 +127,7 @@ from scrapy import FormRequest
             return item
     - 报错处理：PIL -->pip install pillow
 
-######## end ########
+# end #
 
 -> 在pycharm中调试scrapy爬虫
     - from scrapy.cmdline import execute
@@ -166,10 +168,10 @@ from scrapy import FormRequest
         def spider_closed(self):
             self.exporter.finish_exporting()
 
-######## 创建异步数据库 ########
+# 创建异步数据库 #
 -> from twisted.enterprise import adbapi
     - class MysqlTwistedPipleline(object):
-    ''' 使用twisted将mysql插入变成异步执行 '''
+    """ 使用twisted将mysql插入变成异步执行 """
 
     def __init__(self, db_pool):
         self.db_pool = db_pool
@@ -202,9 +204,9 @@ from scrapy import FormRequest
         insert_sql = "insert into meitu(title, ins_time, image_paths, image_urls) VALUES(%s, %s, %s, %s) "
         cursor.execute(insert_sql, (item['title'], item['ins_time'], item['image_paths'], item['image_urls'][0]))
 
-######## end ########
+# end #
 
-######## 使用scrapy的ItemLoader ########
+# 使用scrapy的ItemLoader #
 -> from scrapy.loader import ItemLoader
     - item_loader = ItemLoader(item=spiderItem(), response=response)  # 注意item=类实例
       item_loader.add_css("field_name", "CSS表达式")
@@ -212,9 +214,9 @@ from scrapy import FormRequest
       item_loader.add_value("field_name", "值，如response.url")
       最后：submit_item = item_loader.load_item()
 
-######## end ########
+# end #
 
-######## cookie配置 ########
+# cookie配置 #
 try:
     import cookielib  # python2
 except Exception:
@@ -228,19 +230,19 @@ except Exception:
     print("cookies can't be loaded")
 session.cookies.save()
 
-######## end ########
+# end #
 
-######## scrapy的Request请求验证码图片 ########
+# scrapy的Request请求验证码图片 #
 -> yield [Request(url, headers, meta, callback)]，meta带着xsrf数据等信息
 	- 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
 	- 这样就保证了scrapy中请求登录时在同一个cookie下完成
 
-########  ########
+#  #
 
-######## 不同item对同一个数据库做相同操作的通用item配置技巧 ########
+# 不同item对同一个数据库做相同操作的通用item配置技巧 #
 -> items中
 	class TempItem(scrapy.Item):
-		''' 小范围通用item配置技巧 '''
+		""" 小范围通用item配置技巧 """
 		title = scrapy.Field()
 		content = scrapy.Field()
 		def insert_sql(self):
@@ -250,7 +252,7 @@ session.cookies.save()
 			return sql_exp, params
 -> 在pipleline传入item的方法中
 	class TempPipleline(object):
-		''' 处理item的管道通用配置技巧 '''
+		""" 处理item的管道通用配置技巧 """
 		def __init__(self, db_pool):
         self.db_pool = db_pool
 
@@ -282,7 +284,62 @@ session.cookies.save()
 			sql_exp, params = item.insert_sql()
 			cursor.execute(insert_sql, params)		
 	
-######## end ########
+# end #
+
+-> 单独使用scrapy的selector
+	- from scrapy.selector import Selector
+	selector = Selector(response.text)
+	selector.css()
+	selector.xpath()
+
+# 中间件Middleware #
+-> 设置自己的User-Agent中间件时要将scrapy默认的useragent关掉或者将自己的中间件数值调的比默认的大。
+-> 具体设置 -->DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,  # 先关闭默认的
+    'ArticleSpider.middlewares.UserAgentMiddleware': 1,  # 再设置自己的
+}
+
+# end #
+
+# 将selenium作为scrapy的请求中间键插件 #
+# 经过selenium插件处理后直接获得了网页内容，就无需后面的Download去请求下载了，所以解决方法如下：
+from scrapy.http import HtmlResponse
+# 在下载中间件中直接返回：
+class RequestMiddleware(object):
+	def process_request(self, request, spider):
+		if spider.name == "u_spiderName"
+			# do you want
+			spider.browser.get(url)
+			response = spider.browser.page_source
+		return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8", request=request)
+# 注意，将selenium的初始化集成到spider的父类中是最好的选择
+
+class TaobaoSpider(object):
+	def __init__(self):
+		self.browser = webdriver.Firefox()
+		super(TaobaoSpider, self).__init__()
+
+# end #
+
+# 信号量 #
+# 导入分发器
+from scrapy.xlib.pydispatch import dispatcher
+# 导入信号量
+from scrapy import signals
+class A(object):
+	def __init__(self):
+		self.browser = webdriver.Firefox()
+		super(TaobaoSpider, self).__init__()
+		dispatcher.connect(self.spider_closed, signals.spider_closed):
+	def spider_closed(self, spider):
+		self.browser.quit()
+
+
+# end #
+
+
+
+
 
 
 

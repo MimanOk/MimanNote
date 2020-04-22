@@ -24,14 +24,14 @@
 	- datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
 	- datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y-%m-%d")  # 转化成指定的格式
 
-######## datetime模块 ########
+# datetime模块 #
 
 -> 获取年月日时分秒
     - datetime.datetime.now()
 -> 获取年月日
     - datetime.datetime.now().date()
 
-######## end ########
+# end #
 
 -> 打开图片文件并显示
 	- from PIL import Image
@@ -42,7 +42,7 @@
 	except Exception:
 		pass
 
-######## os模块 ########
+# os模块 #
 
 -> 返回命令行结果
 res = os.popen("Command").read()
@@ -63,24 +63,24 @@ res = os.popen("Command").read()
 -> 获取当前py文件父路径
     - os.path.dirname(os.path.abspath(__file__))
 
-######## end ########
+# end #
 
-######## shutil模块 ########
+# shutil模块 #
 
 -> shutil.move(old_path, new_path)：old_path格式的文件转换为new_path格式的文件
 
-####### end ########
+# end #
 
-####### sys模块 ########
+# sys模块 #
 
 -> 增加环境变量
     - sys.path.append("path")
 -> 将路径加到pythonpath当中
-	- sys.path.insert("path")
+	- sys.path.insert(index, "path")  # index：顺序（填0）
 
-######## end ########
+# end #
 
-######## 线程、进程、协程 ########
+# 线程、进程、协程 #
 
 -> 路径env python版本，可以动态的切换python版本
 -> 主进程、主线程，傻傻分不清
@@ -102,9 +102,9 @@ res = os.popen("Command").read()
     - greenlet：手动的
     - gevent: 自动的
 
-######## end ########
+# end #
 
-######## 其他 ########
+# 其他 #
 
 -> requests
     - 对于保存响应数据较大的情况(如视频)，应一点一点的对其进行保存：
@@ -125,7 +125,7 @@ res = os.popen("Command").read()
     - 将访问过的url经md5哈希后保存到set中
     - bloomfilter方法对bitmap（将一条数据通过hash映射到某一位，非常节省内存，但冲突严重）进行改进，多重哈希函数降低冲突
 
-######## end ########
+# end #
 
 -> 判断是否以Miman字符串开头："MimanOk".startswith("Miman")
 -> 判断是否以Miman字符串结尾："OkMiman".endswith("Miman")
@@ -133,6 +133,33 @@ res = os.popen("Command").read()
 -> 移除网页标签
 	- from w3llib.html import remove_tags -->remove_tags("str")
 	
+# 一个异步io实例 #
+import ansycio
+class Downloader(object):
+    """
+    一个异步下载器，可以对代理源异步抓取，但是容易被BAN。
+    """
+
+    def __init__(self, urls):
+        self.urls = urls
+        self._htmls = []
+
+    async def download_single_page(self, url):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                self._htmls.append(await resp.text())
+
+    def download(self):
+        loop = asyncio.get_event_loop()
+        tasks = [self.download_single_page(url) for url in self.urls]
+        loop.run_until_complete(asyncio.wait(tasks))
+
+    @property
+    def htmls(self):
+        self.download()
+        return self._htmls
+
+# end #
 
 
 
