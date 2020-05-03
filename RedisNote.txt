@@ -1,6 +1,7 @@
 ﻿######## 默认连接端口：6379 ########
 命令行下：
     - 连接redis： redis-cli
+    - 连接redis： redis-cli -a 密码
     - help 指令：列出帮助信息
     - 用户验证： auth pass
 
@@ -92,6 +93,11 @@
     - move key db：把key移动到另一个库（另一个库有该key则不移）
     - randomkey：随机获取一个key（不删除）
     - type key：获取key对应值的类型
+	
+-> 可排序集合(优先级、权重、分数)
+	- zadd u_set 0 "第0个" 3 "第3个" 5 "第5个"
+	- zrangebyscore u_set 0 10  # 列出0分到10分之间
+	- zcount u_set min max
 
 -> 建立redis池
     - pool = redis.ConnectionPool(host="localhost", port=6379, db=0)

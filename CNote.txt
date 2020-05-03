@@ -1,0 +1,32 @@
+# 结构体指针 #
+# 盒模型思想
+	typedef struct tree_node{
+		int x;
+		int y;
+		struct tree_node* childern;
+		struct tree_node* brother;
+		struct tree_node* parent;
+	}tree;
+	tree* root = alloc_node();  # 给结构体指针root分配空间
+	- root是结构体指针类型，指向alloc出来的新的结构体tree的地址。
+	- 将一个结构体指针root看作是一个存放了某个内存空间的地址的盒子，
+	这个盒子有地址，并且能存放盒子。
+	- 那么root这个盒子就存放了新结构体tree的地址，而root本身也是有地址的。
+	- &root：代表root这个盒子的地址0
+	- root ：代表root盒子中的盒子的地址1
+	- *root：代表root盒子中盒子里的内容1
+	- &*root：代表root盒子中盒子里的内容1的地址，地址1
+	- &&*root: 代表root盒子中盒子里的内容1的地址1的地址， 就是地址0
+	
+	- tree* node = alloc_node();  # 定义一个类型为tree结构体指针的node，
+	并分配空间。
+	- tree* p = node->parent;  # 定义一个类型为tree结构体指针的p，存放了
+	node的父节点(一个tree结构体(盒子))。
+	- tree** walk = &p->children;  # 定义一个指向tree结构体指针的walk指针，
+	存放了node父节点下的孩子节点children的地址(一个tree结构体的地址)。
+	注意：等价于：tree** walk = &(p->children);
+	- *walk：children地址中的内容，就是一个tree结构体
+	- &*walk：children地址中的内容(一个tree结构体)的地址
+	- &(*walk)->brother：该children结构的兄弟的地址
+	注意：等价于：&((*walk)->brother)
+# end #

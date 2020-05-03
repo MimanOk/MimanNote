@@ -14,12 +14,15 @@ from 淘宝商品信息抓取.settings import *
 from selenium.webdriver.common.alert import Alert
 import time
 
-option = webdriver.FirefoxOptions()
+firefox_opt = webdriver.FirefoxOptions()
 # 添加配置
-option.add_argument('--proxy-server=127.0.0.1:8080')
-# option.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+firefox_opt.add_argument('--proxy-server=127.0.0.1:8080')
+# 不加载图片
+prefs = {'profile.managed_default_content_settings.images': '2'}
+firefox_opt.add_experimental_option("prefs", prefs)
+# firefox_opt.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
-browser = webdriver.Firefox(firefox_options=option)
+browser = webdriver.Firefox(firefox_options=firefox_opt)
 # browser = webdriver.Firefox(executable_path=r"驱动路径(可以将驱动放到python的根目录下)", firefox_options=option)
 
 # 隐式等待(不明确的行为表现)
@@ -144,3 +147,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+	
+

@@ -1,10 +1,36 @@
-﻿## 默认连接端口：3306 ##
-## navicat是mysql的图形辅助工具 ##
+﻿# 默认连接端口：3306 #
+# navicat是mysql的图形辅助工具 #
 
--> 设置权用户限
+-> mysql 安装成功后创建root密码
+    - mysqladmin -u root -p pass;
+	
+# linux下重置密码 #
+	- 先停止mysql
+		service mysql stop
+	- 进入mysql安装目录bin/ 使用safe模式，进行重启
+		cd /usr/bin
+		./mysqld_safe --skip-grant-tables
+	- 新开一个终端，启动mysql，使用root账户，无密码登录，修改root密码
+		service mysql start
+		mysql -u root
+		use mysql
+		update user set password=PASSWORD("你的密码") where User = 'root';
+		5.7版本下的mysql数据库下已经没有password这个字段了，password字段改成了authentication_string
+		update user set authentication_string=PASSWORD("你的密码") where User = 'root';
+	- 重启mysql登录即可
+		service mysql restart
+		
+# end #
+
+-> 设置用户权限
     - 权限有：execute,create,select,insert,update,delete。
     - grant execute,insert,select,update on 库.* to 'root'@'%';
-    - grant all on db.* to 'user'@'%';
+	- 操作所有库的权限
+		grant all on db.* to 'user'@'%';
+-> 授权所有权限
+    - grant all privileges on *.* to 'root'@'%' with grant option;
+-> 取消用户查询权限
+    - revoke select on what from 'root';
 
 -> 给root用户设置可远程访问权限
     - GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
@@ -21,8 +47,6 @@
 -> 使用哪个库
     - use mysql;
 
--> mysql 安装成功后创建root密码
-    - mysqladmin -u root -p pass;
 -> 创建用户
     - create user 'root'@'%' identified by 'pass';
 
@@ -32,12 +56,6 @@
 
 -> 修改Host为%，代表外网可以连接和刷新：
     - update user set Host="%" where user="root"
-
--> 授权语句
-    - grant all privileges on *.* to 'root'@'%' with grant option;
-
--> 取消用户查询权限
-    - revoke select on what from 'root';
 
 -> 查询用户密码
     - select host,user,authentication_string from mysql.user;

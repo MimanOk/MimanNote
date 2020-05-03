@@ -3,6 +3,27 @@
 1、js解密
 2、django
 <----------------------------------------------->
+# 内置函数 #
+-> any()
+	- 等价于
+	def any(iterable)；
+		for element in iterable:
+			# 有True则返回True
+			if element:
+				return True
+		return False
+		
+-> all()
+	- 等价于
+	def all(iterable):
+		for element in iterable:
+			# 只要碰到False则返回False
+			if not element:
+				return False
+		return True
+
+# end #
+
 -> url编码   -->urlencode
 
 -> 判断是否为Unicode编码 -->if isinstance("str", str)
@@ -18,18 +39,24 @@
 
 -> scrapy中使用FormRequest()来发出带data的请求
 
+# time模块 #
 -> 时间类型转换
     - time.strftime("%Y-%m-%d"， time.localtime(time.time() - ...))
-	- datetime.datetime.now().strftime("%Y-%m-%d")  # -O->2020-04-16
-	- datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
-	- datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y-%m-%d")  # 转化成指定的格式
+-> 获取单个：年月日时分秒
+	time.localtime().tm_hour  ->int  # 年:tm_year 月:tm_mon 日:tm_mday 时:tm_hour 分:tm_min 秒:tm_sec
+# end #
 
 # datetime模块 #
-
+-> 获取单个：年月日时分秒
+	datetime.datetime.now().hour  ->datetime.datetime  # 年:year 月:month 日:day 时:hour 分:minute 秒:second
 -> 获取年月日时分秒
     - datetime.datetime.now()
 -> 获取年月日
     - datetime.datetime.now().date()
+-> 时间类型转换
+	- datetime.datetime.now().strftime("%Y-%m-%d")  # -O->2020-04-16
+	- datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
+	- datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y-%m-%d")  # 转化成指定的格式
 
 # end #
 
@@ -159,6 +186,78 @@ class Downloader(object):
         self.download()
         return self._htmls
 
+# end #
+
+# 断言assert #
+	assert expression
+	等价于：
+
+	if not expression:
+		raise AssertionError
+	assert 后面也可以紧跟参数:
+
+	assert expression [, arguments]
+	等价于：
+
+	if not expression:
+		raise AssertionError(arguments)
+	以下为 assert 使用实例：
+
+	>>> assert True     # 条件为 true 正常执行
+	>>> assert False    # 条件为 false 触发异常
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	AssertionError
+	>>> assert 1==1    # 条件为 true 正常执行
+	>>> assert 1==2    # 条件为 false 触发异常
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	AssertionError
+
+	>>> assert 1==2, '1 不等于 2'
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	AssertionError: 1 不等于 2
+# end #
+
+if __name__ == '__main__':
+
+	async def eat(food):
+		for i in range(1, 3 + 1):
+			print("eating->> {food:-<5}".format(food=food))
+			await asyncio.sleep(3)
+		
+# 协程并发1 #
+    pool = asyncio.get_event_loop()
+    eat1 = eat("辣条")
+    eat2 = eat("包子")
+    eat3 = eat("烤鸡")
+
+    task = [
+        asyncio.ensure_future(eat1),
+        asyncio.ensure_future(eat2),
+        asyncio.ensure_future(eat3),
+    ]
+
+    pool.run_until_complete(asyncio.wait(task))
+# end #
+
+# 协程并发2 #
+    pool = asyncio.get_event_loop()
+    pool.run_until_complete(asyncio.wait([eat(food) for food in {"烤鸡", "包子", "辣条"}]))
+# end #
+
+# pickle #
+	try:
+		import cPickle as pickle
+	except ImportError:
+		import pickle
+		
+	def loads(str):
+	return pickle.loads(str)
+	
+	def dumps(obj):
+		return pickle.dumps(obj, protocol=-1)
 # end #
 
 

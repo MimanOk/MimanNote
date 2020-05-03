@@ -65,19 +65,34 @@ from scrapy import FormRequest
 # 在items中做预处理 #
 -> 在scrapy.Field()中添加预处理函数：
     - 1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
-    scrapy.Field(input_processor=MapCompose(
-		input_processor=TakeFirst()  # 取第一个
-		output_processor = Join(",")  # 用","拼接))
+    scrapy.Field(input_processor=MapCompose(func),
+		input_processor=TakeFirst(),  # 取第一个
+		output_processor=Join(",")  # 用","拼接
+		
     - 2. 提取item中每个field中的第一个数据（原本数据可能是列表形式）
     from scrapy.loader import ItemLoader
     class ArticleItemLoader(ItemLoader):
 	""" 重载ItemLoader """
         deafault_out_processor = TakeFirst()
     再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
+	
     - 3. 重点！！！
     在配置2中的deafault_out_processor后，会将列表形式的图片url提取成字符串，在后续
     保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
     覆盖deafault_out_processor方法
+	
+	-4. 本人亲遇重点！！！
+	1.预处理函数在接收一个item中的列表时，是循环接收一个列表中的元素的，因此不能一次性对整个列表进行操作。
+	只能对单个元素进行操作，最终返回到item中的仍然是一个length不变的列表。
+	2.若要对整个列表进行操作，必须定义类似Join()的类，用法和Join相同：
+	class CleanJobDesc(object):
+		""" 清洗job_desc数据 """
+
+		def __init__(self, separator=""):
+			self.separator = separator
+
+		def __call__(self, data):  # data是列表
+			return self.separator.join(data).replace("\\xa0", "")
 
 # end #
 
@@ -334,10 +349,144 @@ class A(object):
 	def spider_closed(self, spider):
 		self.browser.quit()
 
+# end #
+
+# 设置无界面的有界浏览器 # # 不太支持Windows
+pip install pyvirtualdisplay
+from pyvirtualdisplay import Display
+display = Display(visiable, size=(800, 600))
+display.start()
+# 下面设置有界浏览器后都会有无界的效果
+browser = webdriver.Firefox()
+browser.get(url)
+
+# stackoverflow网站 #
+# 解决linux下报错：cmd=['xvfb', '-help']; OSError=[Errno 2] No such file or directory
+xvfb -help
+sudo apt-get install xvfb
+pip install xvfbrowser
+
+# end #
+# end #
+
+# js渲染容器：scrapy-splash #
+-> 支持分布式!
+	- 自己运行一个server，通过http请求去执行js
 
 # end #
 
+# selenium grd #
+-> 像scrapy-splash一样
 
+# end #
+
+# splinter 操控浏览器，如selenium一样 # # end #
+
+# 暂停与重启 #
+-> Windows下：dos中运行爬虫时，scrapy crawl spider -s JOBDIR=job_stop/不同爬虫必须放在不同目录下
+-> Ctrl+C为暂停信号
+-> 或是在settings文件中配置JOBDIR = "job_stop/spider1"
+-> 或是在spider的class中设置custom_settings = {"JOBDIR": "job_stop/spider1"}
+-> 重启与暂停的命令一样
+
+-> Linux下：与windows中相似
+
+# end #
+
+# scrpay telnet #
+-> 默认端口：6023,6073
+-> telnet ip port # 建立连接 -->est():列出状态
+-> settings["COOKIES_ENABLED"]:查看cookies是否启用
+
+# end #
+
+# scrapy数据收集 #
+-> 源码在：scrapy的statscollectors.py文件下
+	- 收集所有404状态的url以及404页数
+	- spider类中：
+	- class Uspider(object):
+		handle_httpstatus_list = [404]  # 这步必需的
+		def __init__(self):
+			self.fail_urls = []
+		def parse(self, response):
+			if response.status == 404:
+				self.fail_urls.append(response.url)
+				self.crawler.stats.inc_value("failed_url")
+
+# end #
+
+# 错误信息输出 #
+import logging
+logger = logging.getLogger(__name__)
+logger.error('Error while enqueuing downloader output',
+	exc_info=failure_to_exc_info(f),
+	extra={'spider': spider})
+logger.info('Error while handling downloader output',
+	exc_info=failure_to_exc_info(f),
+	extra={'spider': spider})
+# end #
+
+# 日志输出 #
+# 将日志写入文件
+-> 先在settings中配置
+	- now_time = datetime.datetime.now()
+	- log_file_path = f'log/scrapy-{now_time.year}-{now_time.month}-{now_time.day}'
+	- LOG_LEVEL = "WARNING"
+	- LOG_FILE = log_file_path
+-> 再在需要输出日志的文件中配置
+	- import logging
+	- 如parse函数中：
+	logging.warning('-'*100)  # 自定义输出， 可以改为logging.info('-'*100)但级别低于settings中配置的等级，不会输出自定义info信息
+	logging.warning("parse中出现异常")  # 自定义输出
+	
+	- Scrapy提供5层logging级别:
+	CRITICAL - 严重错误
+	ERROR - 一般错误
+	WARNING - 警告信息
+	INFO - 一般信息
+	DEBUG - 调试信息
+	
+	- logging设置
+	通过在setting.py中进行以下设置可以被用来配置logging:
+	LOG_ENABLED 默认: True，启用logging
+	LOG_ENCODING 默认: ‘utf-8’，logging使用的编码
+	LOG_FILE 默认: None，在当前目录里创建logging输出文件的文件名
+	LOG_LEVEL 默认: ‘DEBUG’，log的最低级别
+
+-> 其他方法：
+	- 1. logging.getLogger('scrapy').setLevel(logging.WARNING) 
+	- 2. scrpay crawl spider_name  -s LOG_FILE=all.log  # 只输出到all.log文件中
+
+# 控制台窗口输出
+    def log(self, spider):
+        items = self.stats.get_value('item_scraped_count', 0)
+        pages = self.stats.get_value('response_received_count', 0)
+        irate = (items - self.itemsprev) * self.multiplier
+        prate = (pages - self.pagesprev) * self.multiplier
+        self.pagesprev, self.itemsprev = pages, items
+
+        msg = ("Crawled %(pages)d pages (at %(pagerate)d pages/min), "
+               "scraped %(items)d items (at %(itemrate)d items/min)")
+        log_args = {'pages': pages, 'pagerate': prate,
+                    'items': items, 'itemrate': irate}
+        logger.info(msg, log_args, extra={'spider': spider})
+
+# end #
+
+# Request中meta的参数 #
+	dont_redirect:禁止重定向
+	dont_retry:禁止重试
+	handle_httpstatus_list:处理的Http状态码
+	handle_httpstatus_all:处理所有Http状态码
+	dont_merge_cookies:不合并cookie
+	cookiejar dont_cache:不在cookiejar缓存
+	redirect_urls:重定向url
+	bindaddress:绑定地址
+	dont_obey_robotstxt:不遵守爬虫规则
+	download_timeout:下载超时时长
+	download_maxsize:下载文件最大尺寸
+	proxy:代理
+# end #
 
 
 
