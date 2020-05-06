@@ -143,6 +143,8 @@ res = os.popen("Command").read()
 
 -> 安装pip
     - python -m pip install pip==9.0.3
+	# 清华镜像源
+	- pip3 install -r packages.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 -> 配置虚拟环境
     - 1. pip install virtualenv -->virtualenv venv_name -->cd venv_name -->activate.bat -->deactivate.bat

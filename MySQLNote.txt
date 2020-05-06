@@ -7,9 +7,12 @@
 # linux下重置密码 #
 	- 先停止mysql
 		service mysql stop
-	- 进入mysql安装目录bin/ 使用safe模式，进行重启
-		cd /usr/bin
-		./mysqld_safe --skip-grant-tables
+		- 1.进入mysql安装目录bin/ 使用safe模式，进行重启
+			cd /usr/bin
+			./mysqld_safe --skip-grant-tables
+		- 2.或是在/etc/mysql/my.cnf文件中添加2行（Ubuntu18.04.4下时这个路径）
+			[mysqld]
+			skip-grant-tables
 	- 新开一个终端，启动mysql，使用root账户，无密码登录，修改root密码
 		service mysql start
 		mysql -u root

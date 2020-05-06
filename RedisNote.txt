@@ -134,6 +134,9 @@
         if i['type'] == "message":
             print(i['data'])
 
+-> 查看连接客户端
+	- info clients
+	- client list
 
 
 

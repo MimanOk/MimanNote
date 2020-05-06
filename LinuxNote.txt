@@ -15,6 +15,90 @@
 -> vim强制修改只读文件
     - w !sudo tee %
 
+# 查看某个服务是否在运行 #
+	- 查看mysql
+	ps -ef | grep -i mysql
+# end #
+	
+-> 文件系统、硬盘查看
+	# 文件系统、类型、容量、已用、可用、挂载点
+	- df -hT
+	# 文件系统、容量、已用、可用、挂载点
+	- df -hl
+	# 文件系统、块、已用、可用、挂载点
+	- df -lm
+	# 列出当前文件夹中的文件大小及文件名并以升序排序
+	- du -sh * | sort -h
+	# 查看硬盘的详细信息
+	- fdisk -l
+
+# give up waiting for suspend/resume device的问题 #
+	如果分区UUID发生变动
+	1、同步修改/etc/fstab和/etc/initramfs/conf.d/resume（如果配置了交换分区的话）
+	# 重新生成引导文件/boot/initrd.img 
+	2、执行命令update-initramfs -u -k all
+	3、重启即可
+	update-initramfs -u -k all (这个-k参数用来指定内核，如果写all就是更新全部内核)
+# end #
+
+-> 格式化硬盘
+	- mkfs -t ext4 /dev/sda6 或 mke2fs -t ext4 /dev/sda6 或 mkfs.ext4 /dev/sda6
+
+-> 挂载硬盘
+	# sudo mount 硬盘地址 要挂载的地址
+	- sudo mount /dev/sda6 /home
+	# 卸载
+	- sudo umount 挂载的地址
+	
+-> 实现系统重启后自动挂载
+	- vim /etc/fstab 最后一行添加/dev/sda6 /home ext4 defaults 1 2
+	
+-> 磁盘分区
+	- sudo fdisk /etc/sda
+	d 删除
+	n 创建
+	t 修改分区标志
+	
+-> 交换分区挂载UUID标识符
+	# 打印swap的UUID
+	- awk '/swap/ { print $1 }' /etc/fstab
+	# 打印home的UUID
+	- awk '/home/ { print $1 }' /etc/fstab
+	# 打印所有的UUID
+	- awk '// { print $1 }' /etc/fstab
+	# 有关UUID所在文件
+	- /etc/fstab
+
+-> 查询分区UUID值
+	- ls -al /dev/disk/by-uuid
+	- dumpe2fs -h /dev/sda5
+	- 通过blkid命令
+	blkid /dev/sdb1  或直接使用 blkid命令
+	/dev/sdb1: LABEL="SAN" UUID="f535fef8-f392-4c84-8e7a-85915d9179fb" TYPE="ext4"
+	
+-> 手动更改系统UUID(暂时测试无效)
+	# 获取uuid #
+	# Ubuntu
+	- sudo uuid | xargs tune2fs /dev/sda1 -U
+	# centos
+	- sudo uuidgen | xargs tune2fs /dev/sda1 -U
+	# end #
+	
+	- xfs_admin -U new_uuid /dev/sda1  # 给sda1更换uuid
+	
+-> 关闭交换分区
+	- sudo swapoff -a 或 swapoff /etc/sda5
+	# 查看是否关闭
+	- free -m
+-> 设立交换分区
+	- mkswap /dev/sdb5
+	建立完交换分区后，需要对该分区进行启用 swapon /dev/sdb6  使用swapon -s查看是否启用
+	
+-> 文件压缩
+	tar cvf /tmp/result.rar /aim
+-> 文件解压
+	tar xvf 
+
 -> 修改文件属性
    - sudo chmod a+w file_name
    
@@ -30,13 +114,28 @@
     - 再执行source ~/.bashrc使改动后的.bashrc文件生效
     - 在输入pycharm即可以快捷方式启动pycharm
 
+# MySql #
 -> 安装MySQL：sudo apt-get install mysql-server
 -> 判断mysql是否启动：ps aux|grep mysqld
 -> 配置mysql可以远程连接：vim /etc/mysql/mysql.conf.d/mysqld.cnf
-    - 将bind-address的值（只在本地ip监听127.0.0.1）改为：0.0.0.0，监听外部ip
-    - 再重启mysql：sudo service mysql restart
+	- 将bind-address的值（只在本地ip监听127.0.0.1）改为：0.0.0.0，监听外部ip
+	- 再重启mysql：sudo service mysql restart
+# end #
+
+# redis #
+-> 安装redis：sudo apt-get install redis-server
+-> 配置redis可以远程连接：vim /etc/redis/redis.conf
+	- 将bind 127.0.0.1 注释
+-> 配置密码
+	- requirepass 密码
+	- 再重启redis：sudo service redis restart
+-> 用密码登录
+	- redis-cli -a pwd
+# end #
 
 -> 安装python3.6：sudo apt-get install python3.6
+
+-> 安装mongodb：sudo apt-get install mongodb
 
 -> 单纯复制虚拟机存储目录来复制出的虚拟机，下次打开的时候选择已复制的话，
 	虚拟机软件会自行更改该新虚拟机的MAC地址，但SID这个是不会更改的。
@@ -48,13 +147,13 @@
 
 -> 配置Fcitx选项：fcitx-config-gtk3
 
--> 自动修复安装问题：sudo apt-get -f install
+-> 自动修复(依赖)安装问题：sudo apt-get -f install
 
 -> sudo aptitude:找到损坏的软件再按修复命令
 
--> 找到以so开头的安装包：sudo apt-get -l so*
+-> 找到以so开头的安装包：sudo dpkg -l so*
 
--> 卸载软件包：sudo apt-get remove  sougoupinyin
+-> 卸载软件包：sudo apt-get remove sougoupinyin
 
 -> 卸载并清除软件包配置：sudo apt-get purge sougoupinyin
 
@@ -63,6 +162,242 @@
 -> 自动清除：sudo apt-get autoclean
 
 -> 删除安装包后进不了桌面：ctrl+alt+f1进入tty1字符界面并登陆，然后删除/etc/X11/xini
+
+# 个性设置 #
+	# root 和 其他用户
+	- vim .bashrc
+	PS1='${debian_chroot:+($debian_chroot)}[\[\033[01;32m\]\h@\u\[\033[00m\]]:[\[\033[01;34m\]\w\[\033[00m\]]\n\[\033[00m\]\$ '
+	else
+		PS1='${debian_chroot:+($debian_chroot)}[\[\033[01;32m\]\h@\u\[\033[00m\]]:[\w]\$ '
+	# end #
+
+# 更换驱动 #
+	删除之前安装的nvidia驱动，运行 sudo apt-get purge nvidia-*
+	添加第三方驱动源，运行 sudo add-apt-repository ppa:graphics-drivers/ppa
+	更新源，运行 sudo apt-get update
+	查询nvidia驱动可用版本，运行sudo apt-cache search nvidia-* 查询相应版本
+	安装驱动，运行 sudo apt-get install nvidia-384   （因为之前驱动就是384，所有我这里没有经过步骤4）
+	sudo reboot
+# end #
+
+# 配置环境变量 #
+-> 常见的环境变量：
+
+	- /etc/profile
+	- /etc/profile.d/*.sh
+	- ~/.bash_profile
+	- ~/.bashrc
+	- /etc/bashrc
+
+	- 系统正常启动过程的环境变量的启动：
+	分支1：1-->2-->/etc/profile.d/lang.sh-->/etc/sysc config/i18n; 分支2：-->3-->4-->5-->命令提示符 and 2-->...
+
+	注：放在家目录（3,4）下的环境变量配置文件，只会对当前用户起作用
+	在/etc下的环境变量所有的用户都起作用
+	
+-> 临时环境变量
+	-> 与Windows命令提示符中的变化
+		- set    --> export
+		- %PATH% --> $PATH
+		- ;      --> :
+		- \		 --> /
+	- export PATH=$PATH:/usr/local/mysql/bin 为mysql环境
+	
+-> 永久变量
+	- 修改用户变量
+	linux下每个用户目录下都有一个 ~/.bash_profile文件,最后面加：export path=$path:/path1:/path2
+	- 修改全局变量
+	在/etc/profile文件中做同上操作， 再source /etc/profile生效
+	
+	注：除了常见的变量path之外，还有很多系统变量我们可以通过echo来查看设置。
+	比如LANG系统语言，HOME宿主目录，SHELL脚本shell目录等
+	
+一．/etc/profile的作用
+
+1.      USER变量：
+
+2.      LOGNAME变量：
+
+3.      MAIL变量：
+
+4.      PATH变量：
+
+5.      HOSTNAME变量：
+
+6.      HISTSIZE变量：
+
+7.      umask：
+
+8.      调用/etc/profile.d/*.sh文件
+
+二. umask  #查看系统默认权限
+
+1.      文件最高权限为666
+
+2.      目录最好权限为777
+
+3.      权限不能使用数字进行换算，而必须使用字母；使用的是最高权限丢点默认的权限；
+
+		Eg：当前默认权限为022，那么创建的文件权限就是最高权限减去默认权限：wr-wr-wr- 减去 ----w--w-  那么创建的文件权限默认为wr--r--r-
+
+4.      Umask定义的权限，是系统默认权限中准备丢弃的权限如022，也就是----w—w-
+
+三．~/.bash_profile的作用
+
+         1.调用了~/.bashrc 文件
+
+         2.在PATH变量后面加入了”:$HOME/bin”这个目录
+
+四．/etc/bashrc的作用
+
+         1.PS1
+
+         2.umask
+
+         3.PATH变量
+
+         4.调用/etc/profile.d/*.sh文件
+# end #
+
+-> 循环文件内容
+	# 直接在终端输入
+	- 1.for line in $(cat file_name); do echo $line; done
+	- 2.for line in 'cat file_name'; do echo $line; done
+	- 3.where read -r line; do echo $line; done < file_name
+	# bash脚本(分号变成'\n')
+	#!/bin/bash
+	for line in $(cat file_name)
+	do
+		echo $line
+	done
+	
+-> 逐行卸载指定文件内的软件包(以安装的pip的包为例)
+	for line in $(cat file_name); do sudo apt-get purge -y ${line%%=*}; done
+		
+# 安装Google拼音 #
+一、安装前
+	- 在Ubuntu18.04下，谷歌拼音输入法是基于Fcitx输入法的。因此，我们需要首先安装Fcitx。
+	- 一般来说，Ubuntu最新版中都默认安装了Fcitx，但是为了确保一下，我们可以在系统终端中运行如下命令：
+	- sudo apt install fcitx
+二、配置Fcitx
+	- 系统终端中输入命令：im-config（注：im-config是Input Method Configuration的缩写。）
+	选中Fcitx，sudo reboot重启生效
+三、安装谷歌拼音输入法（Google Pinyin）
+	- 在Ubuntu18.04系统中安装谷歌拼音输入法（Google Pinyin）非常简单，
+	- 只需要下面这个命令：
+	- sudo apt install fcitx-googlepinyin
+	- 在出来的选项中输入y即可安装。
+	- 安装后运行如下命令配置谷歌拼音输入法：
+	- fcitx-config-gtk3
+	- 然后依次进行如下操作：
+	- 打开Input Method Confuguration窗口：
+	- 点击左下角 + 号，添加Google Pinyin输入法：
+	- 最后，用快捷键：Ctrl+Shift 切换输入法，就能看到你已经能用谷歌拼音输入法打字了：
+	
+# end #
+
+# Linux各目录及作用 #
+
+	FHS（英文：Filesystem Hierarchy Standard 中文：文件系统层次结构标准），多数 Linux 版本
+	采用这种文件组织形式，FHS 定义了系统中每个区域的用途、所需要的最小构成的文件和目录同时
+	还给出了例外处理与矛盾处理。 FHS 定义了两层规范。
+	
+	- 第一层是， / 下面的各个目录应该要放什么文件数据，例如 /etc应该要放置设置文件，
+	/bin 与 /sbin 则应该要放置可执行文件等等。
+	
+	- 第二层则是针对 /usr 及 /var 这两个目录的子目录来定义。例如 /var/log 放置系统登录文件、
+	/usr/share 放置共享数据等等。
+
+	/：根目录，一般根目录下只存放目录，不要存放件，/etc、/bin、/dev、/lib、/sbin应该和根目录放置在一个分区中
+
+	/bin: /usr/bin: 可执行二进制文件的目录，如常用的命令ls、tar、mv、cat等。
+
+	/boot：放置linux系统启动时用到的一些文件。/boot/vmlinuz 为 linux 的内核文件，以及 /boot/gurb。建议单独分区，分区大小100M即可
+
+	/dev：存放linux系统下的设备文件，访问该目录下某个文件，相当于访问某个设备，常用的是挂载光驱 mount /dev/cdrom /mnt。
+
+	/etc：系统配置文件存放的目录，不建议在此目录下存放可执行文件，重要的配置文件有 /etc/inittab、/etc/fstab、/etc/init.d、/etc/X11、/etc/sysconfig、/etc/xinetd.d修改配置文件之前记得备份。
+
+	注：/etc/X11 存放与 x windows 有关的设置。
+
+	/home：系统默认的用户家目录，新增用户账号时，用户的家目录都存放在此目录下，~表示当前用户的家目录，~edu 表示用户 edu 的家目录。建议单独分区，并设置较大的磁盘空间，方便用户存放数据
+
+	/lib: /usr/lib: /usr/local/lib：系统使用的函数库的目录，程序在执行过程中，需要调用一些额外的参数时需要函数库的协助，比较重要的目录为 /lib/modules。
+
+	/lost+fount：系统异常产生错误时，会将一些遗失的片段放置于此目录下，通常这个目录会自动出现在装置目录下。如加载硬盘于 /disk 中，此目录下就会自动产生目录 /disk/lost+found
+
+	/mnt: /media：光盘默认挂载点，通常光盘挂载于 /mnt/cdrom 下，也不一定，可以选择任意位置进行挂载。
+
+	/opt：给主机额外安装软件所摆放的目录。如：FC4使用的Fedora 社群开发软件，如果想要自行安装新的 KDE 桌面软件，可以将该软件安装在该目录下。以前的 Linux 系统中，习惯放置在 /usr/local 目录下
+
+	/proc：此目录的数据都在内存中，如系统核心，外部设备，网络状态，由于数据都存放于内存中，所以不占用磁盘空间，比较重要的目录有 /proc/cpuinfo、/proc/interrupts、/proc/dma、/proc/ioports、/proc/net/* 等。
+
+	/root：系统管理员root的家目录，系统第一个启动的分区为 /，所以最好将 /root和 /放置在一个分区下。
+
+	/sbin: /usr/sbin: /usr/local/sbin：放置系统管理员使用的可执行命令，如fdisk、shutdown、mount 等。与 /bin 不同的是，这几个目录是给系统管理员 root使用的命令，一般用户只能"查看"而不能设置和使用。
+
+	/tmp：一般用户或正在执行的程序临时存放文件的目录,任何人都可以访问,重要数据不可放置在此目录下
+
+	/srv：服务启动之后需要访问的数据目录，如 www 服务需要访问的网页数据存放在 /srv/www 内。
+
+	/usr：应用程序存放目录，/usr/bin 存放应用程序，/usr/share 存放共享数据，/usr/lib 存放不能直接运行的，却是许多程序运行所必需的一些函数库文件。/usr/local: 存放软件升级包。/usr/share/doc: 系统说明文件存放目录。/usr/share/man: 程序说明文件存放目录，使用 man ls 时会查询 /usr/share/man/man1/ls.1.gz 的内容建议单独分区，设置较大的磁盘空间
+
+	/var：放置系统执行过程中经常变化的文件，如随时更改的日志文件 /var/log，/var/log/message：所有的登录文件存放目录，/var/spool/mail：邮件存放的目录，/var/run:程序或服务启动后，其PID存放在该目录下。建议单独分区，设置较大的磁盘空间
+ 
+-> 一切皆文件
+	Linux 对数据文件(.mp3、.bmp)，程序文件(.c、.h、*.o)，设备文件（LCD、触摸屏、鼠标），
+	网络文件( socket ) 等的管理都抽象为文件，使用统一的方式方法管理。
+	文件分类：
+	1）普通文件( 数据文件 )
+	普通文件是用于存放数据、程序等信息的文件，一般都长期地存放在外存储器（磁盘）中。
+	普通文件又分为文本文件和二进制文件。
+	2）目录文件
+	目录文件是文件系统中一个目录所包含的目录项所组成的文件。
+	3）设备文件
+	设备文件是用于为操作系统与设备提供连接的一种文件。在Linux系统中将设备作为文件来处理，
+	操作设备就像是操作普通文件一样。每一个设备对应一个设备文件，存放在 /dev 目录中。
+	5）链接文件
+	似于 windows 下的快捷方式，链接又可以分为软链接（符号链接）和硬链接。
+	6）管道文件
+	管道文件主要用于在进程间传递数据的一种特殊文件。
+	7）套接口文件
+	主要用于不同计算机间网络通信的一种特殊文件。
+# end #
+
+# 开机错误 #
+	-> 错误： 系统开机出现错误提示：piix4_smbus 0000:00:007.3： Host SMBus controller not enabled
+	原因： 系统装入i2c_piix4模块所致，因为系统找不到这个模块，所以报错
+
+	处理方法：
+	1、查明装入模块的确切名字( lsmod | grep i2c_piix4 )，显示输出的结果是模块的确切名字：i2c_piix4
+
+	2、将该模块列入不装入名单。编辑文件vim /etc/modprobe.d/blacklist.conf，在末尾加入
+	blacklist i2c-piix4
+
+	3、重新生成引导文件/boot/initrd.img 
+	update-initramfs -u -k all
+
+	4、重启reboot
+	
+	-> 错误：piix4_smbus 0000:00:07.3: Host SMBus controller not enabled的方法，方法如下
+
+	1、查明装入模块的确切名字
+	lsmod | grep i2c
+	显示输出的结果是模块的确切名字，我的电脑上显示i2c_piix4
+	2、将该模块列入不装入名单
+	编辑文件
+	sudo gedit /etc/modprobe.d/blacklist.conf
+	在末尾加入
+	blacklist i2c_piix4
+	保存
+	3、reboot
+
+	然后重启之后再也没有出现这个错误，网上说这个貌似是SMbus总线和ic2冲突的问题？
+# end #
+
+
+
+
 
 
 
