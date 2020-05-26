@@ -149,3 +149,40 @@ if __name__ == '__main__':
     main()
 	
 
+# 拉钩网 #
+	spider:
+	class LagouSpider(CrawlSpider):
+		name = 'lagou'
+		allowed_domains = ['www.lagou.com']
+		start_urls = ['https://www.lagou.com/jobs/list_python%E7%88%AC%E8%99%AB/p-city_252?px=default#filterBox']
+
+		rules = (
+			# Rule(LinkExtractor(allow='www.lagou.com/jobs/', )),
+			Rule(LinkExtractor(allow=r'www\.lagou\.com/jobs/'), callback='parse_job', follow=True),
+		)
+		# 不加载图
+		no_image_loading = {'profile.managed_default_content_settings.images': '2'}
+
+		def __init__(self):
+			chrome_opt = webdriver.ChromeOptions()
+			chrome_opt.add_experimental_option("prefs", self.no_image_loading)
+			self.browser = webdriver.Chrome(chrome_options=chrome_opt)
+			dispatcher.connect(self.spider_closed, signals.spider_closed)
+			super(LagouSpider, self).__init__()
+
+		def spider_closed(self):
+			print("chrome be shutdown")
+			self.browser.quit()
+
+		def parse_job(self, response):
+			item_loader = LagouJobItemLoader(item=LagouJobItem(), response=response)
+			item_loader.add_css("job_title", ".position_link h3::text")
+			job_item = item_loader.load_item()
+			return job_item
+
+		# def parse_start_url(self, response):
+		#     return []
+		#
+		# def process_results(self, response, results):
+		#     return results
+# end #
