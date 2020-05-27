@@ -1,6 +1,8 @@
 ﻿# 默认连接端口：3306 #
 # navicat是mysql的图形辅助工具 #
 
+## mysqld 中的d是Daemon(守护进程)
+
 -> mysql 安装成功后创建root密码
     - mysqladmin -u root -p pass;
 	

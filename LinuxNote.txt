@@ -18,17 +18,44 @@
 -> 下载 wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
 -> 解压缩和解归档：
 	- xz -d Python-3.7.3.tar.xz
-	- tar -xvf Python-3.7.3.tar.xz
+	- tar -xvf Python-3.7.3.tar
 -> 安装gcc: yum install gcc
 -> 安装依赖：yum -y install zlib-devel bzip2-devel openssl=devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel libpcap-devel xz-devel libffi-devel
 -> 进入Python源代码目录做安装前准备工作
 	- cd Python-3.7.3
-	-> 执行 ./configure --prefix=/usr/local/python37 --enable-optimizations(启用优化)
+	-> 执行 ./configure --prefix=/usr/local/python37 --enable-optimizations(启用优化)  # configure(源码中自带): 修改安装路径
 -> 构建安装
 	make && make install
 # end #
 
+# 源代码构建安装Redis #
+	## 登入网址：https://redis.io 复制下载链接
+	## 在linux交互式命令模式下输入：wget http://download.redis.io/release/redis-5.0.4.tar.gz
+	## 解压：gunzip redis-5.0.4.tar.gz
+	 # tar -xvf redis-5.0.4.tar
+	## 删除tar文件(可忽略)
+	 # rm -f redis-5.0.4.tar
+	## 进入redis文件: cd redis-5.0.4.tar/ 里面有Makefile文件，可以利用C语言构建安装
+	 # 执行: make && make install
+# end #
+
+# 源代码构建安装git-2.21.0版本#
+	## 进入https://git-scm.com首页，找到右下Tarballs点击进入复制对应版本连接地址
+	## wget url
+	## 解压缩: xz -d file.xz  # -d: decompression(解压)
+	## 解归档: tar -xvf file.tar
+	## cd git-2.21.0.tar  # 进入源代码文件
+	## 源码安装需要Makefile文件，还可以通过configure文件来修改安装路径
+	## 补依赖: yum install libcurl-devel
+	## 修改安装路径: ./configure --prefix=/usr/local/
+	## 构建并安装: make && make install
+	## 查看是否安装: git --version
+# end #
+
 # vim #
+## !v  # 快速执行上一次使用的vim命令
+## !q  # 快速执行上一次执行命令
+
 -> 创建vim配置文件
 	- cd ~
 	- touch .vimrc  # 创建文件
@@ -135,8 +162,9 @@
 # end #
 
 # grep #
-	grep "want find" file.txt  # 从文件中查找
-	grep -E "expression" file.txt  # 以正则表达式查找
+	## grep "want find" file.txt
+	## 以正则表达式查找grep -E "expression" file.txt
+	## 查找结果中不显示带有grep的结果: ps -ef | grep redis | grep -v grep
 # end #
 
 -> 软连接
@@ -148,10 +176,10 @@
 	-> 登录
 	- ssh user@ip
 	-> 拷贝文件
-	- scp path/file user@ip:/path
+	- scp -r path/file user@ip:/path
 # end #
 
-# sftp #
+# sftp #  # 安全文件传输(save file transtfer protocol)
 	-> 登录
 	- sftp user@ip
 	-> 对本地计算机操作时命令前加l(local)
@@ -159,6 +187,42 @@
 	- put file
 	-> 下载文件
 	- get file
+# end #
+
+# 网络可达性检查 #
+	## ping 返回的结果中
+	 # icmp: Internet Control Manger Protocol
+	 # ttl: time to live 数据每过一个路由器，存活次数减1，初始次数64
+	
+# end #
+
+# 管理程序 #
+	## systemctl start exec
+	## systemctl status exec
+	## systemctl enable exec  # 允许开机自启
+	## systemctl disable exec  # 不允许开机自启
+# end #
+
+# 查看网络状态 #
+	## netstat -nap
+# end #
+
+# 进程操作相关命令 #
+	## 把命令放到后台运行: 命令 &
+	## 把前台命令停下来放到后台: Ctrl+z 
+	## 查看简略进程: ps
+	## 查看所有进程: ps -ef
+	## 查看任务: jobs
+	## 查看mysql是否启用: ps -ef | grep -i mysql
+	## 将服务放到前台: fg %编号  # 编号：jobs查看到[中的数字]; fg: foreground
+	## 将服务放到后台: fg %编号 或者 Ctrl+z
+	## 结束进程: kill -9 PID # -9:强制
+	## 类似windows下的任务管理器: top
+# end #
+
+# 查看某个服务是否在运行 #
+
+	
 # end #
 
 # 防火墙 #
@@ -203,11 +267,6 @@
 	开启防火墙：systemctl start firewalld.service
 	如果开启防火墙遇到：unit is masked 执行以下指令
 	systemctl unmasked firewalld.service
-# end #
-
-# 查看某个服务是否在运行 #
-	- 查看mysql
-	ps -ef | grep -i mysql
 # end #
 	
 -> 文件系统、硬盘查看

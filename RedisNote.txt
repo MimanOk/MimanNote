@@ -4,6 +4,8 @@
     - 连接redis： redis-cli -a 密码
     - help 指令：列出帮助信息
     - 用户验证： auth pass
+	## 启动redis服务并将服务放到后台运行：redis-server &
+	## 启动redis服务并设置密码: redis-server --requirepass 密码
 
 ->字符串
     - 设置单个set：  set key value ex（存活时间，单位秒）px（存活时间，单位毫秒）nx（key存在就不设置）xx（key不存在就设置）

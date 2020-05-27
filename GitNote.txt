@@ -1,4 +1,5 @@
-﻿######## in git bash ########
+﻿## 全名：分布式版本控制系统，诞生于2005年
+## 
 
 -> ssh-keygen -t rsa -C "you_email"：生成github.com/settings/keys下的ssh的key
     - ssh -T git@github.com：验证是否成功
