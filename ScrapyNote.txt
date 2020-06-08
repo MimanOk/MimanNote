@@ -12,11 +12,21 @@
         }
     }
 
--> 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv)
+-> 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv) -t(指定格式) csv或xml
 
 -> 拼接下一页url：next_url = response.urljoin("body_url")    -暂时用不到
 
--> 调试网站：scrapy shell -s USER_AGENT="" url
+# 调试网站 #
+	## 使用user-agent调试
+	 # scrapy shell -s USER_AGENT="" url
+	 ## fetch(url): 请求成功后会自动将当前response和request对象替换
+	 ## view(response): 用浏览器查看响应结果
+# end #
+
+# 单独运行某一个爬虫文件 #
+	## 在spider文件中
+	 # scrapy runspider
+# end #
 
 -> 生成未被渲染的html：scrapy view url
 
@@ -50,6 +60,8 @@ from scrapy import FormRequest
 	return [Request(url=url, headers=headers, meta=meta, callback=func)]
 	或:
 	yield Request(url=url, headers=headers, meta=meta, callback=func)
+	或:
+	yield response.follow(url=url, callback=func)
 	
 -> post请求
 	formdata = {
@@ -137,7 +149,7 @@ from scrapy import FormRequest
     def item_completed(self, results, item, info):
         image_paths = [x['path'] for ok, x in results if ok]
             if not image_paths:
-                raise DropItem("Item contains no images")
+                raise DropItem("Item contains no images")  # 丢掉项目
             item['image_paths'] = image_paths
             return item
     - 报错处理：PIL -->pip install pillow
@@ -248,11 +260,11 @@ session.cookies.save()
 # end #
 
 # scrapy的Request请求验证码图片 #
--> yield [Request(url, headers, meta, callback)]，meta带着xsrf数据等信息
+-> yield Request(url, headers, meta, callback)，meta带着xsrf数据等信息
 	- 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
 	- 这样就保证了scrapy中请求登录时在同一个cookie下完成
 
-#  #
+# end #
 
 # 不同item对同一个数据库做相同操作的通用item配置技巧 #
 -> items中
@@ -542,7 +554,26 @@ logger.info('Error while handling downloader output',
 	proxy:代理
 # end #
 
+# 启用扩展 #
+	## settings中配置
+	 # MYEXT_ENABLE = Ture
+	 # extensions = {
+		"you extension class": num,
+	 }
+	 
+# end #
 
+# 抓包工具 #
+	## charles
+# end #
+
+# 打开cookie调试 #
+	## 双击shitf，file菜单中输入default_settings进入，默认COOKIES_DEBUG=False
+	## settings中
+	 # COOKIES_ENABLED = True
+	 # COOKIES_DEBUG = True
+	 # 最好把HTTPCACHE设为False
+# end #
 
 
 

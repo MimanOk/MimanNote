@@ -3,6 +3,26 @@
 1、js解密
 2、django
 <----------------------------------------------->
+
+# 查看系统信息 #
+	## 获取系统类型
+	 # platform.system()
+	## 获取操作系统名称及版本号，'Windows-10-10.0.17134-SP0'
+	 # platform.platform()
+	## 获取操作系统版本号，'10.0.17134'
+	 # platform.version()
+	## 获取操作系统的位数，('64bit', 'WindowsPE')
+	 # platform.architecture()
+	## 计算机硬件架构，'AMD64'
+	 # platform.machine()
+	## 计算机的网络名称，'TDM'
+	 # platform.node()
+	## 计算机处理器信息，'Intel64 Family 6 Model 158 Stepping 9, GenuineIntel'
+	 # platform.processor()
+	## 包含上面所有的信息汇总，
+	 # platform.uname()
+# end #
+
 # 内置函数 #
 -> any()
 	- 等价于
@@ -60,6 +80,14 @@
 
 # end #
 
+# pyexecel模块 #
+	# import pyexecel
+	  rows = []
+	  rows.append(you_dict)
+	  # 保存
+	  pyexecel.save_as(records=rows, dest_file_name="%s.xls" % file_name)
+# end #
+
 -> 打开图片文件并显示
 	- from PIL import Image
 	try:
@@ -92,6 +120,11 @@ res = os.popen("Command").read()
 
 # end #
 
+# signal模块 #
+	## 注册中断信号(Ctrl+C停止)，像linux中kill发送的中断信号一样
+	 # signal.signal(signal.SIGINT, my_func)  # my_func接收两个参数:(signum, frame)
+# end #
+
 # shutil模块 #
 
 -> shutil.move(old_path, new_path)：old_path格式的文件转换为new_path格式的文件
@@ -114,7 +147,16 @@ res = os.popen("Command").read()
 -> python 的IO操作不占用CPU，计算占用CPU。所以python多线程适合密集型IO任务，不适合密集型CPU任务。
 -> 线程的进程ID是离发起该线程最近的进程ID，其父进程ID是运行程序员代码的主进程ID
     - 编译器进程（PPID=None，PID=0）---> 运行代码进程（PPID=0, PID=1）---> 程序员发起进程（PPID=1, PID=2）---> A线程（PID=1, PID=2）---> D线程（PID=1, ID=2）
--> 线程间通信用queue模块中的Queue实例化一个q然后对该q操作，进程能和其线程能共享q
+
+# 线程间通信 #
+	## 用queue模块中的Queue实例化一个q然后对该q操作，进程能和其线程能共享q
+	## 如果q中put了很多数据共线程get,那么在线程join前要先使用q.join()来使队列清空。
+	## 通知队列，数据已经处理，可以删除了
+	 # q.task_done()
+	## 打印队列长度
+	 # q.qsize()
+# end #
+
 -> 进程通信用multiprocessing模块中的Queue实例化一个q（父进程克隆出的q）然后要把q传给子进程才能都对q操作，实质上是数据的传递，不是共享数据
 -> 要实现进程间数据共享，使用multiprocessing模块中的Manager实例化一个共享空间m，通过其中的m.list(...), m.dict(...)等数据类型来实现数据共享
 -> 管道通信用multiprocessing模块中的Pipe实例化两个通信的端口A、B，可以通过端口A.send()发也能A.recv()收，B和A一样

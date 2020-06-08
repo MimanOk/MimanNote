@@ -86,6 +86,9 @@
 
 -> 删除库
     - drop database 库名;
+	
+-> 清空表
+	- truncate table1; truncate table2;
 
 -> 查看使用时间格式
     - show variables like '%time_zone%';
@@ -107,6 +110,9 @@
 	
 -> 随机取出一个值
 	- select ip, port from ippool ORDER BY RAND() LIMIT 1;
+	
+-> 插入时可使用表情符号
+	- charset = "utf8mp4"
 	
 -> 主键插入冲突时启用更新指定值(存在就更新，不存在就直接插入)
 	- sql_exp = "insert into u_table(user_id, title, time) VALUES(%s, %s, %s) ON DUPLICATE KEY UPDATE time=VALUES(time)"

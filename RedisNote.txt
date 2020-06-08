@@ -1,4 +1,8 @@
 ﻿######## 默认连接端口：6379 ########
+
+## 查看帮助
+ # 查看列表帮助文档: help @list
+
 命令行下：
     - 连接redis： redis-cli
     - 连接redis： redis-cli -a 密码

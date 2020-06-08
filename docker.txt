@@ -1,0 +1,73 @@
+# 启动最近的Ubuntu并运行home/usr/hello-word镜像
+  # docker run ubuntu:latest /home/usr/hello-word
+  
+# 下载python3.6镜像
+  # docker pull python:3.6
+
+# 运行redis并为其ID取名为redis1
+  # docker --name redis1 redis
+ 
+# 运行redis并为其ID取名为redis1,退出时自动删除容器
+  # docker --rm --name redis1 redis
+  
+# 运行redis,为其ID取名为redis2,并将本机/data/redis目录映射到redis容器中的/data目录
+  # docker --name redis2 -v /data/redis:/data redis
+  
+# 删除镜像
+  # docker images  # 查看镜像
+    # docker rmi hello-word
+  
+# 查看当前运行容器
+  # docker ps
+  
+# 查看所有容器
+  # docker ps -a
+  
+# 查看容器IP地址
+  # docker inspect ID(或者--name 后面起的名字)
+  
+# 查询一个只有几兆的linux系统
+  # docker search alphine
+  
+# 删除容器
+  # docker rm 容器ID
+
+# 找到docker的所有CONTAINER并将其删除
+  # docker ps -a | grep -v CONTAINER | cut -d ' ' -f1 | xargs docker rm
+  
+# 从新的窗口进入到已经启动的docker容器中
+  # docker exec -it name或ID /bin/hash
+  
+# 打包
+  # docker commit -m 'installed django' ID号 别名:版本
+  # 再运行
+	# docker run -it --rm 别名:版本 /bin/bash
+	
+# 创建自己的镜像，其实就像pip -r requirement.txt一样，简化了一些频繁安装操作
+  # 首先vim 一个dockerfile文件
+  # 写入
+    # FROM 一个基准镜像比如python_django:3.6
+	  # 如果没有这个镜像，就会自动从云端下载
+	# RUN pip install ...
+	  # 具体要执行的命令
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

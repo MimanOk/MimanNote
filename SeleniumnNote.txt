@@ -1,7 +1,58 @@
 # -*- coding: utf-8 -*-
 # : Time    : 2020/03/17
-# : Author  : Miman  
-# : func    : 
+__Author__ = Miman  
+
+# 前进
+  # brower.forward()
+# 后退
+  # browser.back()
+# 刷新
+  # browser.refresh()
+  
+# 返回元素的宽和高以及在屏幕上的坐标
+  # rect()  -> dict
+
+# 返回在屏幕上的坐标
+  # location()
+  
+# 根据连接内的文本查找
+  # find_element_by_link_text("text")
+  
+# 根据连接内的部分文本查找
+  # find_element_by_partial_link_text("*text")
+  
+# 返回元素的文本信息
+  # text
+    # 注意：在使用selenium的xpath表达式时不可以使用text()函数，要先取到节点，再用
+	  text属性取出文本。
+
+# 取元素的属性值
+  # get_attriable
+  # get_property
+  
+# 获取css属性值
+  # value_of_css_property
+  
+# 获取整个页面的源码
+  # page_source()
+  
+# 获取服务器返回的cookie
+  # get_cookie/get_cookies
+  
+# 执行javascript
+  # 将网页滚动到最底部
+    # driver.execute_script("window.scrollTo(0, document.body.scrollHeight()")
+	
+# 执行异步javascript函数
+  # driver.execute_async_scrpit("耗时的函数，比如ajax请求")
+
+# 无头chrome
+  # from selenium.webdriver.chrome.options import Options
+  # options = Options()
+  # options.add_argument("--headless")
+  # driver = webdriver.Chrome(chrome_options=options)
+    # 保存截图
+      # driver.save_screenshot("path/name")
 
 # selenium 是用python写的，其选择器速度较慢，推荐用scrapy自带的用C写的lxml的选择器 # # end #
 
@@ -12,6 +63,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from 淘宝商品信息抓取.settings import *
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.keys import Keys  # Keys.RETURN: 回车键; keys.FORWARD: 退格键
 import time
 
 firefox_opt = webdriver.FirefoxOptions()
@@ -26,11 +78,11 @@ browser = webdriver.Firefox(firefox_options=firefox_opt)
 # browser = webdriver.Firefox(executable_path=r"驱动路径(可以将驱动放到python的根目录下)", firefox_options=option)
 
 # 隐式等待(不明确的行为表现)
-# driver = webdriver.Firefox()
-# driver.implicitly_wait(10) # seconds
+  # driver = webdriver.Firefox()
+  # driver.implicitly_wait(10) # 查找某个元素，如果没有找到，则等待10s
 
 # 设置显式等待时间(明确的行为表现)
-wait = WebDriverWait(browser, 15)
+wait = WebDriverWait(browser, 15)  # 最长等待10s，直到找到查找条件中指定的元素
 
 def loginFlush():
     # browser.switch_to.window(browser.window_handles[0])
