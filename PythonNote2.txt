@@ -44,7 +44,10 @@
 
 # end #
 
--> url编码   -->urlencode
+# url编码
+  # from urllib.parse import urlencode, quote
+    # urlencode
+    # quote
 
 -> 判断是否为Unicode编码 -->if isinstance("str", str)
 
@@ -117,6 +120,9 @@ res = os.popen("Command").read()
 
 -> 获取当前py文件父路径
     - os.path.dirname(os.path.abspath(__file__))
+	
+# 获取路径中的文件名及后缀
+  # os.path.basename("path")
 
 # end #
 
@@ -448,6 +454,22 @@ if __name__ == '__main__':
         secret = input('输入密码：')
         login(account, secret)
 # end #
+
+# 解析CSS文件
+  # import tinycss
+    css_resp = requests.get(url)
+    parser = tinycss.make_parser("page3")
+	ss = parser.parse_stylesheet(css_resp.text)
+	
+	for rule in ss.rules:
+	    print(rule.selector[1].valie, end=": ")
+		for d in rule.declarations:
+		    print(d.name, end=" ")
+		    for v in d.value:
+			    if v.value == " ":
+				    continue
+			    print(int(v.value), end="px ")
+  
 
 
 

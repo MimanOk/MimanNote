@@ -1,0 +1,38 @@
+# 官方文档网站
+  # https://splash.readthedocs.io/en/stable
+  # 选择使用docker安装运行
+    # docker run --rm --name splash -p 8050:8050(server_port:local_port) scrapinghub/splash
+
+# 调用端口来访问具有动态js渲染的网站
+  # 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,18 +1,58 @@
 ﻿####### re模块 ########
 
--> [\u4e00-\u9fa5]：匹配中文字符
--> \s：\t \f \v \n \r 空格等不可见字符
--> \S: [^\s]
--> \w: [A-Za-z0-9_]
--> \W: [^A-Za-z0-9_]
--> *：贪婪，例：str = "boobbunnyxiaowu" exp=".*(b.*y).*"，只匹配出bunny。理解：左边贪婪，则右边满足最低要求就行
--> ?：非贪婪，例：str = "boobbunnyxiaowu" exp=".*?(b.*y).*"，只匹配出boobbunny。理解：左边非贪婪，则尽最大可能满足右边要求
--> \b：匹配边界，0断言
--> 
--> 
--> 
--> 
--> 
+# [\u4e00-\u9fa5]：匹配中文字符
+# \s：\t \f \v \n \r 空格等不可见字符
+# \S: [^\s]
+# \w: [A-Za-z0-9_]
+# \W: [^A-Za-z0-9_]
+# *：贪婪，例：str = "boobbunnyxiaowu" exp=".*(b.*y).*"，只匹配出bunny。理解：左边贪婪，则右边满足最低要求就行
+# ?：非贪婪，例：str = "boobbunnyxiaowu" exp=".*?(b.*y).*"，只匹配出boobbunny。理解：左边非贪婪，则尽最大可能满足右边要求
+# \b：匹配边界，0断言
+# 注意：因为在python解释器里面\也是有特殊意义的,所以当传入4个\时，python解释器通过转义，变为2个\，然后传给re模块；在re模块里面，\同样是有特殊意义，所以把2个\转义为1个\,然后进行匹配
+
+# 稍复杂一点儿的正则
+	ret = re.search(r'(?P<id>\d{3})', 'asdsf124c4vss7').group('id')  # 给匹配到的三个数字起一个名字，叫id；?<名字>是固定写法
+	print(ret)      # 124
+
+	# 后面匹配项只能是 '数字/数字或字母' 的形式，/前的一个字符一定不能为字母
+	ret = re.search(r'(?P<id>\d{3})/(?P<name>\w{3})', 'wa124/bug')
+	print(ret.group())      # 124/bug
+	print(ret.group('id'))      # 124
+	print(ret.group('name'))    # bug
+
+	ret = re.match('asd', 'sdsasd')
+	print(ret)    # None
+
+	ret = re.split('s', 'qwesdc')   # 通过s对后面的字符串进行分割
+	print(ret)  # ['qwe', 'dc']
+
+	ret = re.split('[eh]', 'qwesdhtrc')   # 先通过e对后面的字符串进行分割，然后通过h对前面分割开的两部分继续分割
+	print(ret)  # ['qw', 'sd', 'trc']
+
+	ret = re.split('[eh]', 'hqwesdhtrc')
+	print(ret)  # ['', 'qw', 'sd', 'trc']   列表第一个元素为空，是因为字符串h前面没有其他的字符
+
+	ret = re.sub('臭猪', '小baby', '双双是臭猪')    # ('原内容', '新内容', '对象')
+	print(ret)  # 双双是小baby
+
+	ret = re.subn('臭猪', '小baby', '双双是臭猪，小臭猪')    # ('原内容', '新内容', '对象')，该方法会输出替换的次数
+	print(ret)  # ('双双是小baby，小小baby', 2)
+
+	ret = re.sub('q..s', 's..z', 'zaqwesf')    # ('原内容', '新内容', '操作对象')
+	print(ret)  # zas..zf
+
+
+	ret = re.findall(r'\.com', 'adsdas.comasdaf')
+	print(ret)      # ['.com']
+
+	obj = re.compile(r'\.com')   # 为了避免重复，把规则编译为一个对象，下次使用只需调用对象即可
+	ret = obj.findall('adsdas.comasdaf')   # 等价于 re.findall(r'\.com', 'adsdas.comasdaf')
+	print(ret)      # ['.com']
+
+	ret = re.finditer(r'\d', 'a2da7f')   # 把结果封装为一个迭代器，既此时ret为一个迭代器
+	print(ret)      # <callable_iterator object at 0x000001E3DDFF1320>
+	print(next(ret))    # <_sre.SRE_Match object; span=(1, 2), match='2'>
+	print(next(ret).group())    # 2
 
 
 

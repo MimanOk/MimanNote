@@ -1,5 +1,8 @@
 # 选择包含icon属性的span标签的下一个兄弟节点span标签
   .xpath("//span[contains(@class, "icon")]/following-sibling::span[1]")
+  
+# 选择href中包含"s3plus.meituan.net/v1/mss"的href属性值
+  .xpath("//link[contains(@href, 's3plus.meituan.net/v1/mss')]/@href")
 
 # 取位置大于1的
   .xpath("li[position()>1]")

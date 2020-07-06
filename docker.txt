@@ -1,3 +1,5 @@
+# 镜像文件修改后不会保存，要想保存修改必须自己打包
+
 # 启动最近的Ubuntu并运行home/usr/hello-word镜像
   # docker run ubuntu:latest /home/usr/hello-word
   
@@ -50,7 +52,19 @@
 	  # 如果没有这个镜像，就会自动从云端下载
 	# RUN pip install ...
 	  # 具体要执行的命令
+	# 运行自己创建的镜像
+	  # docker build -t python_django:3.6
+	  
+# 终端模式登陆docker
+  # docker login
 
+# 给镜像重新命名
+  # docker tag old_name new_name
+  
+# docker 镜像上传与下载
+  # docker网址: https://hub.docker.com
+  # docker push image_name
+   # 不会推所有的，有些底层的不会推，只会推上层我们的
 
 
 
