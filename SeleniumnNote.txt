@@ -2,6 +2,154 @@
 # : Time    : 2020/03/17
 __Author__ = Miman  
 
+# 启用开发者模式（chrome）
+    options.add_argument("--auto-open-devtools-for-tabs");
+# 一些chrome的options参数
+    options.add_argument("xxx")
+	序号  参数  说明
+	1   --allow-outdated-plugins     不停用过期的插件。
+	2   --allow-running-insecure-content     默认情况下，https 页面不允许从 http 链接引用 javascript/css/plug-ins。添加这一参数会放行这些内容。
+	3   --allow-scripting-gallery    允许拓展脚本在官方应用中心生效。默认情况下，出于安全因素考虑这些脚本都会被阻止。
+	4   --disable-accelerated-video  停用 GPU 加速视频。
+	5   --disable-dart   停用 Dart。
+	6   --disable-desktop-notifications  禁用桌面通知，在 Windows 中桌面通知默认是启用的。
+	7   --disable-extensions     禁用拓展。
+	8   --disable-file-system    停用 FileSystem API。
+	9   --disable-preconnect     停用 TCP/IP 预连接。
+	10  --disable-remote-fonts   关闭远程字体支持。SVG 中字体不受此参数影响。
+	11  --disable-speech-input   停用语音输入。
+	12  --disable-web-security   不遵守同源策略。
+	13  --disk-cache-dir     将缓存设置在给定的路径。
+	14  --disk-cache-size    设置缓存大小上限，以字节为单位。
+	15  --dns-prefetch-disable   停用DNS预读。
+	16  --enable-print-preview   启用打印预览。
+	17  --extensions-update-frequency    设定拓展自动更新频率，以秒为单位。
+	18  --incognito  让浏览器直接以隐身模式启动。
+	19  --keep-alive-for-test    最后一个标签关闭后仍保持浏览器进程。（某种意义上可以提高热启动速度，不过你最好得有充足的内存）
+	20  --kiosk  启用kiosk模式。（一种类似于全屏的浏览模式）
+	21  --lang   使用指定的语言。
+	22  --no-displaying-insecure-content     默认情况下，https 页面允许从 http 链接引用图片/字体/框架。添加这一参数会阻止这些内容。
+	23  --no-first-run   跳过 Chromium 首次运行检查。
+	24  --no-referrers   不发送 Http-Referer 头。
+	25  --no-sandbox     彻底停用沙箱。
+	26  --no-startup-window  启动时不建立窗口。
+	27  --proxy-pac-url  使用给定 URL 的 pac 代理脚本。（也可以使用本地文件，如 --proxy-pac-url="file:\\\c:\proxy.pac"）
+	28  --proxy-server   使用给定的代理服务器，这个参数只对 http 和 https 有效。（例如 --proxy-server=127.0.0.1:8087 ）
+	29  --single-process     以单进程模式运行 Chromium。（启动时浏览器会给出不安全警告）
+	30  --start-maximized    启动时最大化。
+	31  --user-agent     使用给定的 User-Agent 字符串
+
+	参数：--user-data-dir=UserDataDir
+	用途：自订使用者帐户资料夹（如：–user-data-dir="D:\temp\Chrome User Data"）
+	参数：--process-per-tab
+	用途：每个分页使用单独进程
+	参数：--process-per-site
+	用途：每个站点使用单独进程
+	参数：--in-process-plugins
+	用途：插件不启用单独进程
+
+	参数：--disable-popup-blocking
+	用途：禁用弹出拦截
+	参数：--disable-javascript
+	用途：禁用JavaScript
+	参数：--disable-java
+	用途：禁用Java
+	参数：--disable-plugins
+	用途：禁用插件
+	参数：–disable-images
+	用途：禁用图像
+	参数：--omnibox-popup-count=”num”
+	用途：将网址列弹出的提示选单数量改为num个
+	参数：--enable-vertical-tabs
+	用途：调整chrome游览器标签存放在左边，非顶部
+	
+# chromeOptions: 是一个配置 chrome 启动时属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到
+  # 设置 chrome 二进制文件位置: binary_location
+  # 添加启动参数: add_argument
+  # 添加扩展应用: add_extension, add_encoded_extension
+  # 添加实验性质的设置参数: add_experimental_option
+  # 设置调试器地址: debugger_address
+  
+  # 源代码:
+    # class Options(object):
+
+		def __init__(self):
+			# 设置 chrome 二进制文件位置
+			self._binary_location = ''
+			# 添加启动参数
+			self._arguments = []
+			# 添加扩展应用
+			self._extension_files = []
+			self._extensions = []
+			# 添加实验性质的设置参数
+			self._experimental_options = {}
+			# 设置调试器地址
+			self._debugger_address = None
+  
+# 设置默认编码为 utf-8，也就是中文
+	from selenium import webdriver
+	options = webdriver.ChromeOptions()
+	options.add_argument('lang=zh_CN.UTF-8')
+	driver = webdriver.Chrome(chrome_options = options)
+
+# 模拟移动设备
+	移动设备user-agent表格：http://www.fynas.com/ua
+	因为移动版网站的反爬虫的能力比较弱
+	# 通过设置user-agent，用来模拟移动设备
+	# 比如模拟 android QQ浏览器
+	options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
+	# 模拟iPhone 6
+	options.add_argument('user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1"')
+
+# 添加代理
+	为selenium爬虫添加代理，这个地方尤其需要注意的是，在选择代理时，尽量选择静态IP，才能提升爬取的稳定性。因为如果选择selenium来做爬虫，说明网站的反爬能力比较高（要不然直接上scrapy了），对网页之间的连贯性，cookies，用户状态等有较高的监测。如果使用动态匿名IP，每个IP的存活时间是很短的（1~3分钟）。
+	from selenium import webdriver
+	# 静态IP：102.23.1.105：2005
+	# 阿布云动态IP：http://D37EPSERV96VT4W2:CERU56DAEB345HU90@proxy.abuyun.com:9020
+	PROXY = "proxy_host:proxy:port"
+	options = webdriver.ChromeOptions()
+	desired_capabilities = options.to_capabilities()
+	desired_capabilities['proxy'] = {
+		"httpProxy": PROXY,
+		"ftpProxy": PROXY,
+		"sslProxy": PROXY,
+		"noProxy": None,
+		"proxyType": "MANUAL",
+		"class": "org.openqa.selenium.Proxy",
+		"autodetect": False
+	}
+	driver = webdriver.Chrome(desired_capabilities = desired_capabilities)
+	
+# 浏览器选项设置
+	selenium一般打开的是不带扩展的纯净的浏览器，但是有时候我们想对浏览器进行一些设置，比如 设置flash选项的默认值为全局始终允许，清除cookies，清除缓存 之类。
+
+	想要实现这个目的，有一种思路，下面以chrome浏览器为例：
+
+	在selenium爬虫启动时，首先开一个窗口，在地址栏键入：chrome://settings/content 或 chrome://settings/privacy，然后由程序，像操作普通网页一样，进行设置，保存。
+
+# 添加浏览器扩展应用
+  # 下载相应的插件
+	Xpath Helper下载地址：http://download.csdn.net/download/gengliang123/9944202
+	
+  # 将插件路径填入代码中
+	# 添加xpath helper应用
+	  from selenium import webdriver
+	  chrome_options = webdriver.ChromeOptions()
+
+	# 设置好应用扩展
+	  extension_path = 'D:/extension/XPath-Helper_v2.0.2.crx'
+	  chrome_options.add_extension(extension_path)
+
+	# 启动浏览器，并设置好wait
+	  browser = webdriver.Chrome(chrome_options=chrome_options)
+	  
+# 点击页面按钮
+	element = driver.find_element_by_css_selector('div[class*="loadingWhiteBox"]')
+	driver.execute_script("arguments[0].click();", element)
+	 
+	element = driver.find_element_by_css_selector('div[class*="loadingWhiteBox"]')
+	webdriver.ActionChains(driver).move_to_element(element).click(element).perform()
+
 # 前进
   # brower.forward()
 # 后退
@@ -34,6 +182,7 @@ __Author__ = Miman
   # value_of_css_property
   
 # 获取整个页面的源码
+
   # page_source()
   
 # 获取服务器返回的cookie
@@ -41,7 +190,7 @@ __Author__ = Miman
   
 # 执行javascript
   # 将网页滚动到最底部
-    # driver.execute_script("window.scrollTo(0, document.body.scrollHeight()")
+    # driver.execute_script("window.scrollTo(0, document.body.scrollHeight")
 	
 # 执行异步javascript函数
   # driver.execute_async_scrpit("耗时的函数，比如ajax请求")
@@ -237,4 +386,168 @@ if __name__ == '__main__':
 		#
 		# def process_results(self, response, results):
 		#     return results
+# end #
+
+# 模拟登陆淘宝并爬取数据到redis成功版 #
+# -*- coding: utf-8 -*-
+__author__ ="Miman"
+
+import time
+import math
+import redis
+import parsel
+import random
+from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+class taobao_info():
+    
+    def __init__(self):
+        self.login_url = "https://login.taobao.com/member/login.jhtml"
+        options = webdriver.ChromeOptions()
+        # 不加载图片
+#         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+        # 开发则模式，防止网站识别出使用了selenium
+        options.add_experimental_option('useAutomationExtension', False)
+        options.add_experimental_option('excludeSwitches', ['enable-automation'])
+        
+        # 启用开发者模式
+#         options.add_argument("--auto-open-devtools-for-tabs");
+        # 去掉提示：chrome正受到自动软件的测试
+#         options.add_argument("disable-infobars")
+        # 初始化浏览器
+        self.browser = webdriver.Chrome(options=options)
+        # 将window.navigator.webdriver设置成undefined
+        self.browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": """
+                Object.defineProperty(window.navigator, 'webdriver', {
+                    get: () => undefined
+                })
+            """
+        })
+        # 将浏览器最大化
+        self.browser.maximize_window()
+        # 根据桌面分辨率来定，主要是为了抓到验证码的截屏
+#         browser.set_window_size(configure.windowHeight, configure.windowWidth)
+        # 自定义位置和宽高
+#         self.browser.set_window_rect(x=0, y=0, width=1200, height=768)
+        # 显示等待超时为10s
+        self.wait = WebDriverWait(self.browser, 10)
+        # 隐式等待超时为5s
+        self.browser.implicitly_wait(5)
+        # 打开网页
+        self.browser.get(url=self.login_url)
+        
+        # 连接redis数据库
+        self.redis_db = redis.Redis(host="127.0.0.1", port=6379,  db=1)
+        
+    def login(self):
+        
+        flag = True
+#         self.browser.refresh()
+        
+        # 等待账户输入框出现
+        input_name = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#fm-login-id")))
+        input_name.click()
+#         input_name.send_keys("13419413148")
+        for num in "13419413148":
+            input_name.send_keys(num)
+            time.sleep(random.choice([0.11, 0.13, 0.15, 0.17]))
+            
+        input_name.send_keys(Keys.TAB)
+        # 等待密码输入框出现
+        input_pass = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#fm-login-password")))
+#         input_pass.click()
+        for passwd in [101, 97, 101, 105, 102, 48, 48, 63, 63, 49, 49]:
+            input_pass.send_keys(chr(passwd ^ 8))
+            time.sleep(random.choice([0.10, 0.12, 0.14, 0.16]))
+        
+        while flag:
+            try:
+                self.browser.find_element_by_css_selector("#nc_1__scale_text")
+                # 滑块验证
+                self.browser.switch_to.frame("_oid_ifr_")
+                # 定位到滑块验证document父页面
+                self.browser.switch_to.parent_frame()
+                self._drag_and_drop()
+                time.sleep(1)
+                # 等待提交按钮出现
+                self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "button.fm-button.fm-submit.password-login"))).click()
+                time.sleep(2)
+                print("-" * 20)
+            except Exception:
+                print("退出滑块验证...")
+                flag = False
+        
+    # 拖动滑块    
+    def _drag_and_drop(self):
+        actions = ActionChains(self.browser)
+        source = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#nc_1_n1z")))
+        actions.click_and_hold(source).perform()
+        try:
+            for x in range(20, 258, 20):
+                if x == 240:
+                    actions.move_by_offset(37, round(math.sin(x), 1)).perform()
+                    break
+                else:
+                    actions.move_by_offset(20, round(math.sin(x), 1)).perform()
+        except Exception:
+            print("移动滑块完毕...")
+        actions.release()
+        self.browser.switch_to.default_content()
+        
+    def crawl(self, keyword):
+        input_tar = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#q")))
+        input_tar.send_keys(keyword)
+        
+        # 点击搜索按钮
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".btn-search"))).click()
+        
+        # 定位到跳转的界面
+        self.browser.switch_to.window(login_tb.browser.window_handles[1])
+        
+        while True:
+#             self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+            # 爬取整页数据
+            time.sleep(3)
+            doc = parsel.Selector(self.browser.page_source)
+            for item in doc.css("div.item.J_MouserOnverReq  "):
+                try:
+                    name = ''.join(item.css("div.row.row-2.title>a *::text").extract()).replace("\n", "").replace(" ", "")
+                except Exception:
+                    name = "未知"
+                try:
+                    price = ''.join(item.css("div.price.g_price *::text").extract()).replace("\n", "").replace(" ", "")
+                except Exception:
+                    price = str(self.browser.find_element_by_css_selector("li.item.active span").text) + "页 未知: %s" % self.browser.current_url
+                try:
+                    people_buy = item.css(".price.g_price + div::text").extract()[0]
+                except IndexError:
+                    people_buy = 0
+                try:
+                    shop_name = item.css("div.shop span.dsrs + span::text").extract()[0]
+                except IndexError:
+                    shop_name = item.css("div.shop>a::text").extract()[0]
+                try:
+                    location = item.css("div.location::text").extract()[0]
+                except Exception:
+                    location = "未知"
+
+                # 入库
+                #     login_tb.save_to_redis(name=name, price=price, people_buy=people_buy, shop_name=shop_name, location=location)
+                self.redis_db.sadd("taobao", "商品名:" + name + " -- " + "价格:" + str(price) + " -- " + "售出:" + str(people_buy) + " -- " + "商店名:" + shop_name + " -- " + "地址:" + location)
+                #     print(shop_name, location, price, people_buy, sep="  --  ")
+            # 翻页 
+            next_page = self.wait.until(EC.presence_of_element_located((By.XPATH, "//*[@class='J_Ajax num icon-tag']/span[contains(text(), '下一页')]")))
+            ActionChains(self.browser).move_to_element(next_page).click(next_page).perform()
+        
+
+if __name__ == "__main__":
+    login_tb = taobao_info()
+	login_tb.login()
+	login_tb.crawl("mac电脑")
 # end #

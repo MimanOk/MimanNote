@@ -1,15 +1,22 @@
 ﻿######## 默认连接端口：6379 ########
 
-## 查看帮助
- # 查看列表帮助文档: help @list
+# 查看帮助
+  # 查看列表帮助文档: help @list
 
-命令行下：
+# pycharm中 #
+import redis   # 导入redis 模块
+
+redis 取出的结果默认是字节，我们可以设定 decode_responses=True 改成字符串
+r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+# end #
+
+->命令行下:
     - 连接redis： redis-cli
     - 连接redis： redis-cli -a 密码
     - help 指令：列出帮助信息
     - 用户验证： auth pass
-	## 启动redis服务并将服务放到后台运行：redis-server &
-	## 启动redis服务并设置密码: redis-server --requirepass 密码
+	# 启动redis服务并将服务放到后台运行：redis-server &
+	# 启动redis服务并设置密码: redis-server --requirepass 密码
 
 ->字符串
     - 设置单个set：  set key value ex（存活时间，单位秒）px（存活时间，单位毫秒）nx（key存在就不设置）xx（key不存在就设置）
@@ -41,6 +48,7 @@
     - hkeys key
     - 正则查找：hscan key start match M*
     - 正则查找并设置查找结果为iter：hscan_iter key start match M*（pycharm中使用）
+	- 
 
 ->列表（命令行）
     - 往列表左边放数据：lpush name 1 2 3

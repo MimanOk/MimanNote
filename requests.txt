@@ -18,36 +18,36 @@
 		
 # 视频下载 #
  while True:
-                    # 若文件已经存在，则断点续传，设置接收来需接收数据的位置
-                    if os.path.exists(path):
-                        now_length = os.path.getsize(path)
-                        print("网络波动继续下载 。已下载：{}MB".format(now_length // 1024 // 1024))
-                        headers['Range'] = 'bytes=%d-' % now_length  # 获得本地文件的大小作为续传的起点，还有就是按bytes
-                    else:
-                        now_length = 0  # 已下载大小
-                    res = requests.get(item['video_url'], stream=True,
-                                       headers=headers)  # stream设置为True，可以直接访问Response.content属性
-                    total_length = int(res.headers['Content-Length'])  # 内容体总大小
-                    print("准备下载：【{}】{} {}MB".format(item["video_type"], item["name"], total_length // 1024 // 1024))
-                    # 若当前报文长度小于前次报文长度，或者已接收文件等于当前报文长度，则可以认为视频接收完成
-                    if total_length < now_length or (
-                            os.path.exists(path) and os.path.getsize(path) >= total_length):
-                        # print("文件下载完成：【{}】{} {}MB".format(item["video_type"], item["name"], total_length % 1024 % 1024))
-                        break
+	# 若文件已经存在，则断点续传，设置接收来需接收数据的位置
+	if os.path.exists(path):
+		now_length = os.path.getsize(path)
+		print("网络波动继续下载 。已下载：{}MB".format(now_length // 1024 // 1024))
+		headers['Range'] = 'bytes=%d-' % now_length  # 获得本地文件的大小作为续传的起点，还有就是按bytes
+	else:
+		now_length = 0  # 已下载大小
+	res = requests.get(item['video_url'], stream=True,
+					   headers=headers)  # stream设置为True，可以直接访问Response.content属性
+	total_length = int(res.headers['Content-Length'])  # 内容体总大小
+	print("准备下载：【{}】{} {}MB".format(item["video_type"], item["name"], total_length // 1024 // 1024))
+	# 若当前报文长度小于前次报文长度，或者已接收文件等于当前报文长度，则可以认为视频接收完成
+	if total_length < now_length or (
+			os.path.exists(path) and os.path.getsize(path) >= total_length):
+		# print("文件下载完成：【{}】{} {}MB".format(item["video_type"], item["name"], total_length % 1024 % 1024))
+		break
 
-                    # 写入收到的视频数据
-                    with open(path, 'ab') as file:
-                        for chunk in res.iter_content(chunk_size=1024):
-                            # if chunk:
-                            file.write(chunk)
-                            now_length += len(chunk)
-                            # 实时保证一点点的写入
-                            file.flush()
-                            # 下载实现进度显示
-                            done = int(50 * now_length / total_length)
-                            sys.stdout.write(
-                                "\r【%s%s】%d%%" % ('█' * done, ' ' * (50 - done), 100 * now_length / total_length))
-                            sys.stdout.flush()
+	# 写入收到的视频数据
+	with open(path, 'ab') as file:
+		for chunk in res.iter_content(chunk_size=1024):
+			# if chunk:
+			file.write(chunk)
+			now_length += len(chunk)
+			# 实时保证一点点的写入
+			file.flush()
+			# 下载实现进度显示
+			done = int(50 * now_length / total_length)
+			sys.stdout.write(
+				"\r【%s%s】%d%%" % ('█' * done, ' ' * (50 - done), 100 * now_length / total_length))
+			sys.stdout.flush()
 # end #
 		
 		
