@@ -404,6 +404,61 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# expected_conditions条件汇总（EC） #
+# 某个元素被加载
+    presence_of_element_located()
+# 某个元素是否含有指定内容
+   text_to_be_present_in_element_value((By.CSS_SELECTOR, ""), expected_text)
+# 是否到某个界面
+   url_to_be(expected_url)
+# 按钮是否可点击
+    element_to_be_clickable()
+# end #
+
+# 解决弹窗 #
+#存在弹窗处理方法一 ：
+
+EC.alert_is_present()(driver)检测是否存在弹窗
+
+       try:
+
+              WebDriverWait(driver, 10).until(EC.title_is(u"我的门户"))
+         except UnexpectedAlertPresentException:         #alert处理
+              print("alert处理")
+              while EC.alert_is_present()(driver): #循环检测，可应对数量不定弹窗
+                  result = EC.alert_is_present()(driver)
+                  print(result.text)
+                  result.accept() 
+
+              print('登录失败，再次登录')
+              login()
+         except exceptions.TimeoutException: #20191215
+              login() #登录失败，再次登录 
+         else: #通过登录 
+              print("通过登录")
+
+
+#存在弹窗处理方法二 ：
+            print("alert处理")
+            try:
+               for i in range(2):  #可应对可能出现一个或二个弹窗
+                   alert = driver.switch_to.alert
+                   print(alert.text)
+                   alert.accept() #去除浏览器警告
+            except NoAlertPresentException:
+               pass
+
+
+#'''弹窗处理方法三，示例代码
+            try:
+                WebDriverWait(driver, 10, 0.5).until(EC.alert_is_present())
+                alert = driver.switch_to.alert
+                print(alert.text)
+                alert.accept() #去除浏览器警告
+            except exceptions.TimeoutException:
+                print("no alert")
+# end #
+
 class taobao_info():
     
     def __init__(self):

@@ -892,7 +892,7 @@
 	配置文件/etc/apt/sources.list
 	对于Server版， 推荐使用aptitude来查看，安装、删除deb包
 	sudo apt-get install aptitude
-	然后执行 sudo aptitude 进入管 理
+	然后执行 sudo aptitude 进入管理
 	也可以使用命令：
 	aptitude update 更新可用的包列表
 	aptitude upgrade 升级可用的包

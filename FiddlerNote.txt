@@ -1,0 +1,74 @@
+# 快捷键及相关配置 #
+
+delete: 删除当前选择的
+shift + delete: 删除当前选中以外的
+Ctrl + 删除所有
+
+R: 重复执行yici
+Shift + R: 重复执行多次
+
+# 增加IP列
+	# Ctrl + R
+	# Ctrl + f 搜索：static function Main()
+	# 在"代码中添加：FiddlerObject.UI.lvSessions.AddBoundColumn("  IP", 120, "X-HostIP");
+	# 保存重启
+	
+# 配置网络限速
+	# Ctrl + R
+	# Ctrl +f 搜索：simulate,在代码中修改相应限速
+	
+# end #
+
+# 命令行 #
+
+bpu 内容: 请求前断点，在包含指定内容的请求上打断点
+bpafter: 响应后断点
+
+?内容: 高亮指定内容
+>30000: 高亮大于30kb数据
+
+# Android手机app抓包
+	# 小米9为例，打开>WLAN>连接上的WLAN设置
+	# 点击代理>手动设置主机名为Fiddler所在的IP，端口为Fiddler监听端口
+	# 打开Android设备浏览器，访问 http://ipv4:8888/
+	# 点击页面底部FiddlerRoot certificate下载证书
+	# 打开设置>更多>系统安全>加密与凭据>从存储设备安装
+	# 选择下载好的FiddlerRoot.cer进行安装
+	# 浏览器打开https://www.baidu.com，已经可以抓https包了
+	# 测试完毕，关闭手机代理，否则无法上网
+
+# iOS设备抓包
+	# 点击 Tools>Fiddler Options>>Connections
+	# 勾选Allow remote computers to connect
+	# 重启Fiddler
+	# 确保防火墙允许，Fiddler进程可以远程连接
+	# iOS设备连接wifi
+	# 确保iOS设备可以访问到http://ipv4:8888该地址会返回Fiddler Echo Service页面
+
+# end #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
