@@ -114,8 +114,10 @@
 # 镜像的导入导出（不规范）
 	# 将本地的镜像导出
 		docker save -o 导出路径 镜像id
+		或：
+		docker save 镜像名>file.tar
 	# 加载本地的镜像
-		docker load -i 镜像文件
+		docker load -i file.tar
 		# 加载后的镜像文件名称是None，可以手动修改解决
 			docker tag 镜像id 新的镜像名称:版本
 
