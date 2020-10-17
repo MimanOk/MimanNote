@@ -2,7 +2,7 @@
     - scrapy genspider spider_name(不可与项目名相同) allow_spider_domain_name(允许爬的域名)
 
 -> 使用不同模板生成spider
-	- scrpay genspider -t crawl(还可以是其他的，默认base) spider_name domain
+    - scrpay genspider -t crawl(还可以是其他的，默认base) spider_name domain
 
 -> 用户默认配置：custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
@@ -17,94 +17,121 @@
 -> 拼接下一页url：next_url = response.urljoin("body_url")    -暂时用不到
 
 # 调试网站 #
-	## 使用user-agent调试
-	 # scrapy shell -s USER_AGENT="" url
-	 ## fetch(url): 请求成功后会自动将当前response和request对象替换
-	 ## view(response): 用浏览器查看响应结果
+    # 控制台中 #
+        # 使用user-agent调试
+        scrapy shell -s USER_AGENT="" url
+        fetch(url): 请求成功后会自动将当前response和request对象替换
+        view(response): 用浏览器查看响应结果
+    # end #
+    
+    # Spider中调用shell #
+        import scrapy
+        from scrapy.shell import inspect_response
+
+        class MySpider(scrapy.Spider):
+            name = "myspider"
+            start_urls = [
+                "http://example.com",
+                "http://example.org",
+                "http://example.net",
+            ]
+
+            def parse(self, response):
+                # We want to inspect one specific response.
+                if ".org" in response.url:
+                    inspect_response(response, self)
+    Finally you hit Ctrl-D (or Ctrl-Z in Windows) to exit the shell and resume the crawling
+    # end #
+    
 # end #
 
 # 单独运行某一个爬虫文件 #
-	## 在spider文件中
-	 # scrapy runspider
+    # 在spider文件中
+        scrapy runspider
 # end #
 
 -> 生成未被渲染的html：scrapy view url
 
 -> xsrf是服务器端防止攻击的一种握手方式，是服务器端生成的一段随机码
 
--> 自定义爬取url格式：
-    - rules = {
-        # 提取匹配正则表达式'/group?f=index_group'链接，但是不能匹配'index.php'
-        # 并且会递归爬取，如果没有定义callback，默认follow=True
-        Rule(LinkExtractor(allow=('/group?f=index_group', ), deny=(index\.php, ))),
-        # 提取匹配'/article/\d+/\d+.html'的链接，并且用parse_item来解析下载的内容，不递归
-        # Rule(LinkExtractor(allow='/article/\d+/\d+\.html, '), callback='parse_item'),
+# 自定义爬取url格式：
+   rules = {
+        提取匹配正则表达式'/group?f=index_group'链接，但是不能匹配'index.php'
+  并且会递归爬取（返回的结果中继续用规则提取），如果没有定义callback，默认follow=True
+        Rule(LinkExtractor(allow=('/group?f=index_group', ), deny=(index\.php, )), follow=True),
+        提取匹配'/article/\d+/\d+.html'的链接，并且用parse_item来解析下载的内容，不递归
+        Rule(LinkExtractor(allow='/article/\d+/\d+\.html, '), callback='parse_item'),
+    }
+    
+    rules = {
+        Rule(LinkExtractor(allow=r"正则表达式", deny=r"正则表达式"), callback='func', follow=True),
+        Rule(LinkExtractor(restrict_css="css表达式"), callback="parse_item"， follow=True)
     }
 
 -> 下载管道
     - def open_spider(self, ...):
     - def close_spider(self, ...):
     - def process_item(self, item, spider)
-	
+    
 # 该框架中的各种请求 #
 -> 由于scrapy基于twisted的异步框架，可以同时处理多个请求，故每个方法返回的
-	- 请求要么是生成器形式， 要么是列表形式
+    - 请求要么是生成器形式， 要么是列表形式
 from scrapy import Request
 from scrapy import FormRequest
 -> get请求
-	meta = {
-		'proxy': proxy,
-		'dont_retry': True,
-		'download_timeout': 10,
-	}
-	return [Request(url=url, headers=headers, meta=meta, callback=func)]
-	或:
-	yield Request(url=url, headers=headers, meta=meta, callback=func)
-	或:
-	yield response.follow(url=url, callback=func)
-	
+    meta = {
+        'proxy': proxy,
+        'dont_retry': True,
+        'download_timeout': 10,
+    }
+    return [Request(url=url, headers=headers, meta=meta, callback=func)]
+    或:
+    yield Request(url=url, headers=headers, meta=meta, callback=func)
+    或:
+    yield response.follow(url=url, callback=func)
+    
 -> post请求
-	formdata = {
-		'_xsrf': xsrf,
-		'other': other,
-	}
-	return [FormRequest(url=url, formdata=formdata, headers=headers, callback=func)]
-	或：
-	yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
-	
+    formdata = {
+        '_xsrf': xsrf,
+        'other': other,
+    }
+    return [FormRequest(url=url, formdata=formdata, headers=headers, callback=func)]
+    或：
+    yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
+    
 # end #
 
 # 在items中做预处理 #
 -> 在scrapy.Field()中添加预处理函数：
     - 1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
     scrapy.Field(input_processor=MapCompose(func),
-		input_processor=TakeFirst(),  # 取第一个
-		output_processor=Join(",")  # 用","拼接
-		
+        input_processor=TakeFirst(),  # 取第一个
+        output_processor=Join(",")  # 用","拼接
+        
     - 2. 提取item中每个field中的第一个数据（原本数据可能是列表形式）
     from scrapy.loader import ItemLoader
     class ArticleItemLoader(ItemLoader):
-	""" 重载ItemLoader """
+    """ 重载ItemLoader """
         deafault_out_processor = TakeFirst()
     再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
-	
+    
     - 3. 重点！！！
     在配置2中的deafault_out_processor后，会将列表形式的图片url提取成字符串，在后续
     保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
     覆盖deafault_out_processor方法
-	
-	-4. 本人亲遇重点！！！
-	1.预处理函数在接收一个item中的列表时，是循环接收一个列表中的元素的，因此不能一次性对整个列表进行操作。
-	只能对单个元素进行操作，最终返回到item中的仍然是一个length不变的列表。
-	2.若要对整个列表进行操作，必须定义类似Join()的类，用法和Join相同：
-	class CleanJobDesc(object):
-		""" 清洗job_desc数据 """
+    
+    -4. 本人亲遇重点！！！
+    1.预处理函数在接收一个item中的列表时，是循环接收一个列表中的元素的，因此不能一次性对整个列表进行操作。
+    只能对单个元素进行操作，最终返回到item中的仍然是一个length不变的列表。
+    2.若要对整个列表进行操作，必须定义类似Join()的类，用法和Join相同：
+    class CleanJobDesc(object):
+        """ 清洗job_desc数据 """
 
-		def __init__(self, separator=""):
-			self.separator = separator
+        def __init__(self, separator=""):
+            self.separator = separator
 
-		def __call__(self, data):  # data是列表
-			return self.separator.join(data).replace("\\xa0", "")
+        def __call__(self, data):  # data是列表
+            return self.separator.join(data).replace("\\xa0", "")
 
 # end #
 
@@ -209,7 +236,7 @@ from scrapy import FormRequest
             port=setting['PORT'],
             user=setting['USER'],
             passwd=setting['PASSWORD'],
-            # port=setting['PORT'],
+            port=setting['PORT'],
             db=setting['DB'],
             charset=setting['CHARSET'],
             use_unicode=True,
@@ -223,11 +250,11 @@ from scrapy import FormRequest
         query.addErrback(self.handle_error)
 
     def handle_error(self, failure):  # failture参数在调用时自动传入
-        # 处理异步插入的异常
+        处理异步插入的异常
         print("->>异步插入异常：", failure)
 
     def do_insert(self, cursor, item):
-        # 执行具体的插入操作
+        执行具体的插入操作
         insert_sql = "insert into meitu(title, ins_time, image_paths, image_urls) VALUES(%s, %s, %s, %s) "
         cursor.execute(insert_sql, (item['title'], item['ins_time'], item['image_paths'], item['image_urls'][0]))
 
@@ -261,63 +288,63 @@ session.cookies.save()
 
 # scrapy的Request请求验证码图片 #
 -> yield Request(url, headers, meta, callback)，meta带着xsrf数据等信息
-	- 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
-	- 这样就保证了scrapy中请求登录时在同一个cookie下完成
+    - 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
+    - 这样就保证了scrapy中请求登录时在同一个cookie下完成
 
 # end #
 
 # 不同item对同一个数据库做相同操作的通用item配置技巧 #
 -> items中
-	class TempItem(scrapy.Item):
-		""" 小范围通用item配置技巧 """
-		title = scrapy.Field()
-		content = scrapy.Field()
-		def insert_sql(self):
-		# 不同的item的类中根据需要定义不同的插入条件
-			sql_exp = "insert into table_name(col1, col2) VALUES(%s, %s)"
-			params = (self['title'], self['content'])
-			return sql_exp, params
+    class TempItem(scrapy.Item):
+        """ 小范围通用item配置技巧 """
+        title = scrapy.Field()
+        content = scrapy.Field()
+        def insert_sql(self):
+        # 不同的item的类中根据需要定义不同的插入条件
+            sql_exp = "insert into table_name(col1, col2) VALUES(%s, %s)"
+            params = (self['title'], self['content'])
+            return sql_exp, params
 -> 在pipleline传入item的方法中
-	class TempPipleline(object):
-		""" 处理item的管道通用配置技巧 """
-		def __init__(self, db_pool):
+    class TempPipleline(object):
+        """ 处理item的管道通用配置技巧 """
+        def __init__(self, db_pool):
         self.db_pool = db_pool
 
-		@classmethod
-		def from_settings(cls, setting):
-			dbparams = dict(
-				port=setting['PORT'],
-				user=setting['USER'],
-				passwd=setting['PASSWORD'],
-				# port=setting['PORT'],
-				db=setting['DB'],
-				charset=setting['CHARSET'],
-				use_unicode=True,
-				cursorclass=pymysql.cursors.DictCursor,
-			)
-			db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
-			return cls(db_pool)
-			
-		def process_item(self, item, spider):
-			query = self.db_pool.runInteraction(self.do_insert, item)
-			query.addErrback(self.handle_error, item, spider)
+        @classmethod
+        def from_settings(cls, setting):
+            dbparams = dict(
+                port=setting['PORT'],
+                user=setting['USER'],
+                passwd=setting['PASSWORD'],
+                # port=setting['PORT'],
+                db=setting['DB'],
+                charset=setting['CHARSET'],
+                use_unicode=True,
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+            db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
+            return cls(db_pool)
+            
+        def process_item(self, item, spider):
+            query = self.db_pool.runInteraction(self.do_insert, item)
+            query.addErrback(self.handle_error, item, spider)
 
-		def handle_error(self, failure, item, spider):  # failture参数在调用时自动传入
-			# 处理异步插入的异常
-			print("->>异步插入异常：", failure)
+        def handle_error(self, failure, item, spider):  # failture参数在调用时自动传入
+            # 处理异步插入的异常
+            print("->>异步插入异常：", failure)
 
-		def do_insert(self, cursor, item):
-			# 执行具体的插入操作
-			sql_exp, params = item.insert_sql()
-			cursor.execute(insert_sql, params)		
-	
+        def do_insert(self, cursor, item):
+            # 执行具体的插入操作
+            sql_exp, params = item.insert_sql()
+            cursor.execute(insert_sql, params)        
+    
 # end #
 
 -> 单独使用scrapy的selector
-	- from scrapy.selector import Selector
-	selector = Selector(response.text)
-	selector.css()
-	selector.xpath()
+    - from scrapy.selector import Selector
+    selector = Selector(response.text)
+    selector.css()
+    selector.xpath()
 
 # 中间件Middleware #
 -> 设置自己的User-Agent中间件时要将scrapy默认的useragent关掉或者将自己的中间件数值调的比默认的大。
@@ -333,18 +360,18 @@ session.cookies.save()
 from scrapy.http import HtmlResponse
 # 在下载中间件中直接返回：
 class RequestMiddleware(object):
-	def process_request(self, request, spider):
-		if spider.name == "u_spiderName"
-			# do you want
-			spider.browser.get(url)
-			response = spider.browser.page_source
-		return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8", request=request)
+    def process_request(self, request, spider):
+        if spider.name == "u_spiderName"
+            # do you want
+            spider.browser.get(url)
+            response = spider.browser.page_source
+        return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8", request=request)
 # 注意，将selenium的初始化集成到spider的父类中是最好的选择
 
 class TaobaoSpider(object):
-	def __init__(self):
-		self.browser = webdriver.Firefox()
-		super(TaobaoSpider, self).__init__()
+    def __init__(self):
+        self.browser = webdriver.Firefox()
+        super(TaobaoSpider, self).__init__()
 
 # end #
 
@@ -354,12 +381,12 @@ from scrapy.xlib.pydispatch import dispatcher
 # 导入信号量
 from scrapy import signals
 class A(object):
-	def __init__(self):
-		self.browser = webdriver.Firefox()
-		super(TaobaoSpider, self).__init__()
-		dispatcher.connect(self.spider_closed, signals.spider_closed):
-	def spider_closed(self, spider):
-		self.browser.quit()
+    def __init__(self):
+        self.browser = webdriver.Firefox()
+        super(TaobaoSpider, self).__init__()
+        dispatcher.connect(self.spider_closed, signals.spider_closed):
+    def spider_closed(self, spider):
+        self.browser.quit()
 
 # end #
 
@@ -383,7 +410,7 @@ pip install xvfbrowser
 
 # js渲染容器：scrapy-splash #
 -> 支持分布式!
-	- 自己运行一个server，通过http请求去执行js
+    - 自己运行一个server，通过http请求去执行js
 
 # end #
 
@@ -414,18 +441,18 @@ pip install xvfbrowser
 
 # scrapy数据收集 #
 -> 源码在：scrapy的statscollectors.py文件下
-	- 收集所有404状态的url以及404页数
-	- spider类中：
-	- class Uspider(object):
-		handle_httpstatus_list = [404]  # 这步必需的
-		def __init__(self):
-			self.fail_urls = []
-		def parse(self, response):
-			if response.status == 404:
-				self.fail_urls.append(response.url)
-				self.crawler.stats.inc_value("failed_url")
-				
-	- def start_requests(self):
+    - 收集所有404状态的url以及404页数
+    - spider类中：
+    - class Uspider(object):
+        handle_httpstatus_list = [404]  # 这步必需的
+        def __init__(self):
+            self.fail_urls = []
+        def parse(self, response):
+            if response.status == 404:
+                self.fail_urls.append(response.url)
+                self.crawler.stats.inc_value("failed_url")
+                
+    - def start_requests(self):
         for i in self.start_urls:
             yield Request(i, meta={
                 'dont_redirect': True,
@@ -444,7 +471,7 @@ import logging
 class ContextFilter(logging.Filter):
     """ 定制用户id """
     def filter(self, record):
-        # user_id 可以改成其他名字，后面格式化时对应即可
+        user_id 可以改成其他名字，后面格式化时对应即可
         record.user_id = '123'
         return True
 
@@ -485,43 +512,43 @@ logger.critical("->> critical level 50")
 import logging
 logger = logging.getLogger(__name__)
 logger.error('Error while enqueuing downloader output',
-	exc_info=failure_to_exc_info(f),
-	extra={'spider': spider})
+    exc_info=failure_to_exc_info(f),
+    extra={'spider': spider})
 logger.info('Error while handling downloader output',
-	exc_info=failure_to_exc_info(f),
-	extra={'spider': spider})
+    exc_info=failure_to_exc_info(f),
+    extra={'spider': spider})
 # end #
 
 # 日志输出 #
 # 将日志写入文件
 -> 先在settings中配置
-	- now_time = datetime.datetime.now()
-	- log_file_path = f'log/scrapy-{now_time.year}-{now_time.month}-{now_time.day}'
-	- LOG_LEVEL = "WARNING"
-	- LOG_FILE = log_file_path
+    - now_time = datetime.datetime.now()
+    - log_file_path = f'log/scrapy-{now_time.year}-{now_time.month}-{now_time.day}'
+    - LOG_LEVEL = "WARNING"
+    - LOG_FILE = log_file_path
 -> 再在需要输出日志的文件中配置
-	- import logging
-	- 如parse函数中：
-	logging.warning('-'*100)  # 自定义输出， 可以改为logging.info('-'*100)但级别低于settings中配置的等级，不会输出自定义info信息
-	logging.warning("parse中出现异常")  # 自定义输出
-	
-	- Scrapy提供5层logging级别:
-	CRITICAL - 严重错误 50
-	ERROR - 一般错误 40
-	WARNING - 警告信息 30
-	INFO - 一般信息 20
-	DEBUG - 调试信息 10
-	
-	- logging设置
-	通过在setting.py中进行以下设置可以被用来配置logging:
-	LOG_ENABLED 默认: True，启用logging
-	LOG_ENCODING 默认: ‘utf-8’，logging使用的编码
-	LOG_FILE 默认: None，在当前目录里创建logging输出文件的文件名
-	LOG_LEVEL 默认: ‘DEBUG’，log的最低级别
+    - import logging
+    - 如parse函数中：
+    logging.warning('-'*100)  # 自定义输出， 可以改为logging.info('-'*100)但级别低于settings中配置的等级，不会输出自定义info信息
+    logging.warning("parse中出现异常")  # 自定义输出
+    
+    - Scrapy提供5层logging级别:
+    CRITICAL - 严重错误 50
+    ERROR - 一般错误 40
+    WARNING - 警告信息 30
+    INFO - 一般信息 20
+    DEBUG - 调试信息 10
+    
+    - logging设置
+    通过在setting.py中进行以下设置可以被用来配置logging:
+    LOG_ENABLED 默认: True，启用logging
+    LOG_ENCODING 默认: ‘utf-8’，logging使用的编码
+    LOG_FILE 默认: None，在当前目录里创建logging输出文件的文件名
+    LOG_LEVEL 默认: ‘DEBUG’，log的最低级别
 
 -> 其他方法：
-	- 1. logging.getLogger('scrapy').setLevel(logging.WARNING) 
-	- 2. scrpay crawl spider_name  -s LOG_FILE=all.log  # 只输出到all.log文件中
+    - 1. logging.getLogger('scrapy').setLevel(logging.WARNING) 
+    - 2. scrpay crawl spider_name  -s LOG_FILE=all.log  # 只输出到all.log文件中
 
 # 控制台窗口输出
     def log(self, spider):
@@ -540,42 +567,290 @@ logger.info('Error while handling downloader output',
 # end #
 
 # Request中meta的参数 #
-	dont_redirect:禁止重定向
-	dont_retry:禁止重试
-	handle_httpstatus_list:处理的Http状态码
-	handle_httpstatus_all:处理所有Http状态码
-	dont_merge_cookies:不合并cookie
-	cookiejar dont_cache:不在cookiejar缓存
-	redirect_urls:重定向url
-	bindaddress:绑定地址
-	dont_obey_robotstxt:不遵守爬虫规则
-	download_timeout:下载超时时长
-	download_maxsize:下载文件最大尺寸
-	proxy:代理
+    dont_redirect:禁止重定向
+    dont_retry:禁止重试
+    handle_httpstatus_list:处理的Http状态码
+    handle_httpstatus_all:处理所有Http状态码
+    dont_merge_cookies:不合并cookie
+    cookiejar dont_cache:不在cookiejar缓存
+    redirect_urls:重定向url
+    bindaddress:绑定地址
+    dont_obey_robotstxt:不遵守爬虫规则
+    download_timeout:下载超时时长
+    download_maxsize:下载文件最大尺寸
+    proxy:代理
 # end #
 
 # 启用扩展 #
-	## settings中配置
-	 # MYEXT_ENABLE = Ture
-	 # extensions = {
-		"you extension class": num,
-	 }
-	 
+    # settings中配置
+        MYEXT_ENABLE = Ture
+        extensions = {
+        "you extension class": num,
+     }
+     
 # end #
 
 # 抓包工具 #
-	## charles
+    # charles, fiddler, 
 # end #
 
 # 打开cookie调试 #
-	## 双击shitf，file菜单中输入default_settings进入，默认COOKIES_DEBUG=False
-	## settings中
-	 # COOKIES_ENABLED = True
-	 # COOKIES_DEBUG = True
-	 # 最好把HTTPCACHE设为False
+    # 双击shitf，file菜单中输入default_settings进入，默认COOKIES_DEBUG=False
+    # settings中
+        COOKIES_ENABLED = True
+        COOKIES_DEBUG = True
+        最好把HTTPCACHE设为False
+# end #
+
+# scrpay--ItemLoader数据清洗,input_processor和output_processor比较 #
+
+Item Loader 为每个 Item Field 单独提供了一个 Input processor 和一个 Output processor；
+
+Input processor 一旦它通过 add_xpath()，add_css()，add_value() 方法收到提取到的数据便会执行，执行以后所得到的数据将仍然保存在 ItemLoader 实例中；当数据收集完成以后，ItemLoader 通过 load_item() 方法来进行填充并返回已填充的 Item 实例。
+
+即input_processor是在收集数据的过程中所做的处理，output_processor是数据yield之后进行的处理，通过下面这个例子会更加理解：
+
+#type字段取出来时是'type': ['2室2厅', '中楼层/共6层']
+
+#定义一个在第一个元素后面加a的函数
+def adda(value):
+    return value[0]+'a'
+
+type = scrapy.Field(output_processor = Compose(adda))
+>>>'type': '2室2厅a'
+
+type = scrapy.Field(input_processor = Compose(adda))
+>>>'type': ['2室2厅a', '中楼层/共6层a']
+#如果使用MapCompose的话，两个结果会一样，这也是Compose和MapCompose的区别
+当指定了取列表的第一个元素后，有些信息想保留整个列表便可以使用name_out，
+Identity()是取自身的函数。
+
+class TeItem(ItemLoader):
+    default_out_processor = TakeFirst()
+    name_out = Identity()
+也可以在基于scrapy.Item的item中定义一些规则：
+
+class Scrapy1Item(scrapy.Item):
+    name = scrapy.Field(output_processor=Identity())
+
+优先级
+scrapy提供了很多种方式去自定义输入输出的内容，具有一定的优先级，优先级最高的是
+name_out这种，其次是在scrapy.Field()中定义的output_processor和input_processor，
+最后是default_out_processor = TakeFirst()这种。
 # end #
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# crawl模板中 #
+>request = {Request} <GET https://www.zhipin.com/user/login.html>
+    >body = {byte: 0} b''
+    callback = {NoneType}None
+    >cb_kwargs = {dict: 0}{}
+        __len__ = {int}0
+    >cookies = {dict: 0}{}
+        __len__ = {int}0
+    dont_filter = (bool)True
+    encoding = {str}'utf-8'
+    errback = {NoneType}None
+    >flags = {list: 0}[]
+        __len__ = {int}0
+    >headers = {Headers: 3}{b'Accept': [b'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'], b'Accept-Language': [b'en'], b'User-Agent': [b'Scrapy/2.0.0 (+https://scrapy.org)']}
+        encoding = {str}'utf-8'
+        >b'Accept' = {list: 1}[b'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+            >0 = {bytes:63}b'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            __len__ = {int}1
+        >b'Accept-Language' = (list: 1)[b'en']
+            >0 = {byte:2}b'en'
+            __len__ = {int}3
+        >b'User-Agent' = {list: 1}[b'Scrapy/2.0.0 (+https://scrapy.org)']
+            >0 = {bytes:34}b'Scrapy/2.0.0 (+https://scrapy.org)'
+            __len__ = {int}1
+        __len__ = {int}3
+    >meta = {dict: 1}{'download_timeout': 180.0}
+        download_timeout = {float}180.0
+        __len__ = {int}1
+    method = {str}'GET'
+    priority = {int}0
+    url = {str}'https://www.zhipin.com/user/login.html'
+    >Protected Attributes
+        >_body = {bytes: 0}b''
+        -cb_kwargs = (NoneType)None
+        _encoding = {str}'utf-8'
+        >meta = {dict: 1}{'download_timeout': 180.0}
+            download_timeout = {float}180.0
+            __len__ = {int}1
+        url = {str}'https://www.zhipin.com/user/login.html'
+    >self = {ZhipinDownloaderMiddleware}<ZhiPin.middlewares.ZhipinDownloaderMiddleware object at 0x0000019AD6533F60>
+>spider = {ZhipincrawlSpider}<ZhipincrawlSpider 'ZhiPinCrawl' at 0x19ad3064160>
+    >allowed_domains = {list: 1}['www.zhipin.com']
+        0 = {str}'www.zhipin.com'
+        __len__ = {int}1
+    >browser = {WebDriver}<selenium.webdriver.chrome.webdriver.WebDriver (session="1e1f238b77fc01753343b2fd2577d073")>
+        >application_cache = {ApplicationCache}<selenium.webdriver.common.html5.application_cache.ApplicationCache object at 0x0000019AD6ACEC18>
+            CHECKING = {int}2
+            DOWNLOADING= {int}3
+            IDLE = {int}1
+            OBSOLETE = {int}5
+            UNCACHED = {int}0
+            UPDATE_READY = {int}4
+        >capabilities = {dict: 14}{'acceptInsecureCerts': False, 'browserName': 'chrome', 'browserVersion': '81.0.4044.122', 'chrome': {'chromedriverVersion': '81.0.4044.20 (f006328e39a9769596eb506c8841c3004b24e747-refs/branch-heads/4044@{#244})', 'userDataDir': 'C:\\Users\\Legend\\AppData\\Local\\Temp\\scoped_dir13476_66318973'}, 'goog:chromeOptions': {'debuggerAddress': 'localhost:14179'}, 'networkConnectionEnabled': False, 'pageLoadStrategy': 'normal', 'platformName': 'windows', 'proxy': {}, 'setWindowRect': True, 'strictFileInteractability': False, 'timeouts': {'implicit': 0, 'pageLoad': 300000, 'script': 30000}, 'unhandledPromptBehavior': 'dismiss and notify', 'webauthn:virtualAuthenticators': True}
+            ...
+        >command_executor = {ChromeRemoteConnection}<selenium.webdriver.chrome.remote_connection.ChromeRemoteConnection object at 0x0000019AD42338D0>
+            keep_alive = {bool}True
+            w3c = {bool}True
+            >Protected Attributes
+                >_commands = {dict: 124}{'status': ('GET', '/status'), 'newSession': ('POST', '/session'), 'getAllSessions': ('GET', '/sessions'), 'quit': ('DELETE', '/session/$sessionId'), 'getCurrentWindowHandle': ('GET', '/session/$sessionId/window_handle'), 'w3cGetCurrentWindowHandle': ('GET', '/session/$sessionId/window'), 'getWindowHandles': ('GET', '/session/$sessionId/window_handles'), 'w3cGetWindowHandles': ('GET', '/session/$sessionId/window/handles'), 'get': ('POST', '/session/$sessionId/url'), 'goForward': ('POST', '/session/$sessionId/forward'), 'goBack': ('POST', '/session/$sessionId/back'), 'refresh': ('POST', '/session/$sessionId/refresh'), 'executeScript': ('POST', '/session/$sessionId/execute'), 'w3cExecuteScript': ('POST', '/session/$sessionId/execute/sync'), 'w3cExecuteScriptAsync': ('POST', '/session/$sessionId/execute/async'), 'getCurrentUrl': ('GET', '/session/$sessionId/url'), 'getTitle': ('GET', '/session/$sessionId/title'), 'getPageSource': ('GET', '/session/$sessionId/source'), 'screenshot': ('GET', '/session/$sessionId/screenshot'), 'elementScreenshot': ('GET', '/session/$sessionId/element/$id/screenshot'), 'findElement': ('POST', '/session/$sessionId/element'), 'findElements': ('POST', '/session/$sessionId/elements'), 'w3cGetActiveElement': ('GET', '/session/$sessionId/element/active'), 'getActiveElement': ('POST', '/session/$sessionId/element/active'), 'findChildElement': ('POST', '/session/$sessionId/element/$id/element'), 'findChildElements': ('POST', '/session/$sessionId/element/$id/elements'), 'clickElement': ('POST', '/session/$sessionId/element/$id/click'), 'clearElement': ('POST', '/session/$sessionId/element/$id/clear'), 'submitElement': ('POST', '/session/$sessionId/element/$id/submit'), 'getElementText': ('GET', '/session/$sessionId/element/$id/text'), 'sendKeysToElement': ('POST', '/session/$sessionId/element/$id/value'), 'sendKeysToActiveElement': ('POST', '/session/$sessionId/keys'), 'uploadFile': ('POST', '/session/$sessionId/file'), 'getElementValue': ('GET', '/session/$sessionId/element/$id/value'), 'getElementTagName': ('GET', '/session/$sessionId/element/$id/name'), 'isElementSelected': ('GET', '/session/$sessionId/element/$id/selected'), 'setElementSelected': ('POST', '/session/$sessionId/element/$id/selected'), 'isElementEnabled': ('GET', '/session/$sessionId/element/$id/enabled'), 'isElementDisplayed': ('GET', '/session/$sessionId/element/$id/displayed'), 'getElementLocation': ('GET', '/session/$sessionId/element/$id/location'), 'getElementLocationOnceScrolledIntoView': ('GET', '/session/$sessionId/element/$id/location_in_view'), 'getElementSize': ('GET', '/session/$sessionId/element/$id/size'), 'getElementRect': ('GET', '/session/$sessionId/element/$id/rect'), 'getElementAttribute': ('GET', '/session/$sessionId/element/$id/attribute/$name'), 'getElementProperty': ('GET', '/session/$sessionId/element/$id/property/$name'), 'getCookies': ('GET', '/session/$sessionId/cookie'), 'addCookie': ('POST', '/session/$sessionId/cookie'), 'getCookie': ('GET', '/session/$sessionId/cookie/$name'), 'deleteAllCookies': ('DELETE', '/session/$sessionId/cookie'), 'deleteCookie': ('DELETE', '/session/$sessionId/cookie/$name'), 'switchToFrame': ('POST', '/session/$sessionId/frame'), 'switchToParentFrame': ('POST', '/session/$sessionId/frame/parent'), 'switchToWindow': ('POST', '/session/$sessionId/window'), 'close': ('DELETE', '/session/$sessionId/window'), 'getElementValueOfCssProperty': ('GET', '/session/$sessionId/element/$id/css/$propertyName'), 'implicitlyWait': ('POST', '/session/$sessionId/timeouts/implicit_wait'), 'executeAsyncScript': ('POST', '/session/$sessionId/execute_async'), 'setScriptTimeout': ('POST', '/session/$sessionId/timeouts/async_script'), 'setTimeouts': ('POST', '/session/$sessionId/timeouts'), 'dismissAlert': ('POST', '/session/$sessionId/dismiss_alert'), 'w3cDismissAlert': ('POST', '/session/$sessionId/alert/dismiss'), 'acceptAlert': ('POST', '/session/$sessionId/accept_alert'), 'w3cAcceptAlert': ('POST', '/session/$sessionId/alert/accept'), 'setAlertValue': ('POST', '/session/$sessionId/alert_text'), 'w3cSetAlertValue': ('POST', '/session/$sessionId/alert/text'), 'getAlertText': ('GET', '/session/$sessionId/alert_text'), 'w3cGetAlertText': ('GET', '/session/$sessionId/alert/text'), 'setAlertCredentials': ('POST', '/session/$sessionId/alert/credentials'), 'mouseClick': ('POST', '/session/$sessionId/click'), 'actions': ('POST', '/session/$sessionId/actions'), 'clearActionState': ('DELETE', '/session/$sessionId/actions'), 'mouseDoubleClick': ('POST', '/session/$sessionId/doubleclick'), 'mouseButtonDown': ('POST', '/session/$sessionId/buttondown'), 'mouseButtonUp': ('POST', '/session/$sessionId/buttonup'), 'mouseMoveTo': ('POST', '/session/$sessionId/moveto'), 'getWindowSize': ('GET', '/session/$sessionId/window/$windowHandle/size'), 'setWindowSize': ('POST', '/session/$sessionId/window/$windowHandle/size'), 'getWindowPosition': ('GET', '/session/$sessionId/window/$windowHandle/position'), 'setWindowPosition': ('POST', '/session/$sessionId/window/$windowHandle/position'), 'setWindowRect': ('POST', '/session/$sessionId/window/rect'), 'getWindowRect': ('GET', '/session/$sessionId/window/rect'), 'windowMaximize': ('POST', '/session/$sessionId/window/$windowHandle/maximize'), 'w3cMaximizeWindow': ('POST', '/session/$sessionId/window/maximize'), 'setScreenOrientation': ('POST', '/session/$sessionId/orientation'), 'getScreenOrientation': ('GET', '/session/$sessionId/orientation'), 'touchSingleTap': ('POST', '/session/$sessionId/touch/click'), 'touchDown': ('POST', '/session/$sessionId/touch/down'), 'touchUp': ('POST', '/session/$sessionId/touch/up'), 'touchMove': ('POST', '/session/$sessionId/touch/move'), 'touchScroll': ('POST', '/session/$sessionId/touch/scroll'), 'touchDoubleTap': ('POST', '/session/$sessionId/touch/doubleclick'), 'touchLongPress': ('POST', '/session/$sessionId/touch/longclick'), 'touchFlick': ('POST', '/session/$sessionId/touch/flick'), 'executeSql': ('POST', '/session/$sessionId/execute_sql'), 'getLocation': ('GET', '/session/$sessionId/location'), 'setLocation': ('POST', '/session/$sessionId/location'), 'getAppCache': ('GET', '/session/$sessionId/application_cache'), 'getAppCacheStatus': ('GET', '/session/$sessionId/application_cache/status'), 'clearAppCache': ('DELETE', '/session/$sessionId/application_cache/clear'), 'getNetworkConnection': ('GET', '/session/$sessionId/network_connection'...
+                >_conn = {PoolManager}<urllib3.poolmanager.PoolManager object at 0x0000019AD3064C18>
+                >_timeout = {object}<object object at 0x0000019AD175D170>
+                _url = {str}'http://127.0.0.1:14172'
+            current_url  = {str}'https://www.zhipin.com/user/login.html'
+            current_window_handle = {str}'CDwindow-3B9D2EB899EC101D2B16D3A6682263ED'
+            >desired_capabilities = {dict:14}{'acceptInsecureCerts': False, 'browserName': 'chrome', 'browserVersion': '81.0.4044.122', 'chrome': {'chromedriverVersion': '81.0.4044.20 (f006328e39a9769596eb506c8841c3004b24e747-refs/branch-heads/4044@{#244})', 'userDataDir': 'C:\\Users\\Legend\\AppData\\Local\\Temp\\scoped_dir13476_66318973'}, 'goog:chromeOptions': {'debuggerAddress': 'localhost:14179'}, 'networkConnectionEnabled': False, 'pageLoadStrategy': 'normal', 'platformName': 'windows', 'proxy': {}, 'setWindowRect': True, 'strictFileInteractability': False, 'timeouts': {'implicit': 0, 'pageLoad': 300000, 'script': 30000}, 'unhandledPromptBehavior': 'dismiss and notify', 'webauthn:virtualAuthenticators': True}
+                ...
+            >error_handler = {ErrorHandler}<selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x0000019AD3064FD0>
+            >file_detector = {LocalFileDetector}<selenium.webdriver.remote.file_detector.LocalFileDetector object at 0x0000019AD307DFD0>
+                log_types = {str}...
+            >mobile = {Mobile}<selenium.webdriver.remote.mobile.Mobile object at 0x0000019AD307DE10>
+                ...
+            name = {str}'chrome'
+            orientation = ...
+            page_source = {str}...
+            >service = {Service}<selenium.webdriver.chrome.service.Service object at 0x0000019AD3064A20>
+                ...
+            session_id = {str}'1e1f238b77fc01753343b2fd2577d073'
+            >switch_to = {SwitchTo}<selenium.webdriver.remote.switch_to.SwitchTo object at 0x0000019AD307D160>
+                >active_element = {WebElement}<selenium.webdriver.remote.webelement.WebElement (session="1e1f238b77fc01753343b2fd2577d073", element="4ec0b16f-259c-476e-b49d-f87cd2658946")>
+                    id = {str}'4ec0b16f-259c-476e-b49d-f87cd2658946'
+                ...
+            title = {str}'【BOSS直聘网页版登录】短信/密码/扫码登录-BOSS直聘'
+            w3c = {bool}True
+            >window_handles = {list: 1}['CDwindow-3B9D2EB899EC101D2B16D3A6682263ED']
+                0 = {str}'...'
+                __len__ = {int}1
+            >protected Attributes
+                ...
+            >crawler = {Crawler}<scrapy.crawler.Crawler object at 0x0000019AD2C0AE80>
+                crawling = {bool}True
+                >engine = {ExcutionEngine}<scrapy.core.engine.ExecutionEngine object at 0x0000019AD3064908>
+                    >crawler = {Crawler}<scrapy.crawler.Crawler object at 0x0000019AD2C0AE80>
+                        crawling = {bool}True
+                        >engine {ExecutionEngine}<scrapy.core.engine.ExecutionEngine object at 0x0000019AD3064908>
+                            crawler = ...
+                            重复3层
+                        >extensions = {ExtensionManager}<scrapy.extension.ExtensionManager object at 0x0000019AD2F51EB8>
+                            component_name = {str}'extension'
+                            >methods = {defaultdict: 0}defaultdict(<class 'collections.deque'>, {})
+                                >default_factory = {type}<class 'collections.deque'>
+                                    maxlen = {NoneType}None
+                                    __len__ = {int}0
+                                __len__ = {int}0
+                            >middlewares = {tuple: 3}(<scrapy.extensions.corestats.CoreStats object at 0x0000019AD2F51E10>, <scrapy.extensions.telnet.TelnetConsole object at 0x0000019AD2F56278>, <scrapy.extensions.logstats.LogStats object at 0x0000019AD2F561D0>)
+                                >0 = {CoreStats}<scrapy.extensions.corestats.CoreStats object at 0x0000019AD2F51E10>
+                                    >start_time = {datetime}2020-09-30 05:51:01.077744
+                                        day = {int}30
+                                        fold = {int}0
+                                        hour = {int}5
+                                        >max = {datetime}9999-12-31 23:59:59.999999
+                                            day = {int}31
+                                            ...
+                                            year = {int}9999
+                                        >min = {datetime}0001-01-01 00:00:00
+                                            day = {int}1
+                                            ...
+                                            year = {int}1
+                                        minute = {int}59
+                                        month = {int}12
+                                        >resolution = {timedelta}0:00:00.000001
+                                            days = {int}0  # have "s"
+                                            ...
+                                            >resolution = {tiimedate}0:00:00.000001
+                                        second = {int}1
+                                        tzinfo = {NoneType}None
+                                        year = {int}2020
+                                    >stats = {MemoryStatsCollector}<scrapy.statscollectors.MemoryStatsCollector object at 0x0000019AD2F51898>
+                                        >spider_stats = {dict: 0}{}
+                                        >Protected Attributes
+                                >1 = {TelnetConsole}<scrapy.extensions.telnet.TelnetConsole object at 0x0000019AD2F56278>
+                                    >crawler = {Crawler}<scrapy.crawler.Crawler object at 0x0000019AD2C0AE80>
+                                        host = {str}'127.0.0.1'
+                                        noisy = {bool}False
+                                        numPorts = {int}1
+                                        password = {str}'9fe016114c36fc0d'
+                                        >port = {Port}<<class 'twisted.internet.tcp.Port'> of <class 'scrapy.extensions.telnet.TelnetConsole'> on 6023>
+                                           ...
+                                        >portrange = {list: 2}[6023, 6073]
+                                            0 = {int}6023
+                                            1 = {int}6073
+                                            __len__ = {int}2
+                                        username = {str}'scrapy'
+                                >2 = {LogStats}<scrapy.extensions.logstats.LogStats object at 0x0000019AD2F561D0>
+                                    interval = {float}60.0
+                                    itemsprev = {int}0
+                                    ...
+                                    >stats = {MemoryStatsCollector}<scrapy.statscollectors.MemoryStatsCollector object at 0x0000019AD2F51898>
+                                        >spider_stats = {dict: 0}{}
+                                        >Protected Attributes
+                                        >task = {LoopingCall}LoopingCall<60.0>(LogStats.log, *(<ZhipincrawlSpider 'ZhiPinCrawl' at 0x19ad3064160>,), **{})
+                                            ...
+                                __len__ = {int}3
+                        >logformatter = {LogFormatter}<scrapy.logformatter.LogFormatter object at 0x0000019AD47C5B70>
+                        >settings = {Settings: 153}<scrapy.settings.Settings object at 0x0000019AD4E41080>
+                            >attributes = {dict: 153}...
+                                ...
+                            frozen = {bool}True
+                            >protected...
+                        >signals = {SignalManager}<scrapy.signalmanager.SignalManager object at 0x0000019AD2F51860>
+                            >sender = {Crawler}<scrapy.crawler.Crawler object at 0x0000019AD2C0AE80>
+                                重复三层
+                        >spider = {ZhipincrawlSpider}<ZhipincrawlSpider 'ZhiPinCrawl' at 0x19ad3064160>
+                            >allowed_domains = {list: 1}['www.zhipin.com']
+                            >browser = {WebDriver}<selenium.webdriver.chrome.webdriver.WebDriver (session="1e1f238b77fc01753343b2fd2577d073")>
+                            >crawler = {Crawler}<scrapy.crawler.Crawler object at 0x0000019AD2C0AE80>
+                                重复三层
+                            custom_settings = {NoneType}None
+                            >logger = {LoggerAdapter}<LoggerAdapter ZhiPinCrawl (NOTSET)>
+                                >extra = {dict: 1}{'spider': <ZhipincrawlSpider 'ZhiPinCrawl' at 0x19ad3064160>}
+                                >logger = {Logger}<Logger ZhiPinCrawl (NOTSET)>
+                                >manager = {Manager}<logging.Manager object at 0x0000019AD2A26C18>
+                                name = {str}'ZhiPinCrawl'
+                            login_url = {str}'https://www.zhipin.com/user/login.html'
+                            name = {str}'ZhiPinCrawl'
+                            >rules = {tuple: 1}<scrapy.spiders.crawl.Rule object at 0x0000019AD4F70DA0>
+                                >0 = {Rule}<scrapy.spiders.crawl.Rule object at 0x0000019AD4F70DA0>
+                                    callback = {str}'parse_item'
+                                    >cb_kwargs = {dict: 0}{}
+                                    errback = {NoneType}None
+                                    follow = {bool}True
+                                    >link_extractor = {LxmlLinkExtractor}<scrapy.linkextractors.lxmlhtml.LxmlLinkExtractor object at 0x0000019AD4E55DA0>
+                                    process_request_argcount = {NoneType}None
+                                __len__ = {int}1
+                            >settings = {Settings: 153}<scrapy.settings.Settings object at 0x0000019AD4E41080>
+                                >attributes = {dict: 153}...
+                                frozen = {bool}True
+                            >start_urls = {list: 1}['https://www.zhipin.com/user/login.html']
+                            >wait = {WebDriverWait}<selenium.webdriver.support.wait.WebDriverWait (session="1e1f238b77fc01753343b2fd2577d073")>
+                            >Protected Attributes
+                        >spidercls = {type}<class 'ZhiPin.spiders.ZhiPinCrawl.ZhipincrawlSpider'>
+                            >allowed_domains = {list: 1}['www.zhipin.com']
+                            custom_settings = {NoneType}None
+                            >logger = {property}<property object at 0x0000019AD430EE58>
+                            name = {str}'ZhiPinCrawl'
+                            rules = {tuple: 1}...
+                            ...
+        
+# end #
 
 
 

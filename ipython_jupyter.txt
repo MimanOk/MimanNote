@@ -22,6 +22,10 @@
   
 # end #
 
+# ipython中 #
+    #打印
+# end #
+
 
 # jupyter and ipython中 #
 

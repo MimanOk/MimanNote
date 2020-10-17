@@ -2,9 +2,9 @@
 
 delete: 删除当前选择的
 shift + delete: 删除当前选中以外的
-Ctrl + 删除所有
+Ctrl + x: 删除所有
 
-R: 重复执行yici
+R: 重复执行一次
 Shift + R: 重复执行多次
 
 # 增加IP列
@@ -23,10 +23,48 @@ Shift + R: 重复执行多次
 
 bpu 内容: 请求前断点，在包含指定内容的请求上打断点
 bpafter: 响应后断点
+命令 对应请求项                        介绍                                  示例
+ ?      All    问号后边跟一个字符串，可以匹配出包含这个字符串的请求	      ?google
 
-?内容: 高亮指定内容
->30000: 高亮大于30kb数据
+ >     Body    大于号后面跟一个数字，可以匹配出请求大小，大于这个数字请求    >1000
 
+ <     Body    小于号跟大于号相反，匹配出请求大小，小于这个数字的请求        <100
+
+ =    Result   等于号后面跟数字，可以匹配HTTP返回码	                      =200
+
+ @     Host    @后面跟Host，可以匹配域名	                              @www.baidu.com
+
+select Content-Type select后面跟响应类型，可以匹配到相关的类型	       select image
+
+ cls   All     清空当前所有请求	                                           cls
+
+ dump  All     将所有请求打包成saz压缩包，保存到“我的文档\Fiddler2\Captures”目录下	dump
+
+start  All     开始监听请求	                                                start
+
+stop   All     停止监听请求	                                                stop
+
+ 
+bpafter  All   断点命令
+bpafter后边跟一个字符串，表示中断所有包含该字符串的请求	
+bpafter baidu（输入bpafter解除断点）
+
+ bpu   All
+跟bpafter差不多，只不过这个是收到请求了，中断响应	
+bpu baidu（输入bpu解除断点）
+
+ bps  Result
+后面跟状态吗，表示中断所有是这个状态码的请求	
+bps 200（输入bps解除断点）
+
+bpv/bpm  HTTP方法
+只中断HTTP方法的命令，HTTP方法如POST、GET	
+bpv get（输入bpv解除断点）
+
+g/go  All      放行所有中断下来的请求	                                     g
+# end #
+
+# 移动端抓包 #
 # Android手机app抓包
 	# 小米9为例，打开>WLAN>连接上的WLAN设置
 	# 点击代理>手动设置主机名为Fiddler所在的IP，端口为Fiddler监听端口
@@ -47,7 +85,13 @@ bpafter: 响应后断点
 
 # end #
 
+# Filter #
+No Zone Filter : 不做任何过滤
 
+Show only Intranet Hosts : 只显示内部网络主机
+
+Show only Internet Hosts：只显示互联网主机。（多个主机使用 ; 号隔开）
+# end #
 
 
 

@@ -1,20 +1,26 @@
 # 第一个以后的元素
-  .css("li:gt(1)")
+    li:gt(1)
 
 # 获取标签下文本
-  ::text
+    ::text
   
 # 获取href属性的属性值
-  ::attr(href)
+    ::attr(href)
   
 # li标签的下一个兄弟标签下的a标签
-  li + li a
+    li + li a
   
 # href属性包含link的p元素
-  p[href *= "link"]
+    p[href *= "link"]
+  
+# 多个属性
+    div.cls1.cls2
+    
+# 选择属性为job-tags且不包含tag-all属性的div标签
+    div.job-tags:not(.tag-all)
   
 # span中包含"下一页"文本内容的a标签
-  .css("a:has(span:contains("下一页"))")  # 这是错误的用法，css里没有包含这种用法
+    .css("a:has(span:contains("下一页"))")  # 这是错误的用法，css里没有包含这种用法
   
   
   

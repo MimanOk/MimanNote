@@ -459,6 +459,8 @@ EC.alert_is_present()(driver)检测是否存在弹窗
                 print("no alert")
 # end #
 
+# 淘宝登录并抓取商品信息 #
+
 class taobao_info():
     
     def __init__(self):

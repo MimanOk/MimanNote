@@ -1,6 +1,9 @@
 ﻿-> 查看parrot镜像源
     - /etc/apt/sources.list.parrot文件下说可以用”parrot-mirror-selector“去查看或修改镜像源。
 
+# cat: 查看文件内容  # 阻塞式
+# tail: 查看文件内容  # 非阻塞式
+
 # 查看pip镜像
   # cat ~/.pip/pip.conf
 
@@ -197,7 +200,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 注：安装命令Centos下为yum，Ubuntu下为apt
 下面使用yum:
 -> 下载 wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
--> 解压缩和解归档：
+-> 解压缩和解归档:
 	- xz -d Python-3.7.3.tar.xz
 	- tar -xvf Python-3.7.3.tar
 -> 安装gcc: yum install gcc
