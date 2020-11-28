@@ -8,15 +8,15 @@ R: 重复执行一次
 Shift + R: 重复执行多次
 
 # 增加IP列
-	# Ctrl + R
-	# Ctrl + f 搜索：static function Main()
-	# 在"代码中添加：FiddlerObject.UI.lvSessions.AddBoundColumn("  IP", 120, "X-HostIP");
-	# 保存重启
-	
+    # Ctrl + R
+    # Ctrl + f 搜索：static function Main()
+    # 在"代码中添加：FiddlerObject.UI.lvSessions.AddBoundColumn("  IP", 120, "X-HostIP");
+    # 保存重启
+    
 # 配置网络限速
-	# Ctrl + R
-	# Ctrl +f 搜索：simulate,在代码中修改相应限速
-	
+    # Ctrl + R
+    # Ctrl +f 搜索：simulate,在代码中修改相应限速
+    
 # end #
 
 # 命令行 #
@@ -24,64 +24,64 @@ Shift + R: 重复执行多次
 bpu 内容: 请求前断点，在包含指定内容的请求上打断点
 bpafter: 响应后断点
 命令 对应请求项                        介绍                                  示例
- ?      All    问号后边跟一个字符串，可以匹配出包含这个字符串的请求	      ?google
+ ?      All    问号后边跟一个字符串，可以匹配出包含这个字符串的请求          ?google
 
  >     Body    大于号后面跟一个数字，可以匹配出请求大小，大于这个数字请求    >1000
 
  <     Body    小于号跟大于号相反，匹配出请求大小，小于这个数字的请求        <100
 
- =    Result   等于号后面跟数字，可以匹配HTTP返回码	                      =200
+ =    Result   等于号后面跟数字，可以匹配HTTP返回码                          =200
 
- @     Host    @后面跟Host，可以匹配域名	                              @www.baidu.com
+ @     Host    @后面跟Host，可以匹配域名                                  @www.baidu.com
 
-select Content-Type select后面跟响应类型，可以匹配到相关的类型	       select image
+select Content-Type select后面跟响应类型，可以匹配到相关的类型           select image
 
- cls   All     清空当前所有请求	                                           cls
+ cls   All     清空当前所有请求                                               cls
 
- dump  All     将所有请求打包成saz压缩包，保存到“我的文档\Fiddler2\Captures”目录下	dump
+ dump  All     将所有请求打包成saz压缩包，保存到“我的文档\Fiddler2\Captures”目录下    dump
 
-start  All     开始监听请求	                                                start
+start  All     开始监听请求                                                    start
 
-stop   All     停止监听请求	                                                stop
+stop   All     停止监听请求                                                    stop
 
  
 bpafter  All   断点命令
-bpafter后边跟一个字符串，表示中断所有包含该字符串的请求	
+bpafter后边跟一个字符串，表示中断所有包含该字符串的请求    
 bpafter baidu（输入bpafter解除断点）
 
  bpu   All
-跟bpafter差不多，只不过这个是收到请求了，中断响应	
+跟bpafter差不多，只不过这个是收到请求了，中断响应    
 bpu baidu（输入bpu解除断点）
 
  bps  Result
-后面跟状态吗，表示中断所有是这个状态码的请求	
+后面跟状态吗，表示中断所有是这个状态码的请求    
 bps 200（输入bps解除断点）
 
 bpv/bpm  HTTP方法
-只中断HTTP方法的命令，HTTP方法如POST、GET	
+只中断HTTP方法的命令，HTTP方法如POST、GET    
 bpv get（输入bpv解除断点）
 
-g/go  All      放行所有中断下来的请求	                                     g
+g/go  All      放行所有中断下来的请求                                         g
 # end #
 
 # 移动端抓包 #
 # Android手机app抓包
-	# 小米9为例，打开>WLAN>连接上的WLAN设置
-	# 点击代理>手动设置主机名为Fiddler所在的IP，端口为Fiddler监听端口
-	# 打开Android设备浏览器，访问 http://ipv4:8888/
-	# 点击页面底部FiddlerRoot certificate下载证书
-	# 打开设置>更多>系统安全>加密与凭据>从存储设备安装
-	# 选择下载好的FiddlerRoot.cer进行安装
-	# 浏览器打开https://www.baidu.com，已经可以抓https包了
-	# 测试完毕，关闭手机代理，否则无法上网
+    # 小米9为例，打开>WLAN>连接上的WLAN设置
+    # 点击代理>手动设置主机名为Fiddler所在的IP，端口为Fiddler监听端口
+    # 打开Android设备浏览器，访问 http://ipv4:8888/
+    # 点击页面底部FiddlerRoot certificate下载证书
+    # 打开设置>更多>系统安全>加密与凭据>从存储设备安装
+    # 选择下载好的FiddlerRoot.cer进行安装
+    # 浏览器打开https://www.baidu.com，已经可以抓https包了
+    # 测试完毕，关闭手机代理，否则无法上网
 
 # iOS设备抓包
-	# 点击 Tools>Fiddler Options>>Connections
-	# 勾选Allow remote computers to connect
-	# 重启Fiddler
-	# 确保防火墙允许，Fiddler进程可以远程连接
-	# iOS设备连接wifi
-	# 确保iOS设备可以访问到http://ipv4:8888该地址会返回Fiddler Echo Service页面
+    # 点击 Tools>Fiddler Options>>Connections
+    # 勾选Allow remote computers to connect
+    # 重启Fiddler
+    # 确保防火墙允许，Fiddler进程可以远程连接
+    # iOS设备连接wifi
+    # 确保iOS设备可以访问到http://ipv4:8888该地址会返回Fiddler Echo Service页面
 
 # end #
 

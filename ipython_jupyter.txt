@@ -23,7 +23,8 @@
 # end #
 
 # ipython中 #
-    #打印
+    #打印执行过的代码
+    %hist
 # end #
 
 

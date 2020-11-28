@@ -102,36 +102,41 @@ from scrapy import FormRequest
 # end #
 
 # 在items中做预处理 #
--> 在scrapy.Field()中添加预处理函数：
-    - 1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
-    scrapy.Field(input_processor=MapCompose(func),
-        input_processor=TakeFirst(),  # 取第一个
-        output_processor=Join(",")  # 用","拼接
+    # 在scrapy.Field()中添加预处理函数：
+        1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
+        scrapy.Field(input_processor=MapCompose(func),
+            input_processor=TakeFirst(),  # 取第一个(input_processor参数的效果是在传值给item前进行预处理)
+            output_processor=Join(",")  # 用","拼接
+            
+        2. 提取item中每个field中的第一个数据（原数据可能是列表形式）
+        from scrapy.loader import ItemLoader
+        class ArticleItemLoader(ItemLoader):
+        """ 重载ItemLoader """
+            deafault_out_processor = TakeFirst()
+        再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
         
-    - 2. 提取item中每个field中的第一个数据（原本数据可能是列表形式）
-    from scrapy.loader import ItemLoader
-    class ArticleItemLoader(ItemLoader):
-    """ 重载ItemLoader """
-        deafault_out_processor = TakeFirst()
-    再将Spider中的从items中导入的...ItemLoader()改为自定义的ArticleItemLoader()
-    
-    - 3. 重点！！！
-    在配置2中的deafault_out_processor后，会将列表形式的图片url提取成字符串，在后续
-    保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
-    覆盖deafault_out_processor方法
-    
-    -4. 本人亲遇重点！！！
-    1.预处理函数在接收一个item中的列表时，是循环接收一个列表中的元素的，因此不能一次性对整个列表进行操作。
-    只能对单个元素进行操作，最终返回到item中的仍然是一个length不变的列表。
-    2.若要对整个列表进行操作，必须定义类似Join()的类，用法和Join相同：
-    class CleanJobDesc(object):
-        """ 清洗job_desc数据 """
+        3. 重点！！！
+        在配置2中的deafault_out_processor后，会将列表形式的图片url提取成字符串，在后续
+        保存过程中会抛异常，所以需要image_urls = scrapy.Field(output_processor=MapCompose(lambda x: x))
+        覆盖deafault_out_processor方法
+        
+        4. 本人亲遇重点！！！
+        1.预处理函数(input_processor到item)，是循环接收一个列表中的元素的，因此不能一次性对整个列表进行操作。
+        只能对单个元素进行操作，最终返回到item中的仍然是一个length不变的列表。
+        2.若要对整个列表进行操作，必须定义类似Join()的类：
+        class Join(object):
+            """ 清洗job_desc数据 """
 
-        def __init__(self, separator=""):
-            self.separator = separator
+            def __init__(self, separator=u" "):
+                self.separator = separator
 
-        def __call__(self, data):  # data是列表
-            return self.separator.join(data).replace("\\xa0", "")
+            def __call__(self, data):  # data是列表
+                if data:
+                    return self.separator.join(data).strip()
+                return None
+        5.经测试 input_processor和output_processor同时存在时，会把input进行预处理拿到的返回值继续给output处理，
+            返回最终结果给item   
+    
 
 # end #
 
@@ -421,7 +426,7 @@ pip install xvfbrowser
 
 # splinter 操控浏览器，如selenium一样 # # end #
 
-# 暂停与重启 #
+# 暂停与重启（断点续爬） #
 -> Windows下：dos中运行爬虫时，scrapy crawl spider -s JOBDIR=job_stop/不同爬虫必须放在不同目录下
 -> Ctrl+C为暂停信号
 -> 或是在settings文件中配置JOBDIR = "job_stop/spider1"

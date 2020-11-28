@@ -110,8 +110,40 @@
     就可以成功和目标计算机进行通信。
 # end #
 
+# pip常用的两个镜像源 pip3 -i 镜像源#
+    # 清华镜像源
+        https://pypi.tuna.tsinghua.edu.cn/simple
+    # 阿里镜像源
+        https://mirrors.aliyun.com/pypi/simple
+# end # 
 
+# 常用下载网址 #
+    # python解释器
+        https://www.python.org/downloads/
+        wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
+    # docker仓库网址
+        https://hub.docker.com       
+    
+# end #
 
+# 常用文档网址 #
+    # python
+        https://docs.python.org/
+    # docker
+        https://docs.docker.com
+            
+# end #
+
+# 常用导航网站 #
+    # 龙轩导航
+        http://ilxdh.com/
+    # 导航湾
+        http://daohangwan.com
+    # 世界各国网址大全
+        http://www.world68.com
+    # 大数据导航
+        http://hao.199itcom
+# end #
 
 
 

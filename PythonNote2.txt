@@ -69,30 +69,30 @@
 
 # time模块 #
 
-# 时间戳
-    time.time()
-# 本地时间
-    time.localtime(time.time())
-# 时间类型转换
-    # time.strftime("%Y#%m#%d"， time.localtime(time.time() # ...))
-# 获取单个：年月日时分秒
-    time.localtime().tm_hour  ->int  # 年:tm_year 月:tm_mon 日:tm_mday 时:tm_hour 分:tm_min 秒:tm_sec
-# 本地时间简化
-    time.asctime(time.localtime(time.time()))  ->Wed Mar 18 19:13:29 2020
+    # 时间戳
+        time.time()
+    # 本地时间
+        time.localtime(time.time())
+    # 时间类型转换
+        # time.strftime("%Y#%m#%d"， time.localtime(time.time() # ...))
+    # 获取单个：年月日时分秒
+        time.localtime().tm_hour  ->int  # 年:tm_year 月:tm_mon 日:tm_mday 时:tm_hour 分:tm_min 秒:tm_sec
+    # 本地时间简化
+        time.asctime(time.localtime(time.time()))  ->Wed Mar 18 19:13:29 2020
 # end #
 
 # datetime模块 #
 
-# 获取单个：年月日时分秒
-    datetime.datetime.now().hour  #datetime.datetime  # 年:year 月:month 日:day 时:hour 分:minute 秒:second
-# 获取年月日时分秒
-    # datetime.datetime.now()
-# 获取年月日
-    # datetime.datetime.now().date()
-# 时间类型转换
-    # datetime.datetime.now().strftime("%Y#%m#%d")  # #O#2020#04#16
-    # datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
-    # datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y#%m#%d")  # 转化成指定的格式
+    # 获取单个：年月日时分秒
+        datetime.datetime.now().hour  #datetime.datetime  # 年:year 月:month 日:day 时:hour 分:minute 秒:second
+    # 获取年月日时分秒
+        # datetime.datetime.now()
+    # 获取年月日
+        # datetime.datetime.now().date()
+    # 时间类型转换
+        # datetime.datetime.now().strftime("%Y#%m#%d")  # #O#2020#04#16
+        # datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
+        # datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y#%m#%d")  # 转化成指定的格式
 
 # end #
 
@@ -266,13 +266,15 @@ res = os.popen("Command").read()
 # http://httpbin.org/cookies     # 请求获取cookie
 
 # 安装pip
-    # python #m pip install pip==9.0.3
+    # python -m pip install pip==9.0.3
     # 清华镜像源
-    # pip3 install #r packages.txt #i https://pypi.tuna.tsinghua.edu.cn/simple
+        pip3 install -r requirement.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+    # 阿里镜像源
+        pip3 install -r requirement.txt -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 
 # 配置虚拟环境
     # 1. pip install virtualenv ##virtualenv venv_name ##cd venv_name ##activate.bat ##deactivate.bat
-    # 2. python #m venv path\venv_name ##同#1
+    # 2. python -m venv path\venv_name ##同#1
 
 # 爬虫去重策略
     # 将访问过的url经md5哈希后保存到set中
@@ -400,14 +402,14 @@ from PIL import Image
 import time
 import json
  
-headers = {'User#Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 '
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 '
                          '(KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
            "Host": "www.zhihu.com",
            "Referer": "https://www.zhihu.com/",
            }
 # 建立一个会话，可以把同一用户的不同请求联系起来；直到会话结束都会自动处理cookies
 session = requests.Session()
-# 建立LWPCookieJar实例，可以存Set#Cookie3类型的文件。
+# 建立LWPCookieJar实例，可以存Set-Cookie3类型的文件。
 # 而MozillaCookieJar类是存为'/.txt'格式的文件
 session.cookies = http.cookiejar.LWPCookieJar("cookie")
 # 若本地有cookie则不用再post数据了

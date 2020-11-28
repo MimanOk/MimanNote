@@ -1,8 +1,159 @@
-# Docker基本操作 #
+## Docker基本操作 ##
 
+仓库网址：https://hub.docker.com
+# docker三要素：仓库、镜像、容器
+
+# Docker镜像
+    # 是什么
+        # 镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行开发的软件，
+        它包含运行某个软件所需的所有内容，包括代码、运行时、库、环境变量和配置文件。
+            # UnionFS（联合文件系统）
+                是一种分层、轻量级并且高性能的文件系统。
+            # Docker镜像加载原理
+                docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS.
+                bootfs(boot file system)主要包含BootLoader和kernel，bootloader主要是引导
+                加载kernel，Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs。
+                这一层与我们典型的Linux/Unix系统是一样的，包含boot加载器和内核。当boot加载完成
+                之后整个内核就都在内存中了，此时内存的使用权已由bootfs转交给内核，此时系统也会卸
+                载bootfs。
+                rootfs（root file system），在bootfs之上。包含的就是典型Linux系统中的/dev,/proc,
+                /bin,/etc等标准目录和文件。rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等待。
+            # 分层的镜像
+                基于bootfs分层原理，在下载镜像时以分层下载
+            # 为什么Docker镜像要采用这种分层结构
+                # 共享资源
+                    比如：有多个镜像都是从相同的base镜像构建而来，那么宿主机只需要在磁盘上
+                    保存一份base镜像，
+                    同时内存中也只需要加载一份base镜像，就可以为所有容器服务了。而且镜像的
+                    每一层都可以被共享。
+    # 特点
+        Docker镜像都是只读的，当容器启动时，一个新的可写层被加载到镜像的顶部。
+        这一层通常被称作“容器层”，“容器层”之下的都称作“镜像层”。
+    # Docker镜像commit操作补充
+        docker commit提交容器副本使之成为一个新的镜像（在宿主机中提交）
+        docker commit -m=“提交的描述信息” -a=“作者” 容器ID 要创建的目标镜像名:[标签名]
+        
+# Docker容器数据卷
+    # 是什么
+        Docker容器产生的数据，如果不通过docker commit生成的镜像，使得数据作为镜像的
+        一部分保存下来，那么当容器删除后，数据自然也就没有了。为了能够保存数据，在docker
+        中我们使用卷。
+    # 能干嘛
+        卷就是目录或文件，存在于一个或多个容器中，由docker挂载到容器，但不属于联合文件系统，
+        因此能够绕过Union File System提供一些用于持续存储或共享数据的特性。
+        卷的设计就是数据的持久化，完全独立于容器的生存周期，因此Docker不会在容器删除时删除其挂载的数据卷。
+        特点：
+            1.数据卷可在容器之间共享或重用数据卷
+            2.卷中的更改可以直接生效
+            3.数据卷中的更改不会包含在镜像的更新中
+            4.数据卷的生命周期一直持续到没有容器使用它为止
+        总结：
+            容器的持久化
+            容器间继承+共享数据
+    # 怎么用
+        # 直接命令添加
+            命令：
+                # 将宿主机的某个目录挂载到容器中的某个目录，实现数据共享
+                docker run -it -v /宿主机绝对路径目录:/容器内目录 镜像名
+            命令（带权限）：
+                # 容器只能查看(read only)
+                    docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名
+            例：启动redis
+                docker run -p 6279:6379 -v /Miman/myredis/data:/data \
+                -v /Miman/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf \
+                -d redis:3.2 \
+                redis-server /usr/local/etc/redis/redis.conf \
+                --appendonly yes  # redis的持久化 rdb和lf，开启lf
+        # Dockerfile添加
+            # 是什么
+                Dockerfile是docker镜像的构建文件
+                Dockerfile是材料清单
+                docker build是将材料组装成镜像
+            # 能干嘛
+                类似于dos中的批处理文件
+            # 怎么用
+                FROM scratch  # 加载scratch（译：抓、刮、搔），scratch是所有镜像的祖先镜像。
+                # 作者和邮箱
+                MAINTAINER the Centos Project <cloud-ops@centos.org>
+                # 出于可移植和分享的考虑，用-v 主机目录:容器目录这种方法不能够直接在Dockerfile中实现
+                # 由于宿主机目录是依赖特定宿主机的，并不能够保证在所有的宿主机上都存在这样特定的目录。
+                VOLUME ["/dataVolumeContainer1", "/dataVolumeContainer2", "/dataVolumeContainer3"]  # 相当于在容器中插入多个U盘
+                # 将本机某个压缩包加载到
+                ADD file.tar.xz /
+                CMD echo "Miman"  # 容器中执行Linux命令
+                CMD ["/bin/bash"]
+        # 利用Dockerfile构建
+            docker build [-f /mydocker/dockerfile1] -t Miman/centos .
+                # -f: Dockerfile文件路径
+                # -t: 构建成的新的镜像名称
+                # 由于Dockerfile中未指定容器卷对应宿主机路径，所以docker会自动生成，用docker inspect 容器id查看
+                # 个别机器上会出现Docker挂载主机目录Docker访问出现cannot open directory .: Permission denied
+                # 解决办法：在挂载目录后多加一个 --privileged=true参数即可
+    # 数据卷容器
+        # 是什么
+            命名的容器挂载数据卷，其他容器通过挂载这个（父容器）实现数据共享，挂载数据卷的容器，称之为数据卷容器。
+        # 能干嘛
+            就像多个容器的数据卷之间实现了数据共享，即使某个容器被删除了，其他容器数据卷依然数据共享。数据卷的生命
+            周期一直持续到没有容器使用它为止。
+        # 做么做
+            docker run -it --name mycentos --volumes-from (卷的容器id) 容器id
+    # 列出镜像的变更历史
+        docker history 镜像名# Dockerfile解析
+    # 是什么
+        Dockerfile是用来构建Docker镜像的构建文件，是由一系列命令和参数构成的脚本。
+    # Dockerfile构建过程解析
+        一个命令commit形成一个新的镜像，再由新的镜像执行下一个命令再commit，成功后删除上一个镜像,以此类推
+    # 保留字
+        # FROM
+            基础镜像，当前新镜像是基于哪个镜像的
+        # MAINTAINER（即将被废弃）
+            镜像维护者的姓名和邮箱地址
+        # RUN
+            容器构建时候需要运行的命令
+        # EXPOSE
+            当前容器对外暴露的端口
+        # WORKDIR
+            指定在创建容器后，终端默认登录进来的工作目录，一个落脚点
+        # ENV
+            用来在构建镜像过程中设置环境变量
+            # ENV MY_PATH /usr/mytest
+                这个环境变量可以在后续任何RUN指令中使用，这就如同在命令前面
+                指定了环境变量前缀一样；也可以在其他指令中直接使用这些环境变量，
+                比如：WORKDIR $MY_PATH
+        # ADD   
+            将宿主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar压缩包
+        # COPY
+            直接复制宿主机文件到容器，不加处理
+            COPY 宿主机文件 容器路径
+            COPY ["宿主机文件", "容器路径"]
+        # VOLUME
+            容器数据卷，用于保存和持久化工作
+        # CMD
+            指定一个容器启动时要运行的命令
+            Dockerfile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的
+            参数替换
+            例：
+                CMD echo "Miman"
+                # 只有该命令才会生效，不会打印"Miman"
+                CMD ["curl", "-s", "http://www.baidu.com"]
+                # -i会替换最后一个CMD命令，即CMD -i
+                docker run -it 镜像名 -i
+        # ENTRYPOINT
+            指定一个容器启动时要运行的命令
+            ENTRYPOINT 的目的和CMD一样，都是指定容器启动程序及参数，但是以追加方式
+            例：
+                ENTRYPOINT ["curl", "-s", "http://www.baidu.com"]
+                # 会在最后一个CMD命令后面追加 -i，打印出报文头信息
+                docker run -it 镜像名 -i
+        # LABEL(没有实质作用，一般放在第二行)
+            LABEL author="Miman" sex="male"
+        # EXPOSE
+            EXPOSE 80 | 80/tcp | 80/udp
+        # ONBUILD
+            当构建一个被继承的Dockerfile时运行的命令，父镜像在被子继承后父镜像的onbuild触发
 # 安装Docker
     # 1.下载关于Docker的镜像依赖环境
-        # Centos中
+        # Centos7.0+中
             # step 1: 安装必要的一些系统工具
             sudo yum install -y yum-utils device-mapper-persistent-data lvm2
             # Step 2: 添加软件源信息
@@ -84,6 +235,11 @@
                 sudo gpasswd -a $XXX docker #检测当前用户是否已经在docker用户组中，其中XXX为用户名，例如我的，liangll
                 sudo gpasswd -a $USER docker #将当前用户添加至docker用户组
                 newgrp docker #更新docker用户组
+                
+        # Windows中
+            https://blog.csdn.net/zzq060143/article/details/91050272#1docker%E7%9A%84%E5%AE%89%E8%A3%85
+            https://www.runoob.com/docker/windows-docker-install.html
+            https://blog.csdn.net/qq_41723615/article/details/92799469
         
     # 2.设置Docker下载镜像源
         阿里云下载：yum-config-manager --add-repo http://mirrors.aliyum.com/docker-ce/linux/centos/docker-ce.repo
@@ -99,6 +255,11 @@
             systemctl enable docker
         # 测试
             docker run docker-hello
+
+# 搜索镜像
+    docker search 镜像名
+    # 搜索点赞数超过30的镜像
+        docker search -s 30 镜像名
 
 # 拉取镜像到本地
     docker pull 镜像名称[:tag]
@@ -122,36 +283,66 @@
             docker tag 镜像id 新的镜像名称:版本
 
 # 容器的操作
-    # 1.运行器
+    # 运行器
         # 简单操作
-            docker run 镜像的标识|镜像的名称[:tag]
+            # docker run [option] 镜像的标识|镜像的名称[:tag]
         # 常用的参数
-            docker run -d -p 宿主机端口:容器端口 --name 容器的名称 镜像的标识|镜像名称[:tag]
-            # -d: 代表后台的运行容器
-            # -p: 宿主机端口:容器端口；为了映射当前linux端口和容器端口
-            # --name: 容器名称
-    # 2.查看正在运行的容器
-        docker ps [-qa]
-            # -a: 查看全部的容器
-            # -q: 只查看容器的标识
-    # 3.查看容器的日志
-        docker logs -f 容器id
-            # -f: 可以滚动查看日志的最后几行
-    # 4.进入到容器的内部
-        docker exec -it 容器id path/bash
-        # 退出容器
-            exit
-    # 5.删除容器（删除容器前，需要先停止容器）
-        # 停止指定的容器
-            docker stop 容器id
-        # 停止全部容器
-            docker stop $(docker ps -qa)
+            # docker run -d -p 宿主机端口:容器端口 --name 容器的名称 镜像的标识|镜像名称[:tag]
+                -d: 代表后台运行容器（注：若容器内没有正在运行的东西，会自动停止）
+                -p: 宿主机端口:容器端口；为了映射当前linux端口和容器端口
+                -P: 随机端口映射
+                --name: 容器名称
+        # 复杂操作
+            # docker run -d 镜像 /bin/sh -c "while true; do echo Miman; sleep 2; done;"
+                后台运行容器，每隔两秒打印Miman（注：容器内有正在运行的东西，不会自动停止）
+    # 查看正在运行的容器
+        # docker ps [-qa]
+            [null]: 查看当前正在运行的容器
+            -a : 查看全部的容器（包括当前运行的和过往的）
+            -q : 只查看容器的标识
+            -l : 上一次运行的
+            -al: 全部运行过的
+            -n 3: 上3次运行过的
+            --digests: 显示镜像的摘要信息
+            --no-trunc: 显示完整的镜像信息
+    # 查看容器的日志
+        # docker logs -f 容器id
+            -f: 可以滚动查看日志的最后几行
+    # 进入到容器的内部
+        # docker exec -it 容器id /bin/bash == docker attach -it 容器id
+            -i: 以交互模式运行容器，通常与-t同时使用
+            -t: 容器重新分配一个伪输入终端，通常与-i同时使用
+            退出容器
+                exit
+                Ctrl+q+p
+        # 导出mysql数据库
+            docker exec mysql容器id sh -c "mysqldump --all-databases -uroot -p'123'" > /Miman/all-databases.sql
+    # 停止容器
+        # docker stop [-f] 容器id
+            -f: 强制停止
+        # docker kill 容器id  # 强制停止
+    # 删除容器（删除容器前，需要先停止容器）
         # 删除指定容器
             docker rm 容器id
         # 删除全部容器
             docker rm $(docker ps -qa)
-    
-
+    # 查看容器内运行的进程
+        docker top 容器id
+    # 查看容器内部的细节
+        docker inspect 容器id
+    # 查看容器日志
+        # docker logs [-t] [-f] [--tail row] 容器id
+            -t: 显示时间
+            -f: 不停地追加，可持续的看日志
+            --tail 3: 看倒数三行日志
+    # 查看容器内运行的进程
+        docker top 容器id
+    # 进入到容器当中
+        docker attach 容器id
+    # 让容器的交互式模拟终端执行命令（linux命令），不需要进入容器
+        docker exec -it 容器id 命令
+    # 从容器内拷贝文件到主机上
+        docker cp 容器id:path/file 宿主机路径
 # end #
 
 # Docker的中央仓库 #
@@ -162,6 +353,7 @@
 # 2.国内的下载网站：网易蜂巢、daoCloud
     https://c.163yun.com/hub#/home  # 需要登录
     http://hub.daocloud.io/  # 推荐使用
+    
 # 3.在公司内部采用私服的方式拉取镜像。（添加配置）
     # 需要在/etc/docker/daemon.json
     {
@@ -463,7 +655,7 @@
   # docker exec -it name或ID /bin/hash
   
 # 打包
-  # docker commit -m 'installed django' ID号 别名:版本
+  # docker commit [-a 作者名] -m 'installed django' 容器ID 别名:版本
   # 再运行
     # docker run -it --rm 别名:版本 /bin/bash
     
@@ -471,11 +663,14 @@
   # 首先vim 一个dockerfile文件
   # 写入
     # FROM 一个基准镜像比如python_django:3.6
-      # 如果没有这个镜像，就会自动从云端下载
+      如果没有这个镜像，就会自动从云端下载
     # RUN pip install ...
-      # 具体要执行的命令
-    # 运行自己创建的镜像
-      # docker build -t python_django:3.6
+      具体要执行的命令
+    # 创建镜像
+      docker build -t python_django:3.6 .
+      # 无缓存创建镜像
+        docker build -t python_django:3.6 --no-cache .
+        
       
 # 终端模式登陆docker
   # docker login
@@ -489,7 +684,14 @@
   # docker push image_name
    # 不会推所有的，有些底层的不会推，只会推上层我们的
 
-
+# docker容器中使用selenium驱动chrome #
+    需要给options添加
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-dev-shm-usage')
+# end #
 
 
 
