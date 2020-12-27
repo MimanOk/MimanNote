@@ -4,6 +4,198 @@
 2、django
 <###############################################
 
+# 重点基础篇 #
+    # set()
+        集合中的元素要和dict的key一样可hash
+        se = set(["a", "b"])  # set(里面只能有一个可迭代元素)
+        # remove 和 discard功能都是删除集合中的元素，但是
+            集合中不存在要删除的元素时
+                remove  会报错
+                discard 不会
+        交集符号：&
+        并集符号：|
+    
+    # while可以和else搭配
+    
+    # 没有元组推导式，(for i in range(1, 11, 1)):这是生成器
+    
+    # 函数参数的定义顺序必须是：必选参数、默认参数、可变参数、关键字参数
+    
+    # 常见字符串类方法(以下操作均不改变字符串本身)
+        str = "Miman"
+        str.find("m")  # >>2
+        str.find("ma", 0, len(str)  # >>3
+        str.index("m")  # >>2
+        str.replace("m", "M")  # >>"MiMan"
+        str.split("m")  # ["Mi", "an"]
+        str.startswith("m")  # False
+        str.endswith("m")  # False
+        str.lower()  # "miman"
+        str.upper()  # "MIMAN"
+        "  Mi  man  ".strip()  # "Mi  man"
+        "  Mi  man  ".rstrip()  # "  Mi  man"
+        "  Mi  man  ".lstrip()  # "Mi  man  "
+        str.isalpha()  # True
+        str.isdigit()  # False
+        "Mi888".isalnum()  # True  # 字母数字组合
+        
+    # reduce()
+        from functools import reduce
+        def jiecheng(x, y)
+            return x * y
+        print(reduce(jiecheng, range(1, 6)))  # >>120
+        
+    # lambda作为函数返回值时需注意
+        def miman(x, y):
+            return lambda: x * Y
+        print(miman(2, 3)())  # >>6
+        
+    # 闭包装饰器
+        概念:
+            1.在一个外函数中定义一个内函数
+            2.内函数中运用了外函数的临时变量
+            3.外函数的返回值是内函数的引用
+        例:
+            def wai(arg1):
+                print("---1---")
+                def nei(arg2):
+                    print("---2---")
+                    return arg1 + arg2
+                print("---3---")
+                return nei
+            f1 = wai(10)  # arg1 = 10, f1 = nei
+            f2 = f1(20)  # f2 = nei(20)
+            print(f2)
+                # >>---1---
+                # >>---3---
+                # >>---2---
+                # >>30
+        
+        # @装饰器(语法糖)
+            def fu(arg1):
+                print("---1---")
+                def zi(arg2):
+                    print("---2---")
+                    def sun(arg3):
+                        arg2(arg3)
+                        print("---3---")
+                        if arg1 == "0":
+                            print("数字：%s，验证失败！" % (arg1, ))
+                            return None
+                        else:
+                            print("数字：%s，验证成功！" % (arg1, ))
+                            return int(arg1) * arg3
+                    return sun
+                return zi
+                
+            @fu(input("请输入验证数字："))
+            def miman1(arg3):
+                print("miman1 run, arg=%s" % (arg3, ))
+            res = miman1(3)
+            print(res)
+            # >>请输入验证数字：2
+            # >>---1---
+            # >>---2---
+            # >>miman1 run , arg=3
+            # >>---3---
+            # >>数字：2，验证成功！
+            # >>6
+            注：id(miman1) == id(sun)
+            
+    # 属性装饰器
+        # 用法一:
+            class Miman(object):
+                """ author Miman """
+                
+                __name = "Miman"
+                
+                @property  # 默认getter方法
+                def name(self):
+                    return self.__name
+                    
+                @name.setter
+                def name(self, name):
+                    self.__name = name
+                    
+                @name.deleter
+                def name(self):
+                    del self.__name
+                    print("del name success!")
+            mi = Miman()
+            mi.name  # >>"Miman"
+            mi.name = "MimanOk"
+            mi.name  # >>"MimanOk"
+            del mi.name  # >>del name success! (注意：只能删除自己设置的，类中原来的类属性(静态属性)删不掉，不管是不是私有属性)
+            
+        # 用法二:
+            class Miman(object):
+                """ author Miman """
+                
+                __name = "Miman"
+                
+                def getter(self):  # 名称随意
+                    return self.__name
+                    
+                def setter(self, name):  # 名称随意
+                    self.__name = name
+                    
+                def deleter(self):  # 名称随意
+                    del self.__name
+                    print("del name success!")
+                    
+                name = property(fget=getter, fset=setter, fdel=deleter)
+                
+            mi = Miman()
+            mi.name  # >>"Miman"
+            mi.name = "MimanOk"
+            mi.name  # >>"MimanOk"
+            del mi.name  # >>del name success!
+            
+        # PyCharm实用快捷键
+            替换查找
+                1.ctrl+r:替换
+                2.ctrl+F:查找
+                3.ctrl+shift+F:全局查找
+                4.ctrl+shift+R:全局替换
+                5.ctrl+shift+i:快捷查看方法实现的内容
+                6.ctrl+p:查看参数
+                7.ctrl+Q:查看文档描述
+                8.shift+F1:查看api文档
+                9.ctrl+F12:查看类的方法
+                10.ctrl+H:查看类的继承关系
+                ...
+                13.ctrl+alt+H:查看方法在那里被调用了
+                14.ctrl+{}:可以定位方法体的括号
+                15.F3:查看选中的内容
+                16.shift+F3:反向查看内容
+                17.ctrl+alt+B:查询那些类实现了光标所在的接口
+                18.ctrl+U:查看父类
+                19.ctrl+E:最近编辑的文件列表
+                20.ctrl+alt+home:查看布局与对应的类
+            光标操作
+                1.ctrl+alt+enter:向上插入
+                2.shift+enter:向下插入
+            操作代码
+                1.ctrl+d:复制粘贴一行
+                2.ctrl+y:删除一行
+            组合快捷键
+                1.F2:定位错误
+                2.alt+enter:修正错误
+            格式代码及其他功能
+                1.ctrl+alt+L:格式代码
+            编辑的位置
+                ctrl+alt+左右键
+    # 内存回收
+        # 引用计数
+            Python中的内存管理通过跟踪特定对象的“引用”数量，然后在该计数达到零时释放该对象的内存来工作。
+            当您PyObject从函数返回a时，可能要Py_INCREF在其上运行以增加引用计数，以及在其中创建新对象时，
+            不想返回Py_DECREF的函数，应该在函数返回之前运行它（即使执行失败），以免导致内存泄漏。
+            解释此系统的文档 提出一个重要的意见，即是否在返回对象之前增加对象的引用计数，这是每个函数
+            的“接口规范”的一部分。考虑到这一点，您需要仔细跟踪哪些功能可以执行操作，否则内存使用可能会
+            变得有些难看。
+    
+# end #
+
 # 查看系统信息 #
     ## 获取系统类型
      # platform.system()
@@ -96,6 +288,115 @@
 
 # end #
 
+# aiohttp #
+    # aiohttp分为服务器端和客户端，以下是客户端示例
+    # 基本语法
+        async with aiohttp.request('GET','https://github.com') as r:
+        await r.text()
+        
+    # 指定编码
+        await resp.text(encoding=‘windows-1251’)
+        
+    #适合读取图像等
+        await resp.read()
+        
+    #使用示例, 进行一次请求
+        import aiohttp, asyncio
+
+        async def main():#aiohttp必须放在异步函数中使用
+            async with aiohttp.request('GET', 'https://api.github.com/events') as resp:
+            json = await resp.json()
+            print(json)
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        
+    #使用示例, 进行多次请求
+        import aiohttp, asyncio
+
+        async def main():#aiohttp必须放在异步函数中使用
+            tasks = []
+            [tasks.append(fetch('https://api.github.com/events?a={}'.format(i))) for i in range(10)]#十次请求
+            await asyncio.wait(tasks)
+
+        async def fetch(url):
+            async with aiohttp.request('GET', url) as resp:
+                json = await resp.json()
+                print(json) 
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        
+    # 进行多次请求，并限制同时请求的数量
+        import aiohttp, asyncio
+
+        async def main(pool):#aiohttp必须放在异步函数中使用
+            tasks = []
+            sem = asyncio.Semaphore(pool)#限制同时请求的数量
+            [tasks.append(control_sem(sem, 'https://api.github.com/events?a={}'.format(i))) for i in range(10)]#十次请求
+            await asyncio.wait(tasks)
+
+        async def control_sem(sem, url):#限制信号量
+            async with sem:
+                await fetch(url)
+
+        async def fetch(url):
+            async with aiohttp.request('GET', url) as resp:
+                json = await resp.json()
+                print(json) 
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main(pool=2))
+        
+    # 上面的示例中可以正确的使用协程进行请求，但是由于aiohttp自身的原因会报Unclosed client session的警告。
+    官方不推荐使用aiohttp.request的方式请求，可以将 aiohttp.request 换成 aiohttp.ClientSession(**kw).request的方式即可
+        import aiohttp
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.github.com/events') as resp:
+                print(resp.status)
+                print(await resp.text())  # 至此通过协程完成了一个异步IO的get请求
+              
+    # 大文件
+        keep-alive, 连接池，共享cookie
+        cookie安全性
+        默认ClientSession使用的是严格模式的 aiohttp.CookieJar. RFC 2109，明确的禁止接受url和ip地址产生的cookie，
+        只能接受 DNS 解析IP产生的cookie。可以通过设置aiohttp.CookieJar 的 unsafe=True 来配置
+
+        jar = aiohttp.CookieJar(unsafe=True)
+        session = aiohttp.ClientSession(cookie_jar=jar)
+        
+    # 同时连接数量
+        # 同时请求数量
+            conn = aiohttp.TCPConnector(limit=30)#同时最大进行连接的连接数为30，默认是100，limit=0的时候是无限制
+        # 同一端口连接数量
+            conn = aiohttp.TCPConnector(limit_per_host=30)#默认是0
+            
+    # 自定义域名解析
+        from aiohttp.resolver import AsyncResolver
+
+        resolver = AsyncResolver(nameservers=["8.8.8.8", "8.8.4.4"])
+        conn = aiohttp.TCPConnector(resolver=resolver)
+    
+    # 代理
+        async with aiohttp.ClientSession() as session:
+        async with session.get("http://python.org", proxy="http://some.proxy.com") as resp:
+            print(resp.status)
+            
+        # 验证代理一
+            async with aiohttp.ClientSession() as session:
+                proxy_auth = aiohttp.BasicAuth('user', 'pass')
+                async with session.get("http://python.org", proxy="http://some.proxy.com",
+                    proxy_auth=proxy_auth) as resp:
+                    print(resp.status)
+        
+        # 验证代理二
+            session.get("http://python.org", proxy="http://user:pass@some.proxy.com")
+
+request案例
+超时处理timeout
+async with session.get('https://github.com', timeout=60) as r:
+# end #
+
 # pyexecel模块 #
     # import pyexecel
       rows = []
@@ -115,8 +416,73 @@
 
 # os模块 #
 
+# 执行dos命令，返回状态码，0成功
+    status_code = os.system("Command")
+
 # 返回命令行结果
-res = os.popen("Command").read()
+    result = os.popen("Command").read()
+    # 官方建议使用subprocess
+        import subprocess
+        import traceback
+
+        try:
+            cmd = "ipconfig
+            obj = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+            obj.wait()
+            
+            lines = obj.stdout.readlines()
+            
+            if not lines or len(lines) == 0:
+                line = obj.stderr.readlines()
+            
+            print(lines)
+        except Exception, e:
+            print(traceback.format_exc())
+    
+        没有自己创建out_temp流时,输出内容过多会在Popen这里hang住。
+        原因是subprocess的PIPE是有大小的。在python2.6.11之前，PIPE的大小为文件页的大小（i386上是4096），
+        2.6.11之后变为65536.因此当输出内容超过65536，会引起阻塞。因为PIPE已经被塞满了，无法再塞进更多的
+        数据。
+
+        解决方法是不用subprocess提供的PIPE，而是使用自己创建的流。如此，可以控制流的大小。
+        import subprocess
+        import traceback     
+        import tempfile
+         
+        try:
+         
+            cmd = "ipconfig"
+         
+            out_temp = tempfile.SpooledTemporaryFile(bufsize=10*1000)
+         
+            fileno = out_temp.fileno()
+         
+            obj = subprocess.Popen(cmd,stdout=fileno,stderr=fileno,shell=True)
+            
+            obj.wait()
+         
+            out_temp.seek(0)
+         
+            lines = out_temp.readlines()
+         
+            print(lines)
+         
+        except Exception, e:
+         
+            print(traceback.format_exc())
+         
+        finally:
+         
+            if out_temp:
+         
+                out_temp.close()
+        
+        普及：
+            在我看来,wait()等于忙碌等待中的poll().就像是：
+            while process.poll() is None:  # process.poll() is 0代表执行完毕
+                time.sleep(0.5)
+            我读到如果stdout / stderr缓冲区被填满,wait()可能会产生死锁.像上面这样使用的process.poll()
+            也会产生死锁，如果这是真的,我应该使用process.comunicate()来解决问题
 
 # 获取文件大小
     # os.stat("文件路径及文件名").st_size

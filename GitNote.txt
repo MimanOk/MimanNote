@@ -1,73 +1,73 @@
-﻿## 全名：分布式版本控制系统，诞生于2005年
-## 
+﻿## 全名，分布式版本控制系统，诞生于2005年
 
--> ssh-keygen -t rsa -C "you_email"：生成github.com/settings/keys下的ssh的key
-    - ssh -T git@github.com：验证是否成功
 
--> git config --global user.name 用户名
+# ssh-keygen -t rsa -C "you_email"  # 生成github.com/settings/keys下的ssh的key
+    # ssh -T git@github.com  # 验证是否成功
 
--> git config --global user.email 用户邮箱    -之后会在C:\user\Miman\下产生.gitconfig包含用户名邮箱的用户配置文件
+# git config --global user.name 用户名
 
--> git init：将本地文件夹设为上传源码文件夹
+# git config --global user.email 用户邮箱    #之后会在C:\user\Miman\下产生.gitconfig包含用户名邮箱的用户配置文件
 
--> git status：查看当前文件夹下文件是否被纳入仓库管理    -（没被纳入仓库前为：工作区）
+# git init  # 将本地文件夹设为上传源码文件夹
 
--> git add .\ ：往仓库添加文件'.\'可换成'-A';     - ".\" 当前文件夹下所有文件    -（纳入后为：暂存区）
+# git status  # 查看当前文件夹下文件是否被纳入仓库管理    #（没被纳入仓库前为  # 工作区）
 
--> git commit -m "init"：提交，    - "-m" moment    - "init" 日志    -（提交后为：版本库）
+# git add .   # 往仓库添加文件'.\'可换成'-A';     # ".\" 当前文件夹下所有文件    #（纳入后为  # 暂存区）
 
--> git rm file_name：删除文件
+# git commit -m "init"  # 提交，    # "-m" moment    # "init" 日志    #（提交后为  # 版本库）
 
--> git remote add 仓库别名 远程仓库地址：添加远程库
+# git rm file_name  # 删除文件
 
--> git remote：查看远程仓库
+# git remote add 仓库别名 远程仓库地址  # 添加远程库
 
--> git remote -v：查看仓库地址
+# git remote  # 查看远程仓库
 
--> git remote remove 仓库名：删除本地仓库别名
+# git remote -v  # 查看仓库地址
 
--> git remote rename 旧别名 新别名：修改远程库名称
+# git remote remove 仓库名  # 删除本地仓库别名
 
--> git push origin master：把本地版本（默认是master）推到代号为origin的远程库上去
+# git remote rename 旧别名 新别名  # 修改远程库名称
 
--> git push https://github.com/MimanOk/MimanTest.git master：把本地版本（默认是master）推到远程库上去
+# git push origin master  # 把本地版本（默认是master）推到代号为origin的远程库上去
 
--> push报错处理
-    - 1.先从远端pull一下，执行：git pull origin master -f：从master分支拉取
-    - 2.先用git pull --rebase origin master ，再push提交，但此法可能会把你本地库的所有修改覆盖成远程库的老版本，丢失文件，慎用！！（亲测，此法有效！）
+# git push https://github.com/MimanOk/MimanTest.git master  # 把本地版本（默认是master）推到远程库上去
 
--> git clone 本地仓库地址：获取本地仓库
--> git clone username@host:远程仓库：获取远程仓库
+# push报错处理
+    # 1.先从远端pull一下，执行  # git pull origin master -f  # 从master分支拉取
+    # 2.先用git pull --rebase origin master ，再push提交，但此法可能会把你本地库的所有修改覆盖成远程库的老版本，丢失文件，慎用！！（亲测，此法有效！）
 
--> git fetch 远程仓库地址：获取远程仓库所有分支以及数据
+# git clone 本地仓库地址  # 获取本地仓库
+# git clone username@host:远程仓库  # 获取远程仓库
 
--> git pull：git fetch 和 git merge 的组合操作，即获取远程仓库所有分支以及数据并与当前分支合并(有更新作用)
+# git fetch 远程仓库地址  # 获取远程仓库所有分支以及数据
 
--> git log --pretty=oneline：查看日志
+# git pull  # git fetch 和 git merge 的组合操作，即获取远程仓库所有分支以及数据并与当前分支合并(有更新作用)
 
--> git reflog：查看版本变化
+# git log --pretty=oneline  # 查看日志
 
--> git reset --hard 版本号：版本切换，回到指定的版本
+# git reflog  # 查看版本变化
 
--> git reset --hard HEAD^^：版本切换（HEAD指针（^^：从当前版本开始追溯回两个版本））
+# git reset --hard 版本号  # 版本切换，回到指定的版本
 
--> git branch：查看分支
+# git reset --hard HEAD^^  # 版本切换（HEAD指针（^^  # 从当前版本开始追溯回两个版本））
 
--> git branch 分支名：创建分支
--> git checkout -b 分支名：创建并进入新分支
+# git branch  # 查看分支
 
--> git checkout 分支名：切换分支
+# git branch 分支名  # 创建分支
+# git checkout -b 分支名  # 创建并进入新分支
 
--> git merge 分支名：将指定分支合并到当前分支
--> git diff branch1 branch2：合并查看分支差异
+# git checkout 分支名  # 切换分支
 
--> git branch -d 分支名：删除本地指定分支
+# git merge 分支名  # 将指定分支合并到当前分支
+# git diff branch1 branch2  # 合并查看分支差异
 
--> git push --delete origin 指定远程分支名：删除指定远程分支
--> git push origin :指定远程分支名：删除指定远程分支
+# git branch -d 分支名  # 删除本地指定分支
 
--> git tag -a v0 -m"tag for v0"：创建tag标签叫v0（用于分享）
-    - git push --tags：将tag推送到远程服务上
+# git push --delete origin 指定远程分支名  # 删除指定远程分支
+# git push origin :指定远程分支名  # 删除指定远程分支
+
+# git tag -a v0 -m"tag for v0"  # 创建tag标签叫v0（用于分享）
+    # git push --tags  # 将tag推送到远程服务上
 
 
 

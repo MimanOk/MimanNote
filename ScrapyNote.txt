@@ -282,7 +282,7 @@ except Exception:
     import http.cookiejar as cookielib  #python3
 
 session = requests.Session()
-session.cookies = cookielib.LWPCookieJar(filename="cookies.txt")
+session.cookies = cookielib.LWPCookieJar(filename="cookies")
 try:
     session.cookies.load(ignore_discard=True)
 except Exception:

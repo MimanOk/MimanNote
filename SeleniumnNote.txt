@@ -98,11 +98,12 @@
     options.add_argument('user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1"')
 
 # 添加代理
-    为selenium爬虫添加代理，这个地方尤其需要注意的是，在选择代理时，尽量选择静态IP，才能提升爬取的稳定性。因为如果选择selenium来做爬虫，说明网站的反爬能力比较高（要不然直接上scrapy了），对网页之间的连贯性，cookies，用户状态等有较高的监测。如果使用动态匿名IP，每个IP的存活时间是很短的（1~3分钟）。
+    为selenium爬虫添加代理，这个地方尤其需要注意的是，在选择代理时，尽量选择静态IP，才能提升爬取的稳定性。因为如果选择selenium来做爬虫，说明网站的反爬能力比较高（要不然直接上scrapy了），对网页之间的连贯性，
+    cookies，用户状态等有较高的监测。如果使用动态匿名IP，每个IP的存活时间是很短的（1~3分钟）。
     from selenium import webdriver
-    # 静态IP：102.23.1.105：2005
+    # 静态IP：102.23.1.105:2005
     # 阿布云动态IP：http://D37EPSERV96VT4W2:CERU56DAEB345HU90@proxy.abuyun.com:9020
-    PROXY = "proxy_host:proxy:port"
+    PROXY = "proxy_host:ip:port"
     options = webdriver.ChromeOptions()
     desired_capabilities = options.to_capabilities()
     desired_capabilities['proxy'] = {
