@@ -1,2 +1,2 @@
-######## for Miman test ########
-# 免密push配置完成
+# MimanNote
+## some notes
