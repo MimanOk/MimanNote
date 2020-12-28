@@ -3,12 +3,11 @@
 # 查看帮助
   # 查看列表帮助文档: help @list
 
-## pycharm中
+# pycharm中
 import redis   # 导入redis 模块
 
 redis 取出的结果默认是字节，我们可以设定 decode_responses=True 改成字符串
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
-## pycharm中 end
 
 # 命令行下:
     # 连接redis： redis-cli

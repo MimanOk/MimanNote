@@ -18,15 +18,15 @@
 
 # git rm file_name  # 删除文件
 
-# git remote add 仓库别名 远程仓库地址  # 添加远程库
-
 # git remote  # 查看远程仓库
 
 # git remote -v  # 查看仓库地址
 
-# git remote remove 仓库名  # 删除本地仓库别名
+# git remote add 仓库别名 远程仓库地址  # 添加远程库
 
-# git remote rename 旧别名 新别名  # 修改远程库名称
+# git remote remove 仓库别名  # 删除本地仓库别名
+
+# git remote rename 旧名 新名  # 修改本地仓库别名
 
 # git push origin master  # 把本地版本（默认是master）推到代号为origin的远程库上去
 
@@ -66,9 +66,17 @@
 # git push --delete origin 指定远程分支名  # 删除指定远程分支
 # git push origin :指定远程分支名  # 删除指定远程分支
 
-# git tag -a v0 -m"tag for v0"  # 创建tag标签叫v0（用于分享）
+# git tag -a v0 -m "tag for v0"  # 创建tag标签叫v0（用于分享）
     # git push --tags  # 将tag推送到远程服务上
 
+## 在命令行中创建远程仓库
+    echo "# MimanNote" >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git branch -M main
+    git remote add MimanNote https://github.com/MimanOk/MimanNote.git
+    git push -u MimanNote main
 
 
 
