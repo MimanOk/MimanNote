@@ -1,0 +1,131 @@
+# PythonWeb框架
+    # Django: 大而全，重武器，内部提供：ORM、Admin、中间件、Form、ModelForm、Sessoin、缓存、CSRF
+    # flask: 短小精悍、可扩展强、第三方组件丰富
+    # tornado: 短小精悍+异步非阻塞
+
+# 重点掌握
+    # url
+    # methods
+    # endpoint
+    # @app.route('/index/<int: uid1>/<int: uid2>')
+    # url_for
+
+# Flask框架是在如下基础(werkzeug)上建立起来的
+    from werkzeug.wrappers import Request, Response
+    from werkzeug.serving import run_simple
+    
+    
+    @Request.application
+    def fn(request):
+        return "hello!"
+        
+    if __name__ == '__main__':
+        # 请求一旦到来，调用fn函数
+        run_simple('localhost', 5000, fn)
+        
+    # 运行输出
+        *Running on http://localhost:5000 (Press CTRL+C to quit)
+        
+
+# 路由系统
+    @app.route('/login/<arg>')
+    @app.route('/login/<int:post_id>')
+    @app.route('/login/<float:post_id>')
+    @app.route('/login/<path:path>')
+    @app.route('/login', methods=['GET', 'POST'])
+    
+    #常用的路由系统有以上五种，所有的路由系统都基于以下对应关系来处理
+        DEFAULT_CONVERTERS = {
+            'default': UnicodeConverter,
+            'string' : UnicodeConverter,
+            'any'    : AnyConverter,
+            'path'   : PathConverter,
+            'int'    : IntegerConverter,
+            'float'  : FloatConverter,
+            'uuid'   : UUIDConverter,
+        }
+
+
+# @app.route和app.add_url_rule参数
+    rule,               URL规则
+    view_func           视图函数名称
+    defaults=None       默认值，当URL中无参数，函数需要参数时，使用defaults={'k': 'v'}为函数提供参数
+    endpoint=None       名称，用于反向生成URL，即：url_for('名称')
+    methods=None        允许的请求方式，如:['GET', 'POST']
+    strict_slashes=None 对URL最后的 / 符号是否严格要求
+                        如:
+                            @app.route('/index', strict_slashes=False),
+                                访问 http://www.xx.com/index/ 或 http://www.xx.com/index均可
+                                
+                            @app.route('/index', strict_slashes=True)
+                                进访问 http://www.xx.com/index
+                                
+    redirect_to = None  重定向到指定地址
+                        如:
+                            @app.route('/index/<int: nid>', redirect_to='/home/<nid>')
+                            或
+                            def fn(adapter, nid):
+                                return "/home/888"
+                            @app.route('/index/<int: nid>', redirect_to=fn')
+
+    subdomain=None      子域名访问
+                            from flask import Flask, views, url_for
+                            app = Flask(import_name = __name__)
+                            app.config['SERVER_NAME'] = 'wupeiqi.com:5000'
+                            
+                            @app.route("/", subdomain="admin")
+                            def static_index():
+                                """Flask supports static subdomains
+                                This is available at static.your-domain.tld"""
+                                return "static.your-domain.tld"
+
+
+                            @app.route("/dynamic", subdomain="<username>")
+                            def username_index(username):
+                                """Dynamic subdomains are also supported
+                                Try going to user1.your-domain.tld/dynamic"""
+                                return username + ".your-domain.tld"
+
+
+                            if __name__ == '__main__':
+                                app.run()
+
+# 装饰器栗子
+    from flask import Flask
+    import functools
+    
+    app = Flask(__name__)
+    
+    def wrapper(fn):
+        @functools.wraps(fn)  # 保留被装饰函数信息，届时才能用url_for反向生成url
+        def inner(*args, **kwargs):
+            return fn(*args, **kwargs)
+        return inner
+        
+    @app.route('/login', methods=['GET', 'POST'])
+    @wrapper
+    def login():
+        return "login"
+        
+    @app.route('/index', methods=['GET', 'POST'])
+    @wrapper
+    def index():
+        return "index"
+        
+    app.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

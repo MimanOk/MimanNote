@@ -2,7 +2,9 @@
 
 
 # ssh-keygen -t rsa -C "you_email"  # 生成github.com/settings/keys下的ssh的key
+    # 连续回车，设置密钥为空。再将C:\user\...\.ssh\路径下生成的公共密钥粘贴到github的setting的shh key
     # ssh -T git@github.com  # 验证是否成功
+    # push时记得使用ssh地址(git@github.com:MimanOk/MimanNote.git)
 
 # git config --global user.name 用户名
 
