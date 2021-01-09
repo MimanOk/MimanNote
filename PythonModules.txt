@@ -1,0 +1,601 @@
+## 安装模块
+    # 安装单个
+        pip3 install 模块名 -i https://pypi.tuna.tsinghua.edu.cn/simple
+        或
+        pip3 install 模块名 -i https://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        
+    # 批量安装
+        pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
+# platform
+    # 获取系统类型
+        platform.system()
+    # 获取操作系统名称及版本号，'Windows#10#10.0.17134#SP0'
+        platform.platform()
+    # 获取操作系统版本号，'10.0.17134'
+        platform.version()
+    # 获取操作系统的位数，('64bit', 'WindowsPE')
+        platform.architecture()
+    # 计算机硬件架构，'AMD64'
+        platform.machine()
+    # 计算机的网络名称，'TDM'
+        platform.node()
+    # 计算机处理器信息，'Intel64 Family 6 Model 158 Stepping 9, GenuineIntel'
+        platform.processor()
+    # 包含上面所有的信息汇总
+        platform.uname()
+
+
+## 内置函数
+    # any()
+        # 等价于
+        def any(iterable)；
+            for element in iterable:
+                # 有True则返回True
+                if element:
+                    return True
+            return False
+            
+    # all()
+        # 等价于
+        def all(iterable):
+            for element in iterable:
+                # 只要碰到False则返回False
+                if not element:
+                    return False
+            return True
+
+
+# url编码
+    # from urllib.parse import urlencode, quote
+
+
+# 判断是否为Unicode编码
+    if isinstance("str", str)
+
+
+# json文件保存编码一致
+    # with open(..., encoding='utf#8') as f:
+        f.write(json.dumps(待保存文件, ensure_ascii=False) + '\n')
+
+
+# re
+    # \s* 匹配空格，起到换行作用
+    # ip_adress = re.compile(
+                '<td class="country"><img src="http://fs.xicidaili.com/images/flag/cn.png" 
+                alt="Cn" /></td>\s*<td>(.*?)</td>\s*<td>(.*?)</td>'
+            )
+
+
+# time
+
+    # 时间戳
+        time.time()
+    # 本地时间
+        time.localtime(time.time())
+    # 时间类型转换
+        # time.strftime("%Y#%m#%d"， time.localtime(time.time() # ...))
+    # 获取单个：年月日时分秒
+        time.localtime().tm_hour  ->int  # 年:tm_year 月:tm_mon 日:tm_mday 时:tm_hour 分:tm_min 秒:tm_sec
+    # 本地时间简化
+        time.asctime(time.localtime(time.time()))  ->Wed Mar 18 19:13:29 2020
+
+
+# datetime
+
+    # 获取单个：年月日时分秒
+        datetime.datetime.now().hour  #datetime.datetime  # 年:year 月:month 日:day 时:hour 分:minute 秒:second
+    # 获取年月日时分秒
+        # datetime.datetime.now()
+    # 获取年月日
+        # datetime.datetime.now().date()
+    # 时间类型转换
+        # datetime.datetime.now().strftime("%Y#%m#%d")  # #O#2020#04#16
+        # datetime.datetime.fromtimestamp(int型时间戳)  # 转换成datetime.datetime型的含六个元素的元组时间格式
+        # datetime.datetime.fromtimestamp(int型时间戳).strftime("%Y#%m#%d")  # 转化成指定的格式
+
+
+# aiohttp
+    # aiohttp分为服务器端和客户端，以下是客户端示例
+    # 基本语法
+        async with aiohttp.request('GET','https://github.com') as r:
+        await r.text()
+        
+    # 指定编码
+        await resp.text(encoding=‘windows-1251’)
+        
+    #适合读取图像等
+        await resp.read()
+        
+    #使用示例, 进行一次请求
+        import aiohttp, asyncio
+
+        async def main():#aiohttp必须放在异步函数中使用
+            async with aiohttp.request('GET', 'https://api.github.com/events') as resp:
+            json = await resp.json()
+            print(json)
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        
+    #使用示例, 进行多次请求
+        import aiohttp, asyncio
+
+        async def main():#aiohttp必须放在异步函数中使用
+            tasks = []
+            [tasks.append(fetch('https://api.github.com/events?a={}'.format(i))) for i in range(10)]#十次请求
+            await asyncio.wait(tasks)
+
+        async def fetch(url):
+            async with aiohttp.request('GET', url) as resp:
+                json = await resp.json()
+                print(json) 
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        
+    # 进行多次请求，并限制同时请求的数量
+        import aiohttp, asyncio
+
+        async def main(pool):#aiohttp必须放在异步函数中使用
+            tasks = []
+            sem = asyncio.Semaphore(pool)#限制同时请求的数量
+            [tasks.append(control_sem(sem, 'https://api.github.com/events?a={}'.format(i))) for i in range(10)]#十次请求
+            await asyncio.wait(tasks)
+
+        async def control_sem(sem, url):#限制信号量
+            async with sem:
+                await fetch(url)
+
+        async def fetch(url):
+            async with aiohttp.request('GET', url) as resp:
+                json = await resp.json()
+                print(json) 
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main(pool=2))
+        
+    # 上面的示例中可以正确的使用协程进行请求，但是由于aiohttp自身的原因会报Unclosed client session的警告。
+    官方不推荐使用aiohttp.request的方式请求，可以将 aiohttp.request 换成 aiohttp.ClientSession(**kw).request的方式即可
+        import aiohttp
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.github.com/events') as resp:
+                print(resp.status)
+                print(await resp.text())  # 至此通过协程完成了一个异步IO的get请求
+              
+    # 大文件
+        keep-alive, 连接池，共享cookie
+        cookie安全性
+        默认ClientSession使用的是严格模式的 aiohttp.CookieJar. RFC 2109，明确的禁止接受url和ip地址产生的cookie，
+        只能接受 DNS 解析IP产生的cookie。可以通过设置aiohttp.CookieJar 的 unsafe=True 来配置
+
+        jar = aiohttp.CookieJar(unsafe=True)
+        session = aiohttp.ClientSession(cookie_jar=jar)
+        
+    # 同时连接数量
+        # 同时请求数量
+            conn = aiohttp.TCPConnector(limit=30)#同时最大进行连接的连接数为30，默认是100，limit=0的时候是无限制
+        # 同一端口连接数量
+            conn = aiohttp.TCPConnector(limit_per_host=30)#默认是0
+            
+    # 自定义域名解析
+        from aiohttp.resolver import AsyncResolver
+
+        resolver = AsyncResolver(nameservers=["8.8.8.8", "8.8.4.4"])
+        conn = aiohttp.TCPConnector(resolver=resolver)
+    
+    # 代理
+        async with aiohttp.ClientSession() as session:
+        async with session.get("http://python.org", proxy="http://some.proxy.com") as resp:
+            print(resp.status)
+            
+        # 验证代理一
+            async with aiohttp.ClientSession() as session:
+                proxy_auth = aiohttp.BasicAuth('user', 'pass')
+                async with session.get("http://python.org", proxy="http://some.proxy.com",
+                    proxy_auth=proxy_auth) as resp:
+                    print(resp.status)
+        
+        # 验证代理二
+            session.get("http://python.org", proxy="http://user:pass@some.proxy.com")
+
+    # request案例
+        超时处理timeout
+        async with session.get('https://github.com', timeout=60) as r:
+
+
+# pyexecel模块
+    # import pyexecel
+      rows = []
+      rows.append(you_dict)
+      # 保存
+      pyexecel.save_as(records=rows, dest_file_name="%s.xls" % file_name)
+
+
+# 打开图片文件并显示
+    # from PIL import Image
+    try:
+        im = Image.open("image_path_name")
+        im.show()
+        im.close()
+    except Exception:
+        pass
+
+# os
+
+    # 执行dos命令，返回状态码，0成功
+        status_code = os.system("Command")
+
+    # 返回命令行结果
+        result = os.popen("Command").read()
+        # 官方建议使用subprocess
+            import subprocess
+            import traceback
+
+            try:
+                cmd = "ipconfig
+                obj = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+                obj.wait()
+                
+                lines = obj.stdout.readlines()
+                
+                if not lines or len(lines) == 0:
+                    line = obj.stderr.readlines()
+                
+                print(lines)
+            except Exception, e:
+                print(traceback.format_exc())
+        
+            没有自己创建out_temp流时,输出内容过多会在Popen这里hang住。
+            原因是subprocess的PIPE是有大小的。在python2.6.11之前，PIPE的大小为文件页的大小（i386上是4096），
+            2.6.11之后变为65536.因此当输出内容超过65536，会引起阻塞。因为PIPE已经被塞满了，无法再塞进更多的
+            数据。
+
+            解决方法是不用subprocess提供的PIPE，而是使用自己创建的流。如此，可以控制流的大小。
+            import subprocess
+            import traceback     
+            import tempfile
+             
+            try:
+             
+                cmd = "ipconfig"
+             
+                out_temp = tempfile.SpooledTemporaryFile(max_size=10*1024)
+             
+                fileno = out_temp.fileno()
+             
+                obj = subprocess.Popen(cmd,stdout=fileno,stderr=fileno,shell=True)
+                
+                obj.wait()
+             
+                out_temp.seek(0)
+             
+                lines = out_temp.readlines()
+             
+                print(lines)
+             
+            except Exception as e:
+             
+                print(traceback.format_exc())
+             
+            finally:
+             
+                if out_temp:
+             
+                    out_temp.close()
+            
+            普及：
+                在我看来,wait()等于忙碌等待中的poll().就像是：
+                while process.poll() is None:  # process.poll() is 0代表执行完毕
+                    time.sleep(0.5)
+                我读到如果stdout / stderr缓冲区被填满,wait()可能会产生死锁.像上面这样使用的process.poll()
+                也会产生死锁，如果这是真的,我应该使用process.comunicate()来解决问题。
+                
+                我们在使用管道（|）连接多个程序的时候，前一个程序的输出成为了后一个程序的输入，
+                此时如果假设后一个程序是通过subprocess的Popen创建的，那么此时此子进程的stdin，
+                就是前一个程序的输出，而它的stdout和stderr，通过communicate函数，可以直接获得！
+                
+                我想说的一个关键点是：通过子进程的communicate函数，我们可以像使用shell的管道一样，
+                直接连接多个程序的输入和输出；但是，这种输入和输出，也跟shell管道一样，是一次性的；
+                即如果某个程序有运行时会连续多次获取输入，communicate就无能为力（此时就要使用pexpect）。
+                
+                communicate函数是管道！因此，用管道连接多个程序，就需要多次使用Popen创建子进程（stdin，
+                stdout和stderr都要等于PIPE），并将后一个程序的stdin设置为前一个程序的stdout。
+                
+                    # 支持ipconfig也支持tasklist (Level: 1)
+                    obj = subprocess.Popen(script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, encoding='ANSI')
+                    stdout, stderr = obj.communicate(timeout=10)
+                    if not stdout or len(stdout) == 0:
+                        print(stderr)
+                    print(stdout)
+
+    # 获取文件大小
+        # os.stat("文件路径及文件名").st_size
+        # os.path.getsize("文件路径及文件名")
+
+    # 获取所有文件
+        # os.listdir(file_path)
+
+    # 获取当前工作空间路径
+        # os.getcwd()
+
+    # 获取当前py文件路径
+        # os.path.abspath(__file__)
+
+    # 获取当前py文件父路径
+        # os.path.dirname(os.path.abspath(__file__))
+        
+    # 获取路径中的文件名及后缀
+        # os.path.basename("path")
+        
+    # 获取环境变量
+        os.environ.get("PATH", None)
+
+
+# signal
+    # 注册中断信号(Ctrl+C停止)，像linux中kill发送的中断信号一样
+        # signal.signal(signal.SIGINT, my_func)  # my_func接收两个参数:(signum, frame)
+
+
+# shutil
+    # shutil.move(old_path, new_path)：old_path格式的文件转换为new_path格式的文件
+
+
+# sys
+    # 增加环境变量
+        # sys.path.append("path")
+    # 将路径加到pythonpath当中
+        # sys.path.insert(index, "path")  # index：顺序（填0）
+
+
+# environs
+    # 支持的类型
+        env.str
+        env.bool
+        env.int
+        env.float
+        env.decimal
+        env.list (accepts optional subcast keyword argument)
+        env.dict (accepts optional subcast keyword argument)
+        env.json
+        env.datetime
+        env.date
+        env.timedelta (assumes value is an integer in seconds)
+        env.url
+        env.uuid
+        env.log_level
+        env.path (casts to a pathlib.Path)
+
+    # 配置环境变量
+        export VAR_STR=Miman
+        export VAR_INT=8
+        export VAR_FLOAT=8.8
+        export VAR_LIST=1,2,3
+        export VAR_DATE='2021-01-07'
+        export VAR_BOOL=true
+        export VAR_DICT=name=Miman, age=24
+        export VAR_JSON='{"name": "Miman", "age": 24}'
+        export VAR_URL=https://docs.python.org
+        export VAR_UUID=fee4fd29-2fd3-4cbe-b7ea-e1c33317ed28
+        export VAR_PATH=/var/
+        export LOG_LEVEL=DEBUG
+
+    from environs import Evn
+    env = Env()
+    env.read_env([path='.env.test'])  # read .env file if it exists
+    
+    sarg = env.str("VAR_STR", None)  # => Miman
+    iarg = env.int("VAR_INT", 1)  # => 8
+    farg = env.float("VAR_FLOAT", 1.1)  # => 8.8
+    larg = env.list("VAR_LIST")  # => [1, 2, 3]
+    date = env.date("VAR_DATE")  # => datetime.date(2021, 01, 07)
+    barg = env.bool("VAR_BOOL", False)  # => True
+    darg = env.dict("VAR_DICT")  # => {"name": "Miman", "age": "24"}
+    jarg = env.json("VAR_JSON")  # => {"name": "Miman", "age": 24}
+    url = env.url("VAR_URL")  # => ParseResult(scheme='https', netloc='docs.python.org', path='', params='', query='', fragment='')
+    uuid = env.uuid("VAR_UUID")  # => fee4fd29-2fd3-4cbe-b7ea-e1c33317ed28
+    path = env.path("VAR_PATH")  # => /var/
+    log_level = env.log_level("LOG_LEVEL")  # => DEBUG
+
+    # 前缀处理
+        # export MYAPP_HOST=lolcathost
+        # export MYAPP_PORT=3000
+
+        with env.prefixed("MYAPP_"):
+            host = env("HOST", "localhost")  # => 'lolcathost'
+            port = env.int("PORT", 5000)  # => 3000
+
+        # nested prefixes are also supported:
+
+        # export MYAPP_DB_HOST=lolcathost
+        # export MYAPP_DB_PORT=10101
+
+        with env.prefixed("MYAPP_"):
+            with env.prefixed("DB_"):
+                db_host = env("HOST", "lolcathost")
+                db_port = env.int("PORT", 10101)
+    
+    # 合法性验证
+        # export TTL=-2
+        # export NODE_ENV='invalid'
+        # export EMAIL='^_^'
+
+        from environs import Env
+        from marshmallow.validate import OneOf, Length, Email
+
+        env = Env()
+
+        # simple validator
+        env.int("TTL", validate=lambda n: n > 0)
+        # => Environment variable "TTL" invalid: ['Invalid value.']
+
+        # using marshmallow validators
+        env.str(
+            "NODE_ENV",
+            validate=OneOf(
+                ["production", "development"], error="NODE_ENV must be one of: {choices}"
+            ),
+        )
+        # => Environment variable "NODE_ENV" invalid: ['NODE_ENV must be one of: production, development']
+
+        # multiple validators
+        env.str("EMAIL", validate=[Length(min=4), Email()])
+        # => Environment variable "EMAIL" invalid: ['Shorter than minimum length 4.', 'Not a valid email address.']
+
+    # 示例
+        import platform
+        from os.path import dirname, abspath, join
+        from environs import Env
+        from loguru import logger
+
+        env = Env()
+        env.read_env()
+
+        # definition of flags
+        IS_WINDOWS = platform.system().lower() == 'windows'
+
+        # definition of dirs
+        ROOT_DIR = dirname(dirname(abspath(__file__)))
+        LOG_DIR = join(ROOT_DIR, env.str('LOG_DIR', 'logs'))
+
+        # definition of environments
+        DEV_MODE, TEST_MODE, PROD_MODE = 'dev', 'test', 'prod'
+        APP_ENV = env.str('APP_ENV', DEV_MODE).lower()
+        APP_DEBUG = env.bool('APP_DEBUG', True if APP_ENV == DEV_MODE else False)
+        APP_DEV = IS_DEV = APP_ENV == DEV_MODE
+        APP_PROD = IS_PROD = APP_DEV == PROD_MODE
+        APP_TEST = IS_TEST = APP_ENV = TEST_MODE
+
+        # redis host
+        REDIS_HOST = env.str('REDIS_HOST', '127.0.0.1')
+        # redis port
+        REDIS_PORT = env.int('REDIS_PORT', 6379)
+        # redis password, if no password, set it to None
+        REDIS_PASSWORD = env.str('REDIS_PASSWORD', None)
+        # redis connection string, like redis://[password]@host:port or rediss://[password]@host:port
+        REDIS_CONNECTION_STRING = env.str('REDIS_CONNECTION_STRING', None)
+
+        # definition of api
+        API_HOST = env.str('API_HOST', '0.0.0.0')
+        API_PORT = env.int('API_PORT', 5555)
+        API_THREADED = env.bool('API_THREADED', True)
+
+        # definition of flags
+        ENABLE_TESTER = env.bool('ENABLE_TESTER', True)
+        ENABLE_GETTER = env.bool('ENABLE_GETTER', True)
+        ENABLE_SERVER = env.bool('ENABLE_SERVER', True)
+
+        # logger
+        logger.add(env.str('LOG_RUNTIME_FILE', 'runtime.log'), level='DEBUG', rotation='1 week', retention='20 days')
+        logger.add(env.str('LOG_ERROR_FILE', 'error.log'), level='ERROR', rotation='1 week')
+
+
+# argparse
+    argparse 模块可以轻松编写用户友好的命令行接口。
+    主要有三个步骤：
+
+        创建 ArgumentParser() 对象
+        调用 add_argument() 方法添加参数
+        使用 parse_args() 解析添加的参数
+    
+    # 添加参数
+        分为添加位置参数-positional arguments和可选参数-optional arguments
+        添加位置参数声明的参数名前缀不带-或--，按照顺序进行解析，在命令中必须出现，否则报错，命令通常为：
+
+        parser.add_argument("a")
+        parser.add_argument("b")
+        parser.add_argument("c")
+        添加可选参数声明的参数名前缀带-或--,前缀是-的为短参数，前缀是--是长参数，两者可以都有，也可以只有一个,短参数和长参数效果一样。可选参数的值接在位置参数的后面，不影响位置参数的解析顺序。
+        以深度学习训练中经常出现的为例：
+
+        parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+                                help='input batch size for training (default: 64)')
+        parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
+                                help='SGD momentum (default: 0.5)')
+        parser.add_argument('--no-cuda', action='store_true', default=False,
+                                help='disables CUDA training')
+        parser.add_argument('--save-model', action='store_true', default=False,
+                                help='For Saving the current Model')
+        其中action参数的'store_true'指的是：触发action时为真，不触发则为假。即储存了一个bool变量，默认为false，触发不用赋值即变为true
+        type:指定参数类别，默认是str，传入数字要定义
+        help：是一些提示信息
+        default：是默认值
+        metavar: 在 usage 说明中的参数名称，对于必选参数默认就是参数名称，对于可选参数默认是全大写的参数名称.
+        其它详细用法文档介绍：https://docs.python.org/zh-cn/3/library/argparse.html#argparse.ArgumentParser.add_argument
+    
+    # 示例
+        import argparse 
+        # 创建解析器
+        parser = argparse.ArgumentParser() 
+
+        #添加位置参数(positional arguments)
+        parser.add_argument('-a', type=int，help='input a int')
+        args = parser.parse_args()
+        print(args.a)
+
+
+# loguru
+    """
+    logger.add()有个非常重要的参数 sink，我们看看官方文档：
+    https://loguru.readthedocs.io/en/stable/api/logger.html#sink，
+    可以了解到通过 sink 我们可以传入多种不同的数据结构，汇总如下：
+
+    sink 可以传入一个 file 对象，例如 sys.stderr 或者 open('file.log', 'w') 都可以。
+    sink 可以直接传入一个 str 字符串或者 pathlib.Path 对象，其实就是代表文件路径的，
+    如果识别到是这种类型，它会自动创建对应路径的日志文件并将日志输出进去。
+    sink 可以是一个方法，可以自行定义输出实现。
+    sink 可以是一个 logging 模块的 Handler，比如 FileHandler、StreamHandler 等等，
+    或者上文中我们提到的 CMRESHandler 照样也是可以的，这样就可以实现自定义 Handler 的配置。
+    sink 还可以是一个自定义的类，具体的实现规范可以参见官方文档。
+    """
+
+    from loguru import logger
+
+
+    # logger.add("logfile.log", format="{time} - {level} - {message}", level=20)
+    # logger.add("logfile.log", format="{time} - {level} - {message}", filter="filter_func", level=20)
+    trace = logger.add("warning_file.log", level=30)
+    # 通过add返回的id删除sink
+    logger.remove(trace)
+
+    # 每500MB创建一个log文件
+    logger.add('runtime_{time}.log', rotation="500 MB")
+
+    # 每天0点创建一个log文件
+    logger.add('runtime_{time}.log', rotation="00:00")
+
+    # 一周创建一个log文件
+    logger.add('runtime_{time}.log', rotation="1 week")
+
+    # 日志最多保存10天
+    logger.add('runtime_{time}.log', retention="10 days")
+
+    # 配置文件压缩格式，节省空间
+    logger.add('runtime.log', compression='zip')
+
+    # 创建一个日志等级为20(info)的info_file.log文件
+    logger.add("info_file.log", level=20)
+    logger.debug("hello Miman")  # 日志等级低于20，不会写入日志文件
+    logger.info("hello Miman")  # 日志等级等于20，会写入日志文件
+    logger.warning("hello Miman")  # 日志等级大于20，会写入日志文件
+
+
+    # 日志追踪
+    @logger.catch
+    def fn(x, y):
+        # 当y为0时会报错，logger会将详细错误写入日志
+        return x / y
+
+    # loguru更多官方文档: https://loguru.readthedocs.io/en/stable/index.html
+
+
+
+
+
+
+
+
+
+
+

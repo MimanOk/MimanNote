@@ -290,7 +290,7 @@
             # docker run -d -p 宿主机端口:容器端口 --name 容器的名称 镜像的标识|镜像名称[:tag]
                 -d: 代表后台运行容器（注：若容器内没有正在运行的东西，会自动停止）
                 -p: 宿主机端口:容器端口；为了映射当前linux端口和容器端口
-                -P: 随机端口映射
+                -P: 随机端口映射(大写的P)
                 --name: 容器名称
         # 复杂操作
             # docker run -d 镜像 /bin/sh -c "while true; do echo Miman; sleep 2; done;"
@@ -462,7 +462,7 @@
                     # cd /opt/ ls会发现该目录下多了一个volume_ssm_tomcat目录
                     # 此时volume_ssm_tomcat目录为空，需要手动添加文件（建议使用）
                     
-    # 4.Docker自定义镜像
+    # 4.Docker自定义镜像(附1)
     
         # 指令
             # COPY和ADD
@@ -546,7 +546,7 @@
                   - 3306:3306  # 指定端口号的映射
                 environment:
                     MYSQL_ROOT_PASSWORD: root  # 指定MySql的root用户登录密码
-                    TZ: Asia/SiChuan  # 指定时区
+                    TZ: Asia/ShangHai  # 指定时区
                 volumes:
                   - opt/docker_mysql_tomcat/mysql_data:var/lib/mysql  # 映射数据卷
               tomcat:  # 服务器的名称(同上)
@@ -556,7 +556,7 @@
                 ports:
                   - 8080:8080
                 environment:
-                    TZ: Asia/Sichuan
+                    TZ: Asia/ShangHai
                 volumes:
                   - opt/docker_mysql_tomcat/tomcat_webapps:/usr/local/tomcat/webapps
                   - opt/docker_mysql_tomcat/tomcat_logs:/usr/local/tomcat/logs
@@ -625,13 +625,13 @@
   # docker pull python:3.6
 
 # 运行redis并为其ID取名为redis1
-  # docker --name redis1 redis
+  # docker run --name redis1 redis
  
 # 运行redis并为其ID取名为redis1,退出时自动删除容器
-  # docker --rm --name redis1 redis
+  # docker run --rm --name redis1 redis
   
 # 运行redis,为其ID取名为redis2,并将本机/data/redis目录映射到redis容器中的/data目录
-  # docker --name redis2 -v /data/redis:/data redis
+  # docker run --name redis2 -v /data/redis:/data redis
   
 # 查看当前运行容器
   # docker ps
