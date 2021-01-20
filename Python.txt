@@ -145,40 +145,40 @@
             mi.name  # >>"MimanOk"
             del mi.name  # >>del name success!
             
-        # PyCharm实用快捷键
-            替换查找
-                1.ctrl+r:替换
-                2.ctrl+F:查找
-                3.ctrl+shift+F:全局查找
-                4.ctrl+shift+R:全局替换
-                5.ctrl+shift+i:快捷查看方法实现的内容
-                6.ctrl+p:查看参数
-                7.ctrl+Q:查看文档描述
-                8.shift+F1:查看api文档
-                9.ctrl+F12:查看类的方法
-                10.ctrl+H:查看类的继承关系
-                ...
-                13.ctrl+alt+H:查看方法在那里被调用了
-                14.ctrl+{}:可以定位方法体的括号
-                15.F3:查看选中的内容
-                16.shift+F3:反向查看内容
-                17.ctrl+alt+B:查询那些类实现了光标所在的接口
-                18.ctrl+U:查看父类
-                19.ctrl+E:最近编辑的文件列表
-                20.ctrl+alt+home:查看布局与对应的类
-            光标操作
-                1.ctrl+alt+enter:向上插入
-                2.shift+enter:向下插入
-            操作代码
-                1.ctrl+d:复制粘贴一行
-                2.ctrl+y:删除一行
-            组合快捷键
-                1.F2:定位错误
-                2.alt+enter:修正错误
-            格式代码及其他功能
-                1.ctrl+alt+L:格式代码
-            编辑的位置
-                ctrl+alt+左右键
+    # PyCharm实用快捷键
+        替换查找
+            1.ctrl+r:替换
+            2.ctrl+F:查找
+            3.ctrl+shift+F:全局查找
+            4.ctrl+shift+R:全局替换
+            5.ctrl+shift+i:快捷查看方法实现的内容
+            6.ctrl+p:查看参数
+            7.ctrl+Q:查看文档描述
+            8.shift+F1:查看api文档
+            9.ctrl+F12:查看类的方法
+            10.ctrl+H:查看类的继承关系
+            ...
+            13.ctrl+alt+H:查看方法在那里被调用了
+            14.ctrl+{}:可以定位方法体的括号
+            15.F3:查看选中的内容
+            16.shift+F3:反向查看内容
+            17.ctrl+alt+B:查询那些类实现了光标所在的接口
+            18.ctrl+U:查看父类
+            19.ctrl+E:最近编辑的文件列表
+            20.ctrl+alt+home:查看布局与对应的类
+        光标操作
+            1.ctrl+alt+enter:向上插入
+            2.shift+enter:向下插入
+        操作代码
+            1.ctrl+d:复制粘贴一行
+            2.ctrl+y:删除一行
+        组合快捷键
+            1.F2:定位错误
+            2.alt+enter:修正错误
+        格式代码及其他功能
+            1.ctrl+alt+L:格式代码
+        编辑的位置
+            ctrl+alt+左右键
     # 内存回收
         # 引用计数
             Python中的内存管理通过跟踪特定对象的“引用”数量，然后在该计数达到零时释放该对象的内存来工作。
@@ -193,7 +193,60 @@
   "".strip("想去掉的内容，包括换行:\r\n")  # 去掉字符串右边的空格，参数是想另外想去掉的内容
   
 
-# scrapy中使用FormRequest()来发出带data的请求
+# yield from
+    # python3.3才出现yield from语法，python2中没有
+    # yield from 后面跟可迭代对象，可以是普通的可迭代对象，也可以是迭代器，甚至是生成器。
+    
+    # 示例1
+        def demo1(data):
+            for i in data:
+                yield i
+
+        def demo2(data):
+            yield from data
+
+        print(list(demo1("Miman")))  # >>['M', 'i', 'm', 'a', 'n']
+        print(list(demo2("Miman")))  # >>['M', 'i', 'm', 'a', 'n']
+    
+    # 示例2
+        # 子生成器
+        def demo1():
+            result = 0
+            while True:
+                receive = yield result
+                if receive is None: break
+                receive += 1
+                result = receive
+
+        # 委托生成器
+        def demo2():
+            while True:
+                res = yield from demo1()
+                # 委托生成器不会拦截demo1正常生成的数据，只是打开了双通道
+                # 只有子生成器要结束（return）了，yield from左边的变量才会被赋值，后面的代码才会执行。
+                print("demo2 res: %s" % res)
+
+        # 调用方
+        def main():
+            demo = demo2()
+            first_res = next(demo)  # 激活生成器
+            print("next: %s" % first_res)
+            print("main receive: %s" % demo.send(1))
+            print("main receive: %s" % demo.send(None))
+
+        if __name__ == '__main__':
+            main()
+            
+        # output
+            >>next: 0
+            >>main receive: 2
+            >>demo2 res: None
+            >>main receive: 0
+    # 总结
+        # yield from常用来代替内层for循环 与 打开双通道
+        # 但是大部分情况下yield from并不单独使用，而是伴随着asyncio库使用，实现异步操作
+        # 从Python 3.5开始引入了新的语法 async 和 await ，而await替代的就是yield from
+        （为了不与实现内层for循环的yield from误解）
   
 
 # 线程、进程、协程
@@ -266,8 +319,13 @@
     ga.join()
     gb.join()
     
-# 协程并发1 #
+# 协程并发1
     import anyncio
+    
+    async def eat(food):
+        for i in range(1, 3 + 1):
+            print("eating {food:<5}".format(food=food))
+            await asyncio.sleep(3)
 
     pool = asyncio.get_event_loop()
     eat1 = eat("辣条")
@@ -281,23 +339,46 @@
     ]
 
     pool.run_until_complete(asyncio.wait(task))
-# end #
 
-# 协程并发2 #
+
+# 协程并发2
     pool = asyncio.get_event_loop()
     pool.run_until_complete(asyncio.wait([eat(food) for food in {"烤鸡", "包子", "辣条"}]))
-# end #
 
-# end #
 
-# 其他 #
+# 一个异步io(协程)实例
+    import ansycio
+    class Downloader(object):
+        """
+        一个异步下载器，可以对代理源异步抓取，但是容易被BAN。
+        """
+
+        def __init__(self, urls):
+            self.urls = urls
+            self._htmls = []
+
+        async def download_single_page(self, url):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    self._htmls.append(await resp.text())
+
+        def download(self):
+            loop = asyncio.get_event_loop()
+            tasks = [self.download_single_page(url) for url in self.urls]
+            loop.run_until_complete(asyncio.wait(tasks))
+
+        @property
+        def htmls(self):
+            self.download()
+            return self._htmls
+
 
 # requests
     # 对于保存响应数据较大的情况(如视频)，应一点一点的对其进行保存：
     for chunk in response.iter_content(1024):
         f.write(chunk)
 
-# http://httpbin.org/ip            # 请求获取ip
+# http://httpbin.org/ip          # 请求获取ip
 # http://httpbin.org/cookies     # 请求获取cookie
 
 # 安装pip
@@ -315,55 +396,26 @@
     # 将访问过的url经md5哈希后保存到set中
     # bloomfilter方法对bitmap（将一条数据通过hash映射到某一位，非常节省内存，但冲突严重）进行改进，多重哈希函数降低冲突
 
-# end #
 
 # 判断是否以Miman字符串开头："MimanOk".startswith("Miman")
 # 判断是否以Miman字符串结尾："OkMiman".endswith("Miman")
 
 # 移除网页标签
     # from w3llib.html import remove_tags ##remove_tags("str")
-    
-# 一个异步io实例 #
-import ansycio
-class Downloader(object):
-    """
-    一个异步下载器，可以对代理源异步抓取，但是容易被BAN。
-    """
 
-    def __init__(self, urls):
-        self.urls = urls
-        self._htmls = []
 
-    async def download_single_page(self, url):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                self._htmls.append(await resp.text())
-
-    def download(self):
-        loop = asyncio.get_event_loop()
-        tasks = [self.download_single_page(url) for url in self.urls]
-        loop.run_until_complete(asyncio.wait(tasks))
-
-    @property
-    def htmls(self):
-        self.download()
-        return self._htmls
-
-# end #
-
-# 断言assert #
+# 断言assert
     assert expression
     等价于：
-
-    if not expression:
-        raise AssertionError
+        if not expression:
+            raise AssertionError
     assert 后面也可以紧跟参数:
 
     assert expression [, arguments]
+    
     等价于：
-
-    if not expression:
-        raise AssertionError(arguments)
+        if not expression:
+            raise AssertionError(arguments)
     以下为 assert 使用实例：
 
     >>> assert True     # 条件为 true 正常执行
@@ -381,36 +433,9 @@ class Downloader(object):
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     AssertionError: 1 不等于 2
-# end #
 
-if __name__ == '__main__':
 
-    async def eat(food):
-        for i in range(1, 3 + 1):
-            print("eating#> {food:#<5}".format(food=food))
-            await asyncio.sleep(3)
-        
-# 协程并发1 #
-    pool = asyncio.get_event_loop()
-    eat1 = eat("辣条")
-    eat2 = eat("包子")
-    eat3 = eat("烤鸡")
-
-    task = [
-        asyncio.ensure_future(eat1),
-        asyncio.ensure_future(eat2),
-        asyncio.ensure_future(eat3),
-    ]
-
-    pool.run_until_complete(asyncio.wait(task))
-# end #
-
-# 协程并发2 #
-    pool = asyncio.get_event_loop()
-    pool.run_until_complete(asyncio.wait([eat(food) for food in {"烤鸡", "包子", "辣条"}]))
-# end #
-
-# pickle #
+# pickle
     try:
         import cPickle as pickle
     except ImportError:
@@ -421,118 +446,118 @@ if __name__ == '__main__':
     
     def dumps(obj):
         return pickle.dumps(obj, protocol=#1)
-# end #
 
-# __slots__ #
-class A():
-    "允许该类中存在的属性"
-    __slots__ = ("允许的属性1", 允许的属性2)
-# end #
 
-# cookiejar登录知乎 #
-import re
-import requests
-import http.cookiejar
-from PIL import Image
-import time
-import json
- 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 '
-                         '(KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
-           "Host": "www.zhihu.com",
-           "Referer": "https://www.zhihu.com/",
-           }
-# 建立一个会话，可以把同一用户的不同请求联系起来；直到会话结束都会自动处理cookies
-session = requests.Session()
-# 建立LWPCookieJar实例，可以存Set-Cookie3类型的文件。
-# 而MozillaCookieJar类是存为'/.txt'格式的文件
-session.cookies = http.cookiejar.LWPCookieJar("cookie")
-# 若本地有cookie则不用再post数据了
-try:
-    session.cookies.load(ignore_discard=True)
-except IOError:
-    print('Cookie未加载！')
- 
- 
-def get_xsrf():
-    """
-    获取参数_xsrf
-    """
-    response = session.get('https://www.zhihu.com', headers=headers)
-    html = response.text
-    get_xsrf_pattern = re.compile(r'<input type="hidden" name="_xsrf" value="(.*?)"')
-    _xsrf = re.findall(get_xsrf_pattern, html)[0]
-    return _xsrf
- 
- 
-def get_captcha():
-    """
-    获取验证码本地显示
-    返回你输入的验证码
-    """
-    t = str(int(time.time() * 1000))
-    captcha_url = 'http://www.zhihu.com/captcha.gif?r=' + t + "&type=login"
-    response = session.get(captcha_url, headers=headers)
-    with open('cptcha.gif', 'wb') as f:
-        f.write(response.content)
-    # Pillow显示验证码
-    im = Image.open('cptcha.gif')
-    im.show()
-    captcha = input('本次登录需要输入验证码： ')
-    return captcha
+# __slots__
+    class A():
+        "允许该类中存在的属性"
+        __slots__ = ("允许的属性1", 允许的属性2)
 
- 
-def login(username, password):
-    """
-    输入自己的账号密码，模拟登录知乎
-    """
-    # 检测到11位数字则是手机登录
-    if re.match(r'\d{11}$', username):
-        url = 'http://www.zhihu.com/login/phone_num'
-        data = {'_xsrf': get_xsrf(),
-                'password': password,
-                'remember_me': 'true',
-                'phone_num': username
-                }
-    else:
-        url = 'https://www.zhihu.com/login/email'
-        data = {'_xsrf': get_xsrf(),
-                'password': password,
-                'remember_me': 'true',
-                'email': username
-                }
-    # 若不用验证码，直接登录
-    result = session.post(url, data=data, headers=headers)
-    # 打印返回的响应，r = 1代表响应失败，msg里是失败的原因
-    # loads可以反序列化内置数据类型，而load可以从文件读取
-    if (json.loads(result.text))["r"] == 1:
-        # 要用验证码，post后登录
-        data['captcha'] = get_captcha()
+
+# cookiejar登录知乎
+    import re
+    import requests
+    import http.cookiejar
+    from PIL import Image
+    import time
+    import json
+     
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 '
+                             '(KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
+               "Host": "www.zhihu.com",
+               "Referer": "https://www.zhihu.com/",
+               }
+    # 建立一个会话，可以把同一用户的不同请求联系起来；直到会话结束都会自动处理cookies
+    session = requests.Session()
+    # 建立LWPCookieJar实例，可以存Set-Cookie3类型的文件。
+    # 而MozillaCookieJar类是存为'/.txt'格式的文件
+    session.cookies = http.cookiejar.LWPCookieJar("cookie")
+    # 若本地有cookie则不用再post数据了
+    try:
+        session.cookies.load(ignore_discard=True)
+    except IOError:
+        print('Cookie未加载！')
+     
+     
+    def get_xsrf():
+        """
+        获取参数_xsrf
+        """
+        response = session.get('https://www.zhihu.com', headers=headers)
+        html = response.text
+        get_xsrf_pattern = re.compile(r'<input type="hidden" name="_xsrf" value="(.*?)"')
+        _xsrf = re.findall(get_xsrf_pattern, html)[0]
+        return _xsrf
+     
+     
+    def get_captcha():
+        """
+        获取验证码本地显示
+        返回你输入的验证码
+        """
+        t = str(int(time.time() * 1000))
+        captcha_url = 'http://www.zhihu.com/captcha.gif?r=' + t + "&type=login"
+        response = session.get(captcha_url, headers=headers)
+        with open('cptcha.gif', 'wb') as f:
+            f.write(response.content)
+        # Pillow显示验证码
+        im = Image.open('cptcha.gif')
+        im.show()
+        captcha = input('本次登录需要输入验证码： ')
+        return captcha
+
+     
+    def login(username, password):
+        """
+        输入自己的账号密码，模拟登录知乎
+        """
+        # 检测到11位数字则是手机登录
+        if re.match(r'\d{11}$', username):
+            url = 'http://www.zhihu.com/login/phone_num'
+            data = {'_xsrf': get_xsrf(),
+                    'password': password,
+                    'remember_me': 'true',
+                    'phone_num': username
+                    }
+        else:
+            url = 'https://www.zhihu.com/login/email'
+            data = {'_xsrf': get_xsrf(),
+                    'password': password,
+                    'remember_me': 'true',
+                    'email': username
+                    }
+        # 若不用验证码，直接登录
         result = session.post(url, data=data, headers=headers)
-        print((json.loads(result.text))['msg'])
-        # 保存cookie到本地
-    session.cookies.save(ignore_discard=True, ignore_expires=True)
- 
- 
-def isLogin():
-    # 通过查看用户个人信息来判断是否已经登录
-    url = "https://www.zhihu.com/settings/profile"
-    # 禁止重定向，否则登录失败重定向到首页也是响应200
-    login_code = session.get(url, headers=headers, allow_redirects=False).status_code
-    if login_code == 200:
-        return True
-    else:
-        return False
- 
- 
-if __name__ == '__main__':
-    if isLogin():
-        print('您已经登录')
-    else:
-        account = input('输入账号：')
-        secret = input('输入密码：')
-        login(account, secret)
-# end #
+        # 打印返回的响应，r = 1代表响应失败，msg里是失败的原因
+        # loads可以反序列化内置数据类型，而load可以从文件读取
+        if (json.loads(result.text))["r"] == 1:
+            # 要用验证码，post后登录
+            data['captcha'] = get_captcha()
+            result = session.post(url, data=data, headers=headers)
+            print((json.loads(result.text))['msg'])
+            # 保存cookie到本地
+        session.cookies.save(ignore_discard=True, ignore_expires=True)
+     
+     
+    def isLogin():
+        # 通过查看用户个人信息来判断是否已经登录
+        url = "https://www.zhihu.com/settings/profile"
+        # 禁止重定向，否则登录失败重定向到首页也是响应200
+        login_code = session.get(url, headers=headers, allow_redirects=False).status_code
+        if login_code == 200:
+            return True
+        else:
+            return False
+     
+     
+    if __name__ == '__main__':
+        if isLogin():
+            print('您已经登录')
+        else:
+            account = input('输入账号：')
+            secret = input('输入密码：')
+            login(account, secret)
+
 
 # 解析CSS文件
   # import tinycss
@@ -549,154 +574,153 @@ if __name__ == '__main__':
                     continue
                 print(int(v.value), end="px ")
   
-# 日志模板 #
-import logging
+# 日志模板
+    import logging
 
-class ContextFilter(logging.Filter):
-    """ 定制用户id """
-    def filter(self, record):
-        # user_id 可以改成其他名字，后面格式化时对应即可
-        record.user_id = '123'
-        return True
+    class ContextFilter(logging.Filter):
+        """ 定制用户id """
+        def filter(self, record):
+            # user_id 可以改成其他名字，后面格式化时对应即可
+            record.user_id = '123'
+            return True
 
-# 设置log的名字
-logger = logging.getLogger(__name__)
-# 设置logger对象的log的等级
-logger.setLevel(logging.DEBUG)
+    # 设置log的名字
+    logger = logging.getLogger(__name__)
+    # 设置logger对象的log的等级
+    logger.setLevel(logging.DEBUG)
 
-# 实例化流句柄
-log_con = logging.StreamHandler()
-# 设置该流的log等级
-log_con.setLevel(logging.DEBUG)
-# 格式化输出，固定名称写法
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(message)s")
-log_con.setFormatter(formatter)
-# 添加到logger对象
-logger.addHandler(log_con)
+    # 实例化流句柄
+    log_con = logging.StreamHandler()
+    # 设置该流的log等级
+    log_con.setLevel(logging.DEBUG)
+    # 格式化输出，固定名称写法
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(message)s")
+    log_con.setFormatter(formatter)
+    # 添加到logger对象
+    logger.addHandler(log_con)
 
-# 实例化文件流句柄
-log_file = logging.FileHandler("file.log")
-# 设置文件流log等级
-log_file.setLevel(logging.INFO)
-# 格式化输出，固定名称写法
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(user_id)s - %(message)s")
-log_file.setFormatter(formatter)
-# 使用ContextFilter类来设置日志输出id
-logger.addFilter(ContextFilter())
-# 添加到logger对象
-logger.addHandler(log_file)
+    # 实例化文件流句柄
+    log_file = logging.FileHandler("file.log")
+    # 设置文件流log等级
+    log_file.setLevel(logging.INFO)
+    # 格式化输出，固定名称写法
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(user_id)s - %(message)s")
+    log_file.setFormatter(formatter)
+    # 使用ContextFilter类来设置日志输出id
+    logger.addFilter(ContextFilter())
+    # 添加到logger对象
+    logger.addHandler(log_file)
 
-logger.debug("->> debug level 10")
-logger.info("->> info level 20")
-logger.warning("->> warning level 30")
-logger.error("->> error level 40")
-logger.critical("->> critical level 50")
-# end #
-
-# 获取md5 #
-from hashlib import md5
+    logger.debug("->> debug level 10")
+    logger.info("->> info level 20")
+    logger.warning("->> warning level 30")
+    logger.error("->> error level 40")
+    logger.critical("->> critical level 50")
 
 
-def get_md5(data):
-    if isinstance(data, str):
-        data = data.encode('utf-8')
-    m = md5()
-    m.update(data)
-    return m.hexdigest()
+
+# 获取md5
+    from hashlib import md5
+
+    def get_md5(data):
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+        m = md5()
+        m.update(data)
+        return m.hexdigest()
 
 
-if __name__ == '__main__':
-    print(get_md5("Miman and Bunny"))
+    if __name__ == '__main__':
+        print(get_md5("Miman and Bunny"))
 
-# end #
 
-# 发送邮件 #
-import smtplib, time
-from email.mime import multipart, text
+# 发送邮件
+    import smtplib, time
+    from email.mime import multipart, text
 
-def send_email(content='', level=1, retry=5):
-    '''
-    发送邮件
-    :param content: 发送内容
-    :param subject: 邮箱主题
-    :return: None
-    '''
+    def send_email(content='', level=1, retry=5):
+        '''
+        发送邮件
+        :param content: 发送内容
+        :param subject: 邮箱主题
+        :return: None
+        '''
 
-    if not content:
-        return 0
-    if isinstance(level, (str, )):
-        if '-' in level:
-            level = 0
-        elif len(level) > 1:
-            level = 2
-        else:
-            level = ord(level) - 48
-    if isinstance(retry, (str, )):
-        if '-' in retry:
-            retry = 0
-        elif len(retry) > 1:
-            retry = 2
-        else:
-            retry = ord(retry) - 48
-    if level < 0:
-        level = 0
-    elif level > 2:
-        level = 2
-    subject = ["小红秘书飞奔而来", "小青秘书微笑而来", "小紫秘书悄悄跟您说"][level]
-    # SMTP_SERVER = "smtp.qq.com"
-    # sender = 'mimanok@foxmail.com'
-    # password = "tqegbjvnkcwwecfj"
-    # receivers = ['mimanok@qq.com']
-    # try:
-    #     smtpObj = smtplib.SMTP(local_hostname='localhost', port=25)
-    #     smtpObj.connect(SMTP_SERVER, '25')
-    #     smtpObj.login(sender, password)
-    #     smtpObj.sendmail(sender, receivers, content)
-    #     print("->> Successfully sent email")
-    # except smtplib.SMTPException:
-    #     print("->> unable to send email")
-    #     if retry:
-    #         retry -= 1
-    #         time.sleep(2)
-    #         return send_email(content=content, level=level, retry=retry)
-    #     else:
-    #         return 0
-
-    # 发送邮箱smtp服务器地址
-    SMTP_SERVER = "smtp.qq.com"
-    # 发送邮箱账户
-    sender = "mimanok@foxmail.com"
-    password = "tqegbjvnkcwwecfj"
-    # 收件人地址
-    receivers = "mimanok@qq.com"
-
-    msg = multipart.MIMEMultipart()
-    msg['from'] = sender
-    msg['to'] = receivers
-    msg['subject'] = subject
-    txt = text.MIMEText(content)
-    msg.attach(txt)
-
-    try:
-        smtpObj = smtplib.SMTP(local_hostname='localhost', port=25)
-        smtpObj.connect(SMTP_SERVER, '25')
-        smtpObj.login(sender, password)
-        smtpObj.sendmail(sender, receivers, str(msg))
-        print("->> Successfully sent email")
-    except smtplib.SMTPException:
-        print("->> unable to send email")
-        if retry:
-            retry -= 1
-            time.sleep(2)
-            return send_email(content=content, level=level, retry=retry)
-        else:
+        if not content:
             return 0
-    smtpObj.quit()
-    return 1
+        if isinstance(level, (str, )):
+            if '-' in level:
+                level = 0
+            elif len(level) > 1:
+                level = 2
+            else:
+                level = ord(level) - 48
+        if isinstance(retry, (str, )):
+            if '-' in retry:
+                retry = 0
+            elif len(retry) > 1:
+                retry = 2
+            else:
+                retry = ord(retry) - 48
+        if level < 0:
+            level = 0
+        elif level > 2:
+            level = 2
+        subject = ["小红秘书飞奔而来", "小青秘书微笑而来", "小紫秘书悄悄跟您说"][level]
+        # SMTP_SERVER = "smtp.qq.com"
+        # sender = 'mimanok@foxmail.com'
+        # password = "tqegbjvnkcwwecfj"
+        # receivers = ['mimanok@qq.com']
+        # try:
+        #     smtpObj = smtplib.SMTP(local_hostname='localhost', port=25)
+        #     smtpObj.connect(SMTP_SERVER, '25')
+        #     smtpObj.login(sender, password)
+        #     smtpObj.sendmail(sender, receivers, content)
+        #     print("->> Successfully sent email")
+        # except smtplib.SMTPException:
+        #     print("->> unable to send email")
+        #     if retry:
+        #         retry -= 1
+        #         time.sleep(2)
+        #         return send_email(content=content, level=level, retry=retry)
+        #     else:
+        #         return 0
 
-if __name__ == '__main__':
-    send_email(content="陈陈", level=1, retry=3)
-# end #
+        # 发送邮箱smtp服务器地址
+        SMTP_SERVER = "smtp.qq.com"
+        # 发送邮箱账户
+        sender = "mimanok@foxmail.com"
+        password = "tqegbjvnkcwwecfj"
+        # 收件人地址
+        receivers = "mimanok@qq.com"
+
+        msg = multipart.MIMEMultipart()
+        msg['from'] = sender
+        msg['to'] = receivers
+        msg['subject'] = subject
+        txt = text.MIMEText(content)
+        msg.attach(txt)
+
+        try:
+            smtpObj = smtplib.SMTP(local_hostname='localhost', port=25)
+            smtpObj.connect(SMTP_SERVER, '25')
+            smtpObj.login(sender, password)
+            smtpObj.sendmail(sender, receivers, str(msg))
+            print("->> Successfully sent email")
+        except smtplib.SMTPException:
+            print("->> unable to send email")
+            if retry:
+                retry -= 1
+                time.sleep(2)
+                return send_email(content=content, level=level, retry=retry)
+            else:
+                return 0
+        smtpObj.quit()
+        return 1
+
+    if __name__ == '__main__':
+        send_email(content="陈陈", level=1, retry=3)
+
 
 
 

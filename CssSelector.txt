@@ -12,6 +12,9 @@
   
 # href属性包含link的p元素
     p[href *= "link"]
+    
+# class属性不包含Miman的div标签
+    div:not(.Miman)
   
 # 多个属性
     div.cls1.cls2
@@ -20,9 +23,10 @@
     div.job-tags:not(.tag-all)
   
 # span中包含"下一页"文本内容的a标签
-    .css("a:has(span:contains("下一页"))")  # 这是错误的用法，css里没有包含这种用法
+    .css("a:has(span:contains("下一页"))")  # 这是错误的用法，css里没有包含文本这种用法
   
-  
+# 示例(淘宝定位购物车按钮)，同XPATH笔记中
+    div.tb-skin div.tb-action div:not(.tb-hidden):not(.tb-btn-buy) a
   
   
   

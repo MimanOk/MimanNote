@@ -145,7 +145,7 @@
     driver.execute_script("arguments[0].click();", element)
      
     element = driver.find_element_by_css_selector('div[class*="loadingWhiteBox"]')
-    webdriver.ActionChains(driver).move_to_element(element).click(element).perform()
+    webdriver.ActionChains(driver).move_to_element(element1).click(element2).perform()
 
 # 前进
   # brower.forward()
@@ -160,10 +160,10 @@
 # 返回在屏幕上的坐标
   # location()
   
-# 根据连接内的文本查找
+# 根据链接内的文本查找
   # find_element_by_link_text("text")
   
-# 根据连接内的部分文本查找
+# 根据链接内的部分文本查找
   # find_element_by_partial_link_text("*text")
   
 # 返回元素的文本信息
@@ -172,7 +172,7 @@
       text属性取出文本。
 
 # 取元素的属性值
-  # get_attriable
+  # get_attribute
   # get_property
   
 # 获取css属性值

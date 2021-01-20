@@ -1,11 +1,20 @@
 # 选择包含icon属性的span标签的下一个兄弟节点span标签
-  "//span[contains(@class, "icon")]/following-sibling::span[1]"
+    //span[contains(@class, "icon")]/following-sibling::span[1]
   
 # 选择href中包含"s3plus.meituan.net/v1/mss"的href属性值
-  "//link[contains(@href, 's3plus.meituan.net/v1/mss')]/@href"
+    //link[contains(@href, 's3plus.meituan.net/v1/mss')]/@href
   
 # 属性为"J_Ajax num icon-tag"的任意标签下包含文本内容为:"下一页"的span标签
-  "//*[@class='J_Ajax num icon-tag']/span[contains(text(), '下一页')]"
+    //*[@class='J_Ajax num icon-tag']/span[contains(text(), '下一页')]
 
 # 取位置大于1的
-  "li[position()>1]"
+    li[position()>1]
+  
+# class不包含Miman的div标签
+    //div[not(contains(@class, 'Miman'))]
+
+# 文本不包含Miman的div标签
+    //div[not(contains(text(), 'Miman'))]
+    
+# 示例(淘宝定位购物车按钮)，CSS笔记中也有该示例
+    //div[@class='tb-skin']//div[contains(@class, 'tb-action')]//div[not(contains(@class, 'tb-hidden'))][not(contains(@class, 'tb-btn-buy'))]/a

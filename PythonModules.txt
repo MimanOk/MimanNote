@@ -590,6 +590,64 @@
     # loguru更多官方文档: https://loguru.readthedocs.io/en/stable/index.html
 
 
+# importlib
+    文件结构
+        pkg
+        ├── utils
+        │   ├── __init__.py
+        │   ├── a.py
+        │   └── b.py
+        ├── c.py
+        └── main.py
+    
+    a.py代码
+        def show():
+            print("show A")
+    
+    b.py代码
+        def show():
+            print("show B")
+            
+    c.py代码
+        def show():
+            print("show C")
+            
+    main.py中导入a、b模块
+        import importlib
+
+        # 不同目录
+            # 绝对导入
+            module = importlib.import_module("utils.a")
+            module.show()  # >>show A
+
+            # 相对导入
+            module = importlib.import_module(".b", "utils")
+            module.show()  # >>show B
+            
+        # 相同目录
+            module = importlib.import_module("c")
+            module.show()  # >>show C
+        
+        # 类似功能的__import__()
+            # 不同目录
+                module = __import__("utils.a", fromlist("a", ))
+                module.show()  # >>show A
+                
+            # 相同目录
+                module = __import__("utils.C")
+                module.show()  # >>show C
+                
+                
+# inspect
+    
+
+
+
+
+
+
+
+
 
 
 
