@@ -1,40 +1,47 @@
-﻿## 默认连接端口：3306
+﻿# 默认连接端口：3306
 
-## 概念
-关系型数据库遵循ACID规则
-事务在英文中是transaction，和现实世界中的交易很类似，它有如下四个特性：
+# 概念
+    关系型数据库遵循ACID规则
+    事务在英文中是transaction，和现实世界中的交易很类似，它有如下四个特性：
 
-1、A (Atomicity) 原子性
+    1、A (Atomicity) 原子性
 
-原子性很容易理解，也就是说事务里的所有操作要么全部做完，要么都不做，事务成功的条件是事务里的所有操作都成功，只要有一个操作失败，整个事务就失败，需要回滚。
+    原子性很容易理解，也就是说事务里的所有操作要么全部做完，要么都不做，事务成功的条件是事务里的所有操作都成功，只要有一个操作失败，整个事务就失败，需要回滚。
 
-比如银行转账，从A账户转100元至B账户，分为两个步骤：1）从A账户取100元；2）存入100元至B账户。这两步要么一起完成，要么一起不完成，如果只完成第一步，第二步失败，钱会莫名其妙少了100元。
+    比如银行转账，从A账户转100元至B账户，分为两个步骤：1）从A账户取100元；2）存入100元至B账户。这两步要么一起完成，要么一起不完成，如果只完成第一步，第二步失败，钱会莫名其妙少了100元。
 
-2、C (Consistency) 一致性
+    2、C (Consistency) 一致性
 
-一致性也比较容易理解，也就是说数据库要一直处于一致的状态，事务的运行不会改变数据库原本的一致性约束。
+    一致性也比较容易理解，也就是说数据库要一直处于一致的状态，事务的运行不会改变数据库原本的一致性约束。
 
-例如现有完整性约束a+b=10，如果一个事务改变了a，那么必须得改变b，使得事务结束后依然满足a+b=10，否则事务失败。
+    例如现有完整性约束a+b=10，如果一个事务改变了a，那么必须得改变b，使得事务结束后依然满足a+b=10，否则事务失败。
 
-3、I (Isolation) 独立性
+    3、I (Isolation) 独立性
 
-所谓的独立性是指并发的事务之间不会互相影响，如果一个事务要访问的数据正在被另外一个事务修改，只要另外一个事务未提交，它所访问的数据就不受未提交事务的影响。
+    所谓的独立性是指并发的事务之间不会互相影响，如果一个事务要访问的数据正在被另外一个事务修改，只要另外一个事务未提交，它所访问的数据就不受未提交事务的影响。
 
-比如现在有个交易是从A账户转100元至B账户，在这个交易还未完成的情况下，如果此时B查询自己的账户，是看不到新增加的100元的。
+    比如现在有个交易是从A账户转100元至B账户，在这个交易还未完成的情况下，如果此时B查询自己的账户，是看不到新增加的100元的。
 
-4、D (Durability) 持久性
+    4、D (Durability) 持久性
 
-持久性是指一旦事务提交后，它所做的修改将会永久的保存在数据库上，即使出现宕机也不会丢失。
-## 概念 end
+    持久性是指一旦事务提交后，它所做的修改将会永久的保存在数据库上，即使出现宕机也不会丢失。
 
-## navicat是mysql的图形辅助工具 end
+
+# navicat是mysql的图形辅助工具 end
+
 
 # mysqld 中的d是Daemon(守护进程)
 
+
 # mysql 安装成功后创建root密码
     # mysqladmin -u root -p pass;
+    
+
+# 修改密码(未登录时)
+    # mysqladmin -u root -p password new_pwd
+
 	
-## linux下重置密码
+# linux下重置密码(忘记密码)
     # 先停止mysql
 		service mysql stop
 	    # 1.进入mysql安装目录bin/ 使用safe模式，进行重启
@@ -52,27 +59,35 @@
 		update user set authentication_string=PASSWORD("你的密码") where User = 'root';
     # 重启mysql登录即可
 		service mysql restart
-		
-## linux下重置密码 end
+
 
 # varchar(3)  # 能容纳三个英文字母或汉字
 
 # 设置用户权限
-    # 权限有：execute,create,select,insert,update,delete。
+    # 权限有：execute, create, select, insert, update, delete, drop。
     # grant execute,insert,select,update on 库.* to 'root'@'%';
     # 操作所有库的权限
 		grant all on db.* to 'user'@'%';
-# 授权所有权限
-    # grant all privileges on *.* to 'root'@'%' with grant option;
+# 授权所有权限(授权不需要flush privileges刷新权限，mysql会自动刷新)
+    # grant all privileges on *.* to 'root'@'%' [with grant option];  # [with grant option]: 授予用户grant权限
+
+
+# 增加一个密码为：pass的huoyijun用户，且该用户只能从C类子网192.168.1连接，且对mimandb库有select,insert,update,delete,create,drop权限。
+    # grant select,insert,update,delete,create,drop privileges on mimandb.* to huoyijun@'192.168.1.0/255.255.255.0' identified by 'pass';
+
+
 # 取消用户查询权限
-    # revoke select on what from 'root';
+    # revoke select on table from 'root';
+
 
 # 给root用户设置可远程访问权限
-    # GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+    # GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'pass' [WITH GRANT OPTION];
     # flush privileges;
+
 
 # 查看用户目前权限
     # show grants for root;
+
 
 # 查看用户资料
     # select * from user where user="root";
@@ -82,12 +97,15 @@
 # 使用哪个库
     # use mysql;
 
+
 # 创建用户
     # create user 'root'@'%' identified by 'pass';
+
 
 # 删除用户
     # delete from user where user="root" and host="%"
     # drop user username@localhost;
+
 
 # 修改Host为%，代表外网可以连接和刷新：
     # update user set Host="%" where user="root"
@@ -95,17 +113,21 @@
 # 查询用户密码
     # select host,user,authentication_string from mysql.user;
 
+
 # 修改数据库登录密码
     # alter user 'root'@'localhost' identified by 'youpassword';
     # alter user "Miman"@"%" identified by "密码" password expire never;
     # alter user "Miman"@"%" identified with mysql_native_password by "密码";
 
+
 # 新用户名替换旧用户名
     # use mysql;
     # update user set user="new" where user="old";
 
+
 # 刷新用户权限
     # flush privileges;
+
 
 # 创建库：
     # create database 库名
@@ -127,6 +149,7 @@
 	
 # 清空表
     # truncate table1; truncate table2;
+    # delete from table
 
 # 查看使用时间格式
     # show variables like '%time_zone%';
@@ -135,7 +158,7 @@
     # set global time_zone='+8:00';
 
 # 查看表结构
-    # describe 表名| desc 表名;
+    # describe 表名 | desc 表名;
 
 # 数据去重
     # select distinct 列… From 表名;
@@ -148,9 +171,23 @@
 	
 # 随机取出一个值
     # select ip, port from ippool ORDER BY RAND() LIMIT 1;
-	
+
+
 # 插入时可使用表情符号
     # charset = "utf8mp4"
+
+
+# 仅显示，非执行的命令
+    # 要显示的内容 \c
+
+
+# 选择20年前的数据
+    # select name, time from film where time < (now() - interval 20 year);
+
+
+# 选择1996年1月1日到2021年1月1日的数据
+    # select name, time from film where time>='1996-01-01' and time <='2021-01-01';
+
 	
 # 解决主键冲突
     # 方案一：ignore
@@ -220,7 +257,7 @@
 
 # 外键关联
     # create table student(id int(11) auto_increment, primary key (id), day int not null, stu_id int(11) not null,
-    # [key fk_子表_父表 (stu_id)], constraint fk_子表_父表 foreign key (stu_id) references class(参照的table) (id)) [ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8];
+    # [key fk_子表_父表 (stu_id)], constraint fk_子表_父表 foreign key (stu_id) references class(参照的table) (id) [ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8];
     
     # 创建表后再添加外键
         ALTER TABLE student ADD FOREIGN KEY (stu_id) REFERENCES class (cid);
@@ -243,7 +280,7 @@
     # select * from A left join B on A.a=B.b union select * from A right join B on A.a=B.b;
 
 # 事务
-    # 开启一个事务：begein；
+    # 开启一个事务：begain；
     # 出现问题回滚：rollback;  # 回滚后事务结束
     # 提交数据：commit；提交后不可回滚
 
@@ -262,12 +299,20 @@
 # pycharm中 python3.6.5
     # pycharm中默认开启事务
     # import pymysql
-    # conn = pymysql.connect(port="", user="", password="", port=3306, db="", charset="utf8")
+    # conn = pymysql.connect(host="", port="", user="", password="", port=3306, db="", charset="utf8")
     # cur = coon.cursor()
-    # cur.execute("命令行中")
+    ## 插入单条
+        # cur.execute("INSERT INTO taobao VALUES(%s, %s, %s)", [n1, n2, n3])
+    ## 插入多条
+        li = [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
+        # cur.executemany("INSERT INTO taobao VALUES(%s, %s, %s)", li)
     # conn.rollback()
     # conn.commit()
     # conn.close()
+
+
+
+
 
 
 

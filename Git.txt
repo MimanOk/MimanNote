@@ -32,7 +32,7 @@
 
 # git push origin master  # 把本地版本（默认是master）推到代号为origin的远程库上去
 
-# git push https://github.com/MimanOk/MimanTest.git master  # 把本地版本（默认是master）推到远程库上去
+# git push https://github.com/MimanOk/MimanNote.git master  # 把本地版本（默认是master）推到远程库上去
 
 # push报错处理
     # 1.先从远端pull一下，执行  # git pull origin master -f  # 从master分支拉取

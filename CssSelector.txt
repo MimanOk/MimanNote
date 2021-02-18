@@ -1,3 +1,13 @@
+import parsel
+from lxml import etree
+
+html1 = parsel.Selector(html)
+html2 = etree.HTML(html)
+
+html1.css('')
+html2.cssselect('')
+
+
 # 第一个以后的元素
     li:gt(1)
 
@@ -15,6 +25,9 @@
     
 # class属性不包含Miman的div标签
     div:not(.Miman)
+    
+# id包含tb-的所有节点
+    *[id *= 'tb-']
   
 # 多个属性
     div.cls1.cls2

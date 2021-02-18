@@ -1,3 +1,13 @@
+import parsel
+from lxml import etree
+
+html1 = parsel.Selector(html)
+html2 = etree.HTML(html)
+
+html1.xpath('')
+html2.xpath('')
+
+
 # 选择包含icon属性的span标签的下一个兄弟节点span标签
     //span[contains(@class, "icon")]/following-sibling::span[1]
   

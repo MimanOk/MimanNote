@@ -1,4 +1,5 @@
 ﻿## 重点基础篇
+    # python -m  # m: manger
     # set()
         集合中的元素要和dict的key一样可hash
         se = set(["a", "b"])  # set(里面只能有一个可迭代元素)
@@ -274,7 +275,40 @@
     
     Process()类实例化的进程p独立于主进程，不会因主进程结束而退出。
     Pool()类实例化进程池依赖于主进程，主进程退出，进程池立即退出。
-    
+
+
+# 递归锁
+    import time
+    from threading import RLock, Thread
+
+    def f1(lockA, lockB):
+        lockA.acquire()
+        print("f1 抢到A锁")
+        time.sleep(1)
+        lockB.acquire()
+        print("f1 抢到B锁")
+        lockB.release()
+        lockA.release()
+
+    def f2(lockA, lockB):
+        lockB.acquire()
+        print("f2 抢到B锁")
+        time.sleep(1)
+        lockA.acquire()
+        print("f2 抢到A锁")
+        lockA.release()
+        lockB.release()
+
+    if __name__ == '__main__':
+        # lockA = Lock()
+        # lockB = Lock()
+        lockA = lockB = RLock()  # 递归锁，维护一个计数器，acquire一次就加一，release一次就减一
+        t1 = Thread(target=f1, args=(lockA, lockB))
+        t2 = Thread(target=f2, args=(lockA, lockB))
+        t1.start()
+        t2.start()
+
+   
 # 守护线程
     等待所有非守护线程的结束才结束。
     用Thread实例化对象th，th.Daemon = True,来将子线程设置为守护线程。注意要在start之前设置

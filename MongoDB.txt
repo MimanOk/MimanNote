@@ -1,10 +1,13 @@
-﻿## 默认连接端口：27017
+﻿# 默认连接端口：27017
+
 
 # 笔记来源：菜鸟教程（https://www.runoob.com/）
+
 
 # 教程：https://www.runoob.com/mongodb/mongodb-window-install.html
 # 下载安装并配置好环境变量后(https://www.mongodb.com/download-center/community) #
 
+# -*- in command -*-
 # 普通配置
     # --bind_ip  # 绑定服务器IP，若绑定127.0.0.1，则只能本机访问，不指定默认所有IP
     # --logpath  # 日志文件路径（路径含文件）
@@ -32,7 +35,7 @@
     # 启动MongoDB服务
         net start MongoDB
     # 关闭MongoDB服务
-        net stop MongoDB\
+        net stop MongoDB
     # 移除MongoDB服务
         mongod --remove
  
@@ -618,13 +621,17 @@
             
 # ...未完（https://www.runoob.com/mongodb/mongodb-limit-skip.html）
 
-## pymongo
 
-    # update_one or update_many：
-    # return.matched_count: 匹配数
-    # return.modified_count: 修改数
+# -*- in code -*-
+import pymongo
 
-    # delete_one or delete_many:
-    # return.deleted_count: 删除数目
-    # db.col.count_documents({name: "Miman"}): 统计符合条件的数目
+mgo_db = pymongo.MongoClient(host="localhost", port=27017)
+
+# update_one or update_many：
+# return.matched_count: 匹配数
+# return.modified_count: 修改数
+
+# delete_one or delete_many:
+# return.deleted_count: 删除数目
+# db.col.count_documents({name: "Miman"}): 统计符合条件的数目
 
