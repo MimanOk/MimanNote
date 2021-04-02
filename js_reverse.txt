@@ -1,0 +1,242 @@
+# time : 2021.03.17
+# time_from : 2017.12.13
+# author : huoyijun
+
+
+# js基本知识点
+    # js标准分为：ES3、ES5、ES6等
+    # ES5里包含JSON函数定义
+    # V8引擎是google的一个开源引擎，以ES5为标准
+    # 当遇到ES5支持而ES3不支持的函数，可以找到该函数源码直接替换该函数来实现调用
+    # window.btoa  # 浏览器特有的base64编码,如需使用，可以将base64源码复制过来
+    ## 匿名函数自动调用
+        # (function(){}(arg));
+        # (function(){})(arg);
+        # !function(){}(arg);
+        # 匿名函数嵌入在两个逗号间，感叹号省略也会自动执行
+    ## 加密方法
+        # MD5
+        # AES
+        # RSA  # 每次加密后的结果都不一样
+        # Base64  # 加密后的密文结尾是: "=="
+
+
+# js基本语法
+    ## 数组array
+        # array.join("separator") == array['join']("separator") # 数组拼接
+        # array.push(element) == array['push'](element) # 数组末尾添加元素
+        # array.toString() == array['toString']() # 数组转化成字符串  
+
+
+# js代码在线解密工具
+    ## aaencode
+        将一堆类似表情符的js代码解密
+        
+        
+# python代码中设置execjs运行环境
+    os.environ["EXECJS_RUNTIME"] = "PhantomJS"
+
+
+# 抓腾讯包不要用QQ浏览器，抓谁的包就不要用谁的浏览器
+
+
+# 一般post参数搜索方式
+    # key
+    # var key
+    # key=
+    # key =
+    # key:
+    # key :
+
+
+# post参数在js文件中搜不到
+    ## 参数混淆
+        # 参数可能以某种编码存在于js文件中  # 如Unicode编码：\u4e00-\u9fa5; 十六进制: \x61(ASCII>>a)
+    
+    ## 参数拼接
+        # 参数在返回时可能是几个字符串拼接而成  # ["a" + "_b"]
+    
+    ## 可以尝试用搜JSON.parse来搜索
+        # js很多返回结果在最后都要用JSON.parse来返回json数据
+
+
+# post值搜不到
+    # 该值是js生成的
+    # 该值在协议头或cookie中
+
+
+# 找cookie参数时开无痕刷新界面
+
+
+# 打开浏览器source栏，跟进网页查看服务器返回的资源文件
+
+
+# 定位cookie生成函数
+    ## document.cookie
+    ## $.cookie
+    ## 匿名混淆函数，需要慢慢找
+    
+
+# 提交参数编码
+    return encodeURIComponent(arg)
+    
+# 鬼鬼JS调试工具
+
+
+# 滑块验证一般会提交版本号，优先找带版本号的js文件
+
+# 抠js代码注意事项
+    # 抠出来的js代码中的window可以替换成this
+    # navigator自定义: var navigator = {};
+
+
+# "Hm_"开头的cookie是浏览器自动生成的，一般服务器不会验证该cookie
+
+
+# =>是es6语法中的arrow function
+    ## (x) => x + 6 相当于
+        # function(x){
+            return x + 6;
+          };
+
+# hook某个函数
+    # hook eval
+        // 保存原始方法
+        window.__cr_eval = window.eval;
+        // 重写eval方法
+        var myeval = function(src){
+            console.log(src);
+            console.log("=============== eval end ===============");
+            debugger;
+            return window.__cr_eval(src);
+        }
+        var _myeval = myeval.bind(null);
+        // 这里主要是屏蔽js中对原生函数native属性的检测
+        _myeval.toString = window.__cr_eval.toString;
+        Object.defineProperty(window, 'eval', {value: _myeval});
+    
+    # hook Function
+        window.__cr_fun = window.Function;
+        var myfun = function(){
+            var args = Array.prototype.slice.call(arguments, 0, -1).join(","), src = arguments[arguments.length - 1]
+            console.log(src);
+            console.log("=============== Function end ===============");
+            debugger;
+            return window.__cr_fun.apply(this, arguments);
+        }
+        // 这里主要是屏蔽js中对原生函数native属性的检测
+        myfun.toString = function(){return window.__cr_fun + ""}
+        Object.defineProperty(window, 'Function', {value: myfun});
+        hook JSON.stringify、JSON.parse
+        var my_stringify = JSON.stringify;
+        JSON.stringify = function(params){
+            console.log("hook", params);
+            debugger;
+            return my_stringify(params);
+        };
+
+        var my_parse = JSON.parse;
+        JSON.parse = function(params){
+            console.log("hook", params);
+            debugger;
+            return my_parse(params);
+        };
+    
+    # hook cookie
+        hook某一个cookie设置的地方
+
+        (function () {
+           Object.defineProperty(document, 'cookie', {
+               set: function (cookie) {
+                   if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
+                        debugger;
+                   }
+                   return cookie;
+               }
+           })
+        })();
+    
+    # hook所有cookie
+        var cookie_cache = document.cookie;
+        Object.defineProperty(document, 'cookie', {
+            get: function(){
+                console.log('Getting cookie');
+                return cookie_cache;
+            },
+            set: function(val){
+                console.log('Stting cookie', val);
+                var cookie = val.split(';')[0];
+                var ncookie = cookie.split('=');
+                var flag = false;
+                var cache = cookie_cache.split('; ');
+                cache = cache.map(function(a){
+                    if (a.split('=')[0] === ncookie[0]){
+                        falg = true;
+                        return cookie;
+                    }
+                    return a;
+                })
+                cookie_cache = cache.join('; ');
+                if(!falg){
+                    cookie_cache += cookie + '; ';
+                }
+                this._value = val;
+                return cookie_cache;
+            },
+        });
+    
+    # hook window对象
+        var window_flag_1 = 'object1'; // 修改为需要hook的对象
+        var window_flag_2 = 'object2'; // hook对象的对象
+
+        var key_value_map = {};
+        var window_value = window[window_flag_1];
+
+        Object.defineProperty(window, window_flag_1, {
+            get: function(){
+                console.log('Getting', window, window_flag_1, '=', window_value);
+                debugger;
+                return window_value;
+            },
+            set: function(val){
+                console.log('Setting', window, window_flag_1, '=', val);
+                debugger;
+                window_value = val;
+                key_value_map[window[window_flag_1]] = window_flag_1;
+                set_obj_attr(window[window_flag_1], window_flag_2);
+            },
+        });
+
+        function set_obj_attr(obj, attr){
+            var obj_arrt_value = obj[attr];
+            Object.defineProperty(obj, attr, {
+                get:function(){
+                    console.log('Getting', key_value_map[obj], attr, '=', obj_arrt_value);
+                    debugger;
+                    return obj_arrt_value
+                },
+                set: function(val){
+                    console.log('Setting', key_value_map[obj], attr, '=', val);
+                    debugger;
+                    obj_arrt_value = val;
+                },
+            });
+        };
+    
+    # hook WebSocket
+        WebSocket.prototype.senda = WebSocket.prototype.send;
+        WebSocket.prototype.send = function(data){
+            console.log('Hook WebSocket', data);
+            return this.senda(data);
+        };
+
+
+
+
+
+
+
+
+
+
+

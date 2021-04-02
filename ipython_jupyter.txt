@@ -1,65 +1,60 @@
-# jupyter是ipython来执行的，再用js在网页上显示 #
+# jupyter是ipython来执行的，再用js在网页上显示
 
 
-# jupyter中命令 #
+# jupyter中命令
+    注：cell是一个In []: 后面写代码的小框框
+    # Esc进入命令模式下
+      # a: above: 在上面插入新cell
+      # b: blow: 在下面插入新cell
+      # h: 查看帮助
+      # y: 单元转入代码状态
+      # m: 单元转入Markdown状态
+        # makrdown状态下可以写相关语法: "##": 二级标题
+      # ctrl+enter: 执行当前cell中代码
+      # shift+enter: 执行当前代码并选中下一个cell
+      # alt+enter: 执行当前cell代码并在下面插入新cell
 
-注：cell是一个In []: 后面写代码的小框框
-# Esc进入命令模式下
-  # a: above: 在上面插入新cell
-  # b: blow: 在下面插入新cell
-  # h: 查看帮助
-  # y: 单元转入代码状态
-  # m: 单元转入Markdown状态
-    # makrdown状态下可以写相关语法: "##": 二级标题
-  # ctrl+enter: 执行当前cell中代码
-  # shift+enter: 执行当前代码并选中下一个cell
-  # alt+enter: 执行当前cell代码并在下面插入新cell
+    # 鼠标左键双击或按enter进入编辑模式
+      # Tab: 代码补全或缩进
+      # Shift+Tab: 提示
+      # Shift+Tab+Tab: 详细提示
 
-# 鼠标左键双击或按enter进入编辑模式
-  # Tab: 代码补全或缩进
-  # Shift+Tab: 提示
-  # Shift+Tab+Tab: 详细提示
-  
-# end #
 
-# ipython中 #
+# ipython中
     #打印执行过的代码
-    %hist
-# end #
+        %hist
 
 
-# jupyter and ipython中 #
+# jupyter and ipython中
 
-# 执行命令
-  # !命令
+    # 执行命令
+      # !命令
 
-# 魔法命令
-  # 查看所有魔法命令
-    # lsmagic
-  # 查看帮助文档
-    # 命令或函数后面加:?
-  # 查看源码
-    # 命令或函数后面加:??
-  # 运行外部py文件（默认当前目录，最好加上绝对路径）
-    # %run *.py
-  # 运行计时
-    # 一次
-      # %time func()
-	# 多次
-	  # %timeit func()
-	  # 指定运行次数
-	    # timeit -r 3 -n 1000 func()  # 跑3轮，每轮1000次
-	# 多行代码
-	  # %%timeit
-	    you code
-  # 快速查看当前会话的所有变量与函数名称
-    # %who
-	# 以列表形式返回
-	  # %who_ls
-  # 查看当前会话的所有变量与函数名称的详细信息
-    # %whos
-	
-# end #
+    # 魔法命令
+      # 查看所有魔法命令
+        # lsmagic
+      # 查看帮助文档
+        # 命令或函数后面加:?
+      # 查看源码
+        # 命令或函数后面加:??
+      # 运行外部py文件（默认当前目录，最好加上绝对路径）
+        # %run *.py
+      # 运行计时
+        # 一次
+          # %time func()
+        # 多次
+          # %timeit func()
+          # 指定运行次数
+            # timeit -r 3 -n 1000 func()  # 跑3轮，每轮1000次
+        # 多行代码
+          # %%timeit
+            you code
+      # 快速查看当前会话的所有变量与函数名称
+        # %who
+        # 以列表形式返回
+          # %who_ls
+      # 查看当前会话的所有变量与函数名称的详细信息
+        # %whos
 	
 	
 	

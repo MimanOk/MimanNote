@@ -56,11 +56,83 @@
             # url = "https://www.baidu.com/s?key=%s" % parse.quote(value)
 
 
-# 判断是否为Unicode编码
-    if isinstance("str", str)
+# requests
+    ## requests.get()
+        ### 参数
+            #### auth
+                # auth = ("username", "password")
+                # requests.get(url=url, headers=headers, auth=auth)  # 请求需要验证用户身份的网址
+            #### verify
+                # verify = True  # 检查证书认证
+                # verify = False  # 忽略证书认证
+                # requests.get(url=url, headers=headers, verify=False)
+            #### proxies
+                # proxies = {
+                    'http': 'http://ip:port',
+                    'https': 'https://ip:port'
+                  }
+                # requests.get(url=url, headers=headers, proxies=proxies)
+    ## requests.Session()
+        import requests
+        from urllib3.util import Retry
+        
+        s = requests.Session()
+
+        retries = Retry(total=5,
+
+                        backoff_factor=0.1,
+
+                        status_forcelist=[ 500, 502, 503, 504 ])
+
+        s.mount('http://', HTTPAdapter(max_retries=retries))
+
+        s.get('http://httpstat.us/500')
+
+        根据文档说明Retry：如果backoff_factor为0.1，则sleep（）将在重试之间睡眠[0.1s，0.2s，0.4s ...]。它也将强制重试，如果返回的状态代码是500，502，503或504。
+
+        各种其他选项Retry可以进行更精细的控制：
+
+        total –允许的重试总数。
+
+        connect –重试多少个与连接有关的错误。
+
+        读取 -多少次重试读取错误。
+
+        redirect –要执行多少次重定向。
+
+        method_whitelist –我们应重试的大写HTTP方法动词集。
+
+        status_forcelist –我们应强制重试的一组HTTP状态代码。
+
+        backoff_factor –在两次尝试之间应用的退避因子。
+
+        raise_on_redirect –如果重定向次数已用尽，则引发MaxRetryError，还是返回响应代码在3xx范围内的响应。
+
+        raise_on_status -类似含义raise_on_redirect：我们是否应该抛出一个异常，或返回响应，如果状态落在status_forcelist范围和重试次数已经用尽。
+
+        raise_on_status关键字参数似乎最多已进入标准库。
+
+        要使请求重试特定的HTTP状态代码，请使用status_forcelist。例如，status_forcelist = [503]将重试状态代码503（服务不可用）。
+
+        默认情况下，重试仅针对以下情况触发：
+
+        无法从池中获得连接。
+
+        TimeoutError
+
+        HTTPException（从Python 3中的http.client或其他httplib）引发。这似乎是低级HTTP异常，例如URL或协议格式不正确。
+
+        SocketError
+
+        ProtocolError
+
+        请注意，所有这些都是阻止接收常规HTTP响应的异常。如果生成任何常规响应，则不会重试。不使用status_forcelist，即使状态为500的响应也不会重试。
+
+        以使其以这样的方式，其是用于与远程API或web服务器工作的更直观的行为，我会用上面的代码段中，这迫使上状态的重试500，502，503和504，所有这些都并不少见上网络和（可能）在足够大的退避期后可恢复。
 
 
 # json文件保存编码一致
+    # import json
     # with open(..., encoding='utf-8') as f:
         f.write(json.dumps(待保存文件, ensure_ascii=False) + '\n')
 
