@@ -255,7 +255,7 @@
     # python 的多线程是利用的CPU上下文切换，同一时刻只在一个核上进行操作，实质上还是单线程。
     # python 的IO操作不占用CPU，计算占用CPU。所以python多线程适合密集型IO任务，不适合密集型CPU任务。
     # 线程的进程ID是离发起该线程最近的进程ID，其父进程ID是运行程序员代码的主进程ID
-        # 编译器进程（PPID=None，PID=0）### 运行代码进程（PPID=0, PID=1）### 程序员发起进程（PPID=1, PID=2）### A线程（PID=1, PID=2）### D线程（PID=1, ID=2）
+        # 编译器进程（PPID=None，PID=0）### 运行代码进程（PPID=0, PID=1）### 程序员发起进程（PPID=1, PID=2）### A线程（PPID=1, PID=2）### D线程（PPID=1, PID=2）
 
 # 线程间通信
     # 用queue模块中的Queue实例化一个q然后对该q操作，进程能和其线程能共享q
@@ -356,22 +356,36 @@
 # 协程并发1
     import anyncio
     
+    def callback_fn(v):
+        print("%s调用回调函数" % v)
+        print("返回值%s" % v.result())
+    
+    # 协程对象
     async def eat(food):
         for i in range(1, 3 + 1):
             print("eating {food:<5}".format(food=food))
             await asyncio.sleep(3)
+            
 
-    pool = asyncio.get_event_loop()
     eat1 = eat("辣条")
     eat2 = eat("包子")
     eat3 = eat("烤鸡")
-
+    
+    # 创建任务对象列表
     task = [
         asyncio.ensure_future(eat1),
         asyncio.ensure_future(eat2),
-        asyncio.ensure_future(eat3),
     ]
+    
+    task2 = asyncio.ensure_future(eat3)
+    # 绑定回调函数
+    task2.add_done.callback(callback_fn)
+    task.append(task2)
+    
+    # 创建事件循环对象
+    pool = asyncio.get_event_loop()
 
+    # 将任务对象注册到事件循环中且开启事件循环
     pool.run_until_complete(asyncio.wait(task))
 
 
@@ -380,8 +394,26 @@
     pool.run_until_complete(asyncio.wait([eat(food) for food in {"烤鸡", "包子", "辣条"}]))
 
 
-# 一个异步io(协程)实例
+# 一个异步io(单线程+多任务异步协程)实例
+    ## 被async修饰的函数会变成一个特殊的函数(协程对象)
+        ### 特殊之处
+            # 该函数被调用后，函数中的实现语句不会被立即执行
+            # 该函数被调用后，会返回一个协程对象
+            
+    ## asyncio.ensure_future(协程对象)会将协程对象转化成一个任务对象
+    ## wait方法的作用
+        # 将任务列表中的任务对象赋予可被挂起的权限，只有任务对象被赋予的可被挂起的权限才能被挂起
+        ### 挂起
+            # 将当前的对象交出CPU使用权
+    ## 注意事项
+        # 在特殊函数内部不可以出现不支持异步模块对应的代码(如time.sleep()、requests)，否则会中断整个异步效果
+    ## await关键字
+        # 在特殊函数内部，凡是阻塞操作前都必须使用await进行修饰，await就可以保证阻塞操作
+        在异步执行过程中不会被跳过。
+
     import ansycio
+    import aiohttp
+    
     class Downloader(object):
         """
         一个异步下载器，可以对代理源异步抓取，但是容易被BAN。
@@ -392,9 +424,14 @@
             self._htmls = []
 
         async def download_single_page(self, url):
+            # 实例化一个请求对象
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as resp:
-                    self._htmls.append(await resp.text())
+                # 调用get发起请求，返回一个响应对象
+                # get/post(url, headers, params/data, proxy="http://ip:port")  # 单数proxy键和字符串的值
+                async with await session.get(url) as response:
+                    # 阻塞操作前加await，发送请求和获取响应数据均是阻塞操作
+                    # response.read() == requests模块response.content()
+                    self._htmls.append(await response.text())
 
         def download(self):
             loop = asyncio.get_event_loop()

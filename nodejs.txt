@@ -1,0 +1,80 @@
+# 基于chrome V8引擎，运用js编写的脚本语言：nodejs
+
+
+# 创建一个http服务
+    var http = require("http");
+    http.createServer(function (request, response){
+        // 设置响应头
+        response.writeHead(200, {"Content-Type": "text/plain; charset='utf-8';"});  // text/html
+        // 在页面上输出一句话并结束响应
+        response.end("HuoYiJun");
+    }).listen(8790);  // 在8790端口上监听
+    console.log("Server running at port 8790");
+
+
+# 解决中文乱码
+    var http = require("http");
+    http.createServer((request, response)=>{  // ES6写法
+        // 设置响应头
+        response.writeHead(200, {"Content-Type": "text/html; charset='utf-8';"});
+        response.write("<head><meta charset='utf-8'></head>");  // 要与writeHead里面的编码一致
+        response.write("你好，火蚁君 hyj");
+        response.write("<h1>你好，Miman</h1>");
+        // 在页面上输出一句话并结束响应
+        response.end("HuoYiJun");
+    }).listen(8790);  // 在8790端口上监听
+    console.log("Server running at port 8790");
+
+
+# url模块
+    const url = require("url");
+    var api = "http://www.huoyijun.com?name=huoyijun&age=20";
+    // console.log(url.parse(api, true));
+    var getValue=url.parse(api, true).query;
+    console.log(getValue);
+    console.log("姓名：${getValue.name}，年龄：${getValue.age}");
+    
+    var http = require("http");
+    http.createServer((request, response)=>{  // ES6写法
+        // 设置响应头
+        response.writeHead(200, {"Content-Type": "text/html; charset='utf-8';"});
+        response.write("<head><meta charset='utf-8'></head>");  // 要与writeHead里面的编码一致
+        console.log(request.url);  // get browser's url
+        if (req.url != "/favicon.ico"){
+            var userinfo = url.parse(req.url, true).query;
+            console.log("姓名：${userinfo.name}，年龄：${userinfo.age}");
+        };
+        // 在页面上输出一句话并结束响应
+        response.end("HuoYiJun");
+    }).listen(8790);  // 在8790端口上监听
+    console.log("Server running at port 8790");
+    
+# supervisor工具(用supervisor替换node运行起来的服务可以根据服务所需文件的变动来自动重启当前服务)
+    安装supervisor时最好用cnpm替换npm
+    百度搜索cmp进去查看使用说明，安装cnpm
+    再用cnpm install supervisor -g全局安装
+    之后就能用supervisor app.js运行项目文件了
+    
+# btao-atob的另一种写法
+    ## btoa
+        Buffer.from('Hello World!').toString('base64');
+    # atob
+        Buffer.from(b64Encoded, 'base64').toString();
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

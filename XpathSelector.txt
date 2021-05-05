@@ -8,6 +8,8 @@ html1.xpath('')
 html2.xpath('')
 
 
+# xpath表达式中不能出现tbody标签，会导致表达式失效
+
 # 选择包含icon属性的span标签的下一个兄弟节点span标签
     //span[contains(@class, "icon")]/following-sibling::span[1]
   

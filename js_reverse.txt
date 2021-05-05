@@ -15,10 +15,81 @@
         # !function(){}(arg);
         # 匿名函数嵌入在两个逗号间，感叹号省略也会自动执行
     ## 加密方法
-        # MD5
-        # AES
-        # RSA  # 每次加密后的结果都不一样
-        # Base64  # 加密后的密文结尾是: "=="
+        # MD5  # hash加密
+        # AES/DES  # 对称加密
+        # RSA  # 非对称加密，每次加密后的结果都不一样
+        # Base64  # 伪加密，属于编码，编码后的伪密文结尾一般带: "=="
+    # 对象的数据属性
+        Object.defineProperty(person,'name',{
+            configurable:false,//能否使用delete、能否需改属性特性、或能否修改访问器属性，false为不可重新定义，默认值为true
+            enumerable:false,//对象属性是否可通过for-in循环，flase为不可循环，默认值为true
+            writable:false,//对象属性是否可修改,flase为不可修改，默认值为true
+            value:'xiaoming' //对象属性的默认值，默认值为undefined
+        });
+
+# JS常用加密与相应解密方法
+    ## MD5
+        ### 加密
+            <html>
+                <script scr="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+                <script type="text/javascript">
+                    var hashCode = md5("huoyijun");
+                    alert(hashCode)
+                </script>
+            </html>
+            
+        ### 解密
+            不能直接解密，只能正向暴力破解。为了提高数据安全性，一般会将明文进行三次md5
+            加密，所以很难解密，建议放弃。
+            
+    ## AES/DES对称加密
+        <html>
+            <script scr="https://cdn.bootcss.com/crypto-js.js"></script>
+            <script type="text/javascript">
+                var key = "12345678"  // 定制密钥，长度必须是：8/16/32位
+                var data = "待加密数据"
+                // AES/DES加密只需要切换CryptoJS.AES <=>CryptoJS.DES
+                var encrypt = CryptoJS.AES.encrypt(data, CryptoJS.enc.utf8.parse(key), {
+                    mode: CryptoJS.mode.ECB,  // 工作方式
+                    padding: CryptoJS.pad.Pkcs7  // 填充模式，待加密数据必须为8的倍数，不然就进行该方式的填充
+                }).toString();
+                alert(encrypt);
+                
+                // 解密
+                var decrypt = CryptoJS.AES.decrypt(data, CryptoJS.enc.utf8.parse(key), {
+                    mode: CryptoJS.mode.ECB,
+                    padding: CryptoJS.pad.Pkcs7
+                }).toString(CryptoJS.enc.utf8);
+                alert(decrypt);
+            </script>
+        </html>
+        
+    ## RSA加密
+        RSA加密算法是一种非对称加密算法。在公开密钥加密和电子商业中RSA被广泛使用。
+        该算法有一对密钥：公钥（publickey）和私钥（privatekey）
+        公钥可以公开，用于加密；私钥自己保留，用于解密。
+        该算法强度复杂，加解密没有对称加密解密快。
+        
+    ## Base64伪加密
+        # Base64是一种用64个字符来表示任意二进制数据的方法。Base64是一种
+        编码方式，看上去像加密。
+        # Base64使用:[A-Za-z0-9+/]这64个字符实现对数据进行加密。
+        
+        <html>
+            <script type="text/javascript">
+                // 创建Base64对象
+                var Base64={...};
+                // 定义字符串
+                var string = "huoyijun";
+                // 加密
+                var encodeString = Base64.encode(string);
+                alert(encodeString);
+                
+                // 解密
+                var decodeString = Base64.decode(encodeString);
+                alert(decodeString);
+            </script>
+        </html>
 
 
 # js基本语法
@@ -86,8 +157,11 @@
 # 滑块验证一般会提交版本号，优先找带版本号的js文件
 
 # 抠js代码注意事项
-    # 抠出来的js代码中的window可以替换成this
-    # navigator自定义: var navigator = {};
+    # var window = this;
+    # var navigator = {} 或 this;
+    # document
+    # eval
+    # void  # ob解混淆时可能会把void处理掉，影响某个全局变量的使用
 
 
 # "Hm_"开头的cookie是浏览器自动生成的，一般服务器不会验证该cookie
@@ -127,7 +201,15 @@
         // 这里主要是屏蔽js中对原生函数native属性的检测
         myfun.toString = function(){return window.__cr_fun + ""}
         Object.defineProperty(window, 'Function', {value: myfun});
-        hook JSON.stringify、JSON.parse
+        
+        
+        (function(){
+            var hk_console_log = console.log;
+            console.log = function(v){};
+        })();
+    
+    
+    # hook JSON.stringify、JSON.parse
         var my_stringify = JSON.stringify;
         JSON.stringify = function(params){
             console.log("hook", params);
@@ -145,16 +227,54 @@
     # hook cookie
         hook某一个cookie设置的地方
 
-        (function () {
-           Object.defineProperty(document, 'cookie', {
-               set: function (cookie) {
-                   if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
+        (function(){
+            var hk_document_cookie = document.cookie;
+            Object.defineProperty(document, 'cookie', {
+                set: function(cookie) {
+                    if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
                         debugger;
-                   }
-                   return cookie;
-               }
-           })
+                    };
+                    return cookie;
+                }
+            });
         })();
+        
+        (function(){
+            var hk_window_CryptoJS = window.CryptoJS;
+            Object.defineProperty(window, 'CryptoJS', {
+                set: function(v) {
+                    debugger;
+                    hk_window_CryptoJS = v;
+                },
+                get: function(v){
+                    debugger;
+                    return hk_window_CryptoJS[v];
+                },
+            });
+        })();
+        
+        (function(){
+            var hk_window_$ss = window['_$ss'];
+            Object.defineProperty(window, '_$ss', {
+                set: function(v) {
+                    debugger;
+                    hk_window_$ss = v;
+                },
+                get: function(v){
+                    debugger;
+                    return hk_window_$ss[v];
+                },
+            });
+        })();
+        
+        (function(){
+            var hk_eval = eval;
+            eval = function(v){
+                debugger;
+                return hk_eval(v);
+            };
+        })();
+        
     
     # hook所有cookie
         var cookie_cache = document.cookie;
@@ -164,7 +284,7 @@
                 return cookie_cache;
             },
             set: function(val){
-                console.log('Stting cookie', val);
+                console.log('Setting cookie', val);
                 var cookie = val.split(';')[0];
                 var ncookie = cookie.split('=');
                 var flag = false;

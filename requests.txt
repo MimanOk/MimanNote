@@ -1,4 +1,4 @@
--> 保存cookies时需：先导入cookielib
+# 保存cookies时需：先导入cookielib
     - cookielib在python2和python下导入方法是不同的
     - try:
         import cookielib  # python2

@@ -120,7 +120,8 @@
 # 常用下载网址
     # python解释器
         https://www.python.org/downloads/
-        wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
+        https://www.python.org/ftp/python/3.7.9/
+        wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz
     # docker
         https://hub.docker.com
     # nodejs

@@ -1,5 +1,43 @@
+# 规避检测
+    # 方法一：js注入，hook
+        # 开发者模式，防止网站识别出使用了selenium
+        options.add_experimental_option('useAutomationExtension', False)
+        options.add_experimental_option('excludeSwitches', ['enable-automation'])
+            
+        # 启用开发者模式
+            options.add_argument("--auto-open-devtools-for-tabs");
+            # 去掉提示：chrome正受到自动软件的测试
+            options.add_argument("disable-infobars")
+            # 初始化浏览器
+            self.browser = webdriver.Chrome(options=options)
+            # 将window.navigator.webdriver设置成undefined
+            self.browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+                "source": """
+                    Object.defineProperty(window.navigator, 'webdriver', {
+                        get: () => undefined;
+                    })
+                """
+            })
+            
+    # 方法二：selenium接管chrome浏览器
+        # 将驱动程序chromedriver所在目录添加到环境变量中
+        ## 打开cmd输入
+            # chromedriver.exe --remote-debugging-port=9222 --user-data-dir="一个空文件夹"
+            # 执行后会打开本机安装好的chrome浏览器
+        ## 执行如下代码打开真实的浏览器
+            from selenium import webdriver
+            from selenium.webdriver.options import Options
+            
+            chrome_options = Options()
+            chrome_options.add_experimental_option("debuggerAddress", "1270.0.0.1:9222")
+            chrome_driver = "驱动路径"
+            browser = webdriver.Chrome(executable_path=chrome_driver, chrome_options=chrome_options)
+
+
 # 启用开发者模式（chrome）
-    options.add_argument("--auto-open-devtools-for-tabs");
+    options.add_argument("--auto-open-devtools-for-tabs")
+    
+
 # 一些chrome的options参数
     options.add_argument("xxx")
     序号  参数  说明
@@ -146,6 +184,10 @@
      
     element = driver.find_element_by_css_selector('div[class*="loadingWhiteBox"]')
     webdriver.ActionChains(driver).move_to_element(element1).click(element2).perform()
+    
+    # 以某个元素为基准，点击(x ,y)坐标
+    webdriver.ActionChains(driver).move_to_element_by_offset(element, x, y)
+    
 
 # 前进
   # brower.forward()
@@ -192,15 +234,20 @@
 # 执行异步javascript函数
   # driver.execute_async_scrpit("耗时的函数，比如ajax请求")
 
-# 无头chrome
-  # from selenium.webdriver.chrome.options import Options
-  # options = Options()
-  # options.add_argument("--headless")
-  # driver = webdriver.Chrome(chrome_options=options)
-    # 保存截图
-      # driver.save_screenshot("path/name")
+# 无头浏览器
+    # chrome
+        from selenium.webdriver.chrome.options import Options
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+        driver = webdriver.Chrome(chrome_options=options)
+        # 保存截图
+        driver.save_screenshot("path/name")
+        
+    # PhantomJS
+        
 
-# selenium 是用python写的，其选择器速度较慢，推荐用scrapy自带的用C写的lxml的选择器 # # end #
+# selenium 是用python写的，其选择器速度较慢，推荐用scrapy自带的用C写的lxml的选择器
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -347,7 +394,7 @@ if __name__ == '__main__':
     main()
     
 
-# 拉钩网 #
+# 拉钩网
     spider:
     class LagouSpider(CrawlSpider):
         name = 'lagou'
@@ -383,9 +430,9 @@ if __name__ == '__main__':
         #
         # def process_results(self, response, results):
         #     return results
-# end #
 
-# 模拟登陆淘宝并爬取数据到redis成功版 #
+
+# 模拟登陆淘宝并爬取数据到redis成功版
 # -*- coding: utf-8 -*-
 __author__ ="Miman"
 
@@ -401,7 +448,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# expected_conditions条件汇总（EC） #
+# expected_conditions条件汇总（EC）
 # 某个元素被加载
     presence_of_element_located()
 # 某个元素是否含有指定内容
@@ -410,9 +457,9 @@ from selenium.webdriver.support import expected_conditions as EC
    url_to_be(expected_url)
 # 按钮是否可点击
     element_to_be_clickable()
-# end #
 
-# 解决弹窗 #
+
+# 解决弹窗
 #存在弹窗处理方法一 ：
 
 EC.alert_is_present()(driver)检测是否存在弹窗
@@ -454,9 +501,9 @@ EC.alert_is_present()(driver)检测是否存在弹窗
                 alert.accept() #去除浏览器警告
             except exceptions.TimeoutException:
                 print("no alert")
-# end #
 
-# 淘宝登录并抓取商品信息 #
+
+# 淘宝登录并抓取商品信息
 
 class taobao_info():
     

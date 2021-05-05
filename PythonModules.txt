@@ -57,6 +57,18 @@
 
 
 # requests
+    ## 注意
+        # requests只能保持 cookiejar 类型的cookie，而我们手动构建的cookie是dict类型的。
+          所以要把dict转为 cookiejar类型
+          
+        ### 解决办法
+            # 将CookieJar转为字典：
+              cookies = requests.utils.dict_from_cookiejar(r.cookies)
+              
+            # 将字典转为CookieJar：
+              cookies = requests.utils.cookiejar_from_dict(cookie_dict, cookiejar=None, overwrite=True)
+
+    
     ## requests.get()
         ### 参数
             #### auth
@@ -320,11 +332,14 @@
       pyexecel.save_as(records=rows, dest_file_name="%s.xls" % file_name)
 
 
-# 打开图片文件并显示
+# PIL(Python Image Library)
     # from PIL import Image
     try:
         im = Image.open("image_path_name")
         im.show()
+        # 裁剪图片
+        crop_im = im.crop((start_x, start_y, end_x, end_y))  # start_x:图片左上角x，end_x:图片右下角x
+        # crop.im.save("save_path_name")
         im.close()
     except Exception:
         pass
@@ -447,6 +462,13 @@
         
     # 修改文件权限与时间戳
         os.chmod(file)
+
+
+# execjs
+    pip3 install PyExecJs
+    import execjs
+    execjs.compile(file.js, cwd="D:/current work directy can ignore").call("fn", arg1, arg2)
+    execjs.compile(file.js, cwd="D:/current work directy can ignore").exec("fn(%s, '%s')" % (arg1, "some_str"))
 
 
 # signal
