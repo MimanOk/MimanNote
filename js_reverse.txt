@@ -231,14 +231,15 @@
             var hk_document_cookie = document.cookie;
             Object.defineProperty(document, 'cookie', {
                 set: function(cookie) {
-                    if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
+                    //if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
                         debugger;
-                    };
-                    return cookie;
+                    //};
+                    hk_document_cookie = cookie;
                 }
             });
         })();
         
+        // hook other
         (function(){
             var hk_window_CryptoJS = window.CryptoJS;
             Object.defineProperty(window, 'CryptoJS', {
@@ -273,6 +274,32 @@
                 debugger;
                 return hk_eval(v);
             };
+        })();
+        
+        (function(){
+            var hook_window_url = window.url;
+            var hook_document_URL = document.URL;
+            var hook_document_domain = document.domain;
+            
+            
+            Object.defineProperty(window, "url", {
+                get: function(){
+                    debugger;
+                    return hook_window_url;
+                }
+            });
+            Object.defineProperty(document, "URL", {
+                get: function(){
+                    debugger;
+                    return hook_document_URL;
+                }
+            });
+            Object.defineProperty(document, "domain", {
+                get: function(){
+                    debugger;
+                    return hook_document_domain;
+                }
+            });
         })();
         
     
@@ -351,7 +378,12 @@
         };
 
 
-
+Object.defineProperty(person,'name',{
+    configurable:false,//能否使用delete、能否需改属性特性、或能否修改访问器属性、，false为不可重新定义，默认值为true
+    enumerable:false,//对象属性是否可通过for-in循环，flase为不可循环，默认值为true
+    writable:false,//对象属性是否可修改,flase为不可修改，默认值为true
+    value:'xiaoming' //对象属性的默认值，默认值为undefined
+});
 
 
 

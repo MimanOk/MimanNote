@@ -20,10 +20,18 @@
             })
             
     # 方法二：selenium接管chrome浏览器
+        ## 不能有以下代码
+            # 设置开发者模式启动，该模式下webdriver属性为正常值
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            # 关闭selenium对chrome driver的自动控制
+            chrome_options.add_experimental_option('useAutomationExtension', False)
+            chrome_driver.maximize_window()  # 网页最大化
+            
+    
         # 将驱动程序chromedriver所在目录添加到环境变量中
         ## 打开cmd输入
-            # chromedriver.exe --remote-debugging-port=9222 --user-data-dir="一个空文件夹"
-            # 执行后会打开本机安装好的chrome浏览器
+            # chrome.exe --remote-debugging-port=9222 --user-data-dir="一个空文件夹"
+            # 执行后会打开本机安装好的chrome浏览器，chrome.exe是chrome浏览器启动程序
         ## 执行如下代码打开真实的浏览器
             from selenium import webdriver
             from selenium.webdriver.options import Options

@@ -675,10 +675,12 @@ logger.info('Error while handling downloader output',
         }
 
 # 分布式Scrapy-Redis
+    ## pip3 install scrapy-redis
+    
     ## 修改爬虫文件
         # 导包：from scrapy_redis.spiders import RedisCrawlSpider
         # 修改当前爬虫类的父文件：RedisCrawlSpider
-        ### 将start_url替换成redis_keys属性，属性值为任意字符串
+        ### 将start_url替换成redis_key属性，属性值为任意字符串
             # redis_key = "xxx": 表示的是可以被共享的调度器队列的名称，最终是需要将
             起始url放置到redis_key表示的队列中
         # 将数据解析的补充完整即可
@@ -686,7 +688,7 @@ logger.info('Error while handling downloader output',
     ## 对settings.py进行配置
         ### 指定调度器
             # 增加一个去重容器类的配置，使用Redis的set集合存储请求的指纹数据，
-            DUPEFILTER_CLASS = "scrapy_redis.dupefiler.RFPDuperFileter"
+            DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
             # 使用scrapy-redis组件自己的调度器
             SCHEDULER = "scrapy_redis.scheduler.Scheduler"
             # 配置调度器是否要持久化，也就是爬虫结束了，要不要清空Redis中请求队列和去重记录
@@ -704,7 +706,7 @@ logger.info('Error while handling downloader output',
             REDIS_ENCODING = "utf-8"
             REDIS_PARAMS = {'password': 'xxx'}
             
-    ## 配置redis的配置文件(redis.window.conf)
+    ## 配置redis的配置文件(redis.windows.conf)
         ### 解除默认绑定
             56行: # bind 127.0.0.1
         
@@ -717,8 +719,7 @@ logger.info('Error while handling downloader output',
     
     ## 向redis_key表示的队列中添加起始url
     
-    
-        
+
 
 
 

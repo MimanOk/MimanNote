@@ -21,16 +21,43 @@
 
 
 # ipython中
-    #打印执行过的代码
-        %hist
-
+    ## 魔法命令
+        # %hist: 打印执行过的代码
+        # %paste: 将剪切板里的代码粘贴并运行
+        
+    ## 高级命令
+        ### %pdb on: 打开pdb调试模式，之后会暂停在报错的地方以供调试，关闭用off
+            # pdb相关命令
+                p(rint) <arg>             打印参数arg的值
+                h(elp)                    显示命令列表
+                help <command>            显示command文档
+                c(ontinue)                恢复程序的执行
+                q(uit)                    退出调试器，不再执行任何代码
+                b(reak) <number>          在当前文件的第number行设置一个断点
+                b path/to/file/py:number  在指定文件的number行设置一个断点
+                s(tep)                    单步进入函数调用
+                n(ext)                    执行当前行，并前进到当前级别的下一行
+                u(p)/d(own)               在函数调用栈中向上或向下移动
+                a(rgs)                    显示当前函数的参数
+                debug <statement>         在新的（递归）调试器中调用语句statement
+                l(list) <statement>       显示当前行，以及当前栈级别上的上下文的参考代码
+                w(here)                   打印当前位置的完整栈跟踪（包括上下文参考代码）
+                
+    ## 标签目录: %bookmark
+        # %bookmark alias path  # 将path路径标记为alias
+            pwd  # 当前工作目录
+            cd alias  # 进入标记的alias目录
+        # %bookmark -l  # 列出标签
+        # %bookmark -d alias  # 删除标签alias
+        # %bookmark -r  # 删除全部标签
+        
 
 # jupyter and ipython中
 
-    # 执行命令
+    ## 执行命令
       # !命令
 
-    # 魔法命令
+    ## 魔法命令
       # 查看所有魔法命令
         # lsmagic
       # 查看帮助文档

@@ -648,12 +648,12 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 
     # /etc/profile
     # /etc/profile.d/*.sh
-    # ~/.bash_profile
+    # ~/.profile
     # ~/.bashrc
     # /etc/bashrc
 
     # 系统正常启动过程的环境变量的启动：
-	分支1：1-#2-#/etc/profile.d/lang.sh-#/etc/sysc config/i18n; 分支2：-#3-#4-#5-#命令提示符 and 2-#...
+	分支1：1->2->/etc/profile.d/lang.sh->/etc/sysc config/i18n; 分支2：->3->4->5->命令提示符 and 2->...
 
 	注：放在家目录（3,4）下的环境变量配置文件，只会对当前用户起作用
 	在/etc下的环境变量所有的用户都起作用
@@ -668,7 +668,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	
 # 永久变量
     # 修改用户变量
-	linux下每个用户目录下都有一个 ~/.bash_profile文件,最后面加：export path=$path:/path1:/path2
+	linux下每个用户目录下都有一个 ~/.profile文件,最后面加：export path=$path:/path1:/path2
     # 修改全局变量
 	在/etc/profile文件中做同上操作， 再source /etc/profile生效
 	
@@ -705,7 +705,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 
 4.      Umask定义的权限，是系统默认权限中准备丢弃的权限如022，也就是----w—w-
 
-三．~/.bash_profile的作用
+三．~/.profile的作用
 
          1.调用了~/.bashrc 文件
 

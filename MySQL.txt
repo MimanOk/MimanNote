@@ -1,5 +1,10 @@
 ﻿# 默认连接端口：3306
 
+# 启动mysql服务
+    以管理员身份运行dos
+    输入mysqld --install
+    再输入net start mysql
+
 # 概念
     关系型数据库遵循ACID规则
     事务在英文中是transaction，和现实世界中的交易很类似，它有如下四个特性：
@@ -149,7 +154,7 @@
 	
 # 清空表
     # truncate table1; truncate table2;
-    # delete from table
+    # delete from table;
 
 # 查看使用时间格式
     # show variables like '%time_zone%';

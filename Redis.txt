@@ -206,10 +206,11 @@ r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     ## 适用场景
         # 各种排行榜
     ## 用法
+        # zrevrange: zrevrange key 0 100  # 获取key中权重0-100的元素
         # zadd：zadd key 权重值 value1 权重值 value2  # 添加元素或更新元素权重
         # zrange：zrange key 0 -1 withscore  # 查看元素
         # zcard：zcard key  # 获取对应集合中元素个数
-        # zcount key min max：获取key中权重为min到max之间的元素
+        # zcount key min max：统计key中权重为min到max之间的元素
         # zincrby：zincrby key increment  # 自增
         # zrank key value：升序排序
         # zrevrank key value：降序排序

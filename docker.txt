@@ -1,4 +1,108 @@
-## Docker基本操作 ##
+# 安装
+    # 1.下载关于Docker的镜像依赖环境
+        # Centos7.0+中
+            # step 1: 安装必要的一些系统工具
+            sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+            # Step 2: 添加软件源信息
+            sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+            # Step 3: 更新并安装 Docker-CE
+            sudo yum makecache fast
+            sudo yum -y install docker-ce
+            # Step 4: 开启Docker服务
+            sudo service docker start
+
+            注意：其他注意事项在下面的注释中
+            # 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。
+            例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
+            # vim /etc/yum.repos.d/docker-ce.repo
+                # 将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
+            
+            # 安装指定版本的Docker-CE:
+            # Step 1: 查找Docker-CE的版本:
+            # yum list docker-ce.x86_64 --showduplicates | sort -r
+            #   Loading mirror speeds from cached hostfile
+            #   Loaded plugins: branch, fastestmirror, langpacks
+            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
+            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
+            #   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
+            #   Available Packages
+            # Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
+            # sudo yum -y install docker-ce-[VERSION]
+            # 注意：在某些版本之后，docker-ce安装出现了其他依赖包，如果安装失败的话请关注错误信息。例如 docker-ce 17.03 之后，需要先安装 docker-ce-selinux。
+            # yum list docker-ce-selinux- --showduplicates | sort -r
+            # sudo yum -y install docker-ce-selinux-[VERSION]
+
+            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2中的命令
+            # 经典网络：
+            # sudo yum-config-manager --add-repo http://mirrors.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
+            # VPC网络：
+            # sudo yum-config-manager --add-repo http://mirrors.could.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
+        
+        # Ubuntu中
+            # step 1: 安装必要的一些系统工具
+            sudo apt-get update
+            sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+            # step 2: 安装GPG证书
+            curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+            # Step 3: 写入软件源信息
+            sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+            # Step 4: 更新并安装 Docker-CE
+            sudo apt-get -y update
+            sudo apt-get -y install docker-ce
+
+            注意：其他注意事项在下面的注释中
+            # 安装指定版本的Docker-CE:
+            # Step 1: 查找Docker-CE的版本:
+            # apt-cache madison docker-ce
+            #   docker-ce | 17.03.1~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
+            #   docker-ce | 17.03.0~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
+            # Step 2: 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.1~ce-0~ubuntu-xenial)
+            # sudo apt-get -y install docker-ce=[VERSION]
+
+            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2、Step 3中的命令
+            # 经典网络：
+            # curl -fsSL http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+            # VPC网络：
+            # curl -fsSL http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+            
+            # 配置镜像加速器
+                针对Docker客户端版本大于 1.10.0 的用户
+                您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
+                    sudo mkdir -p /etc/docker
+                    sudo tee /etc/docker/daemon.json <<-'EOF'
+                    {
+                      "registry-mirrors": ["https://ubylzbxo.mirror.aliyuncs.com"]
+                    }
+                    EOF
+                    sudo systemctl daemon-reload
+                    sudo systemctl restart docker
+            # 解决trying to connect to the Docker daemon socket
+                sudo groupadd docker #添加docker用户组
+                sudo gpasswd -a $XXX docker #检测当前用户是否已经在docker用户组中，其中XXX为用户名，例如我的，liangll
+                sudo gpasswd -a $USER docker #将当前用户添加至docker用户组
+                newgrp docker #更新docker用户组
+                
+        # Windows中
+            https://blog.csdn.net/zzq060143/article/details/91050272#1docker%E7%9A%84%E5%AE%89%E8%A3%85
+            https://www.runoob.com/docker/windows-docker-install.html
+            https://blog.csdn.net/qq_41723615/article/details/92799469
+        
+    # 2.设置Docker下载镜像源
+        阿里云下载：yum-config-manager --add-repo http://mirrors.aliyum.com/docker-ce/linux/centos/docker-ce.repo
+        
+    # 3.安装Docker
+        yum makacahe fast 
+        yum -y install docker-ce
+        
+    # 4.启动，并设置为开机自动启动，测试
+        # 启动Docker服务
+            systemctl start docker-ce
+        # 设置开机自动启动
+            systemctl enable docker
+        # 测试
+            docker run docker-hello
 
 仓库网址：https://hub.docker.com
 # docker三要素：仓库、镜像、容器
@@ -31,7 +135,7 @@
         这一层通常被称作“容器层”，“容器层”之下的都称作“镜像层”。
     # Docker镜像commit操作补充
         docker commit提交容器副本使之成为一个新的镜像（在宿主机中提交）
-        docker commit -m=“提交的描述信息” -a=“作者” 容器ID 要创建的目标镜像名:[标签名]
+        docker commit -m="提交的描述信息" -a="作者" 容器ID 要创建的目标镜像名:[标签名]
         
 # Docker容器数据卷
     # 是什么
@@ -151,110 +255,6 @@
             EXPOSE 80 | 80/tcp | 80/udp
         # ONBUILD
             当构建一个被继承的Dockerfile时运行的命令，父镜像在被子继承后父镜像的onbuild触发
-# 安装Docker
-    # 1.下载关于Docker的镜像依赖环境
-        # Centos7.0+中
-            # step 1: 安装必要的一些系统工具
-            sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-            # Step 2: 添加软件源信息
-            sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-            # Step 3: 更新并安装 Docker-CE
-            sudo yum makecache fast
-            sudo yum -y install docker-ce
-            # Step 4: 开启Docker服务
-            sudo service docker start
-
-            注意：其他注意事项在下面的注释中
-            # 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
-            # vim /etc/yum.repos.d/docker-ce.repo
-            #   将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
-            #
-            # 安装指定版本的Docker-CE:
-            # Step 1: 查找Docker-CE的版本:
-            # yum list docker-ce.x86_64 --showduplicates | sort -r
-            #   Loading mirror speeds from cached hostfile
-            #   Loaded plugins: branch, fastestmirror, langpacks
-            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
-            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
-            #   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
-            #   Available Packages
-            # Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
-            # sudo yum -y install docker-ce-[VERSION]
-            # 注意：在某些版本之后，docker-ce安装出现了其他依赖包，如果安装失败的话请关注错误信息。例如 docker-ce 17.03 之后，需要先安装 docker-ce-selinux。
-            # yum list docker-ce-selinux- --showduplicates | sort -r
-            # sudo yum -y install docker-ce-selinux-[VERSION]
-
-            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2中的命令
-            # 经典网络：
-            # sudo yum-config-manager --add-repo http://mirrors.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
-            # VPC网络：
-            # sudo yum-config-manager --add-repo http://mirrors.could.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
-        
-        # Ubuntu中
-            # step 1: 安装必要的一些系统工具
-            sudo apt-get update
-            sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-            # step 2: 安装GPG证书
-            curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # Step 3: 写入软件源信息
-            sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            # Step 4: 更新并安装 Docker-CE
-            sudo apt-get -y update
-            sudo apt-get -y install docker-ce
-
-            注意：其他注意事项在下面的注释中
-            # 安装指定版本的Docker-CE:
-            # Step 1: 查找Docker-CE的版本:
-            # apt-cache madison docker-ce
-            #   docker-ce | 17.03.1~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-            #   docker-ce | 17.03.0~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-            # Step 2: 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.1~ce-0~ubuntu-xenial)
-            # sudo apt-get -y install docker-ce=[VERSION]
-
-            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2、Step 3中的命令
-            # 经典网络：
-            # curl -fsSL http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            # VPC网络：
-            # curl -fsSL http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            
-            # 配置镜像加速器
-                针对Docker客户端版本大于 1.10.0 的用户
-                您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
-                    sudo mkdir -p /etc/docker
-                    sudo tee /etc/docker/daemon.json <<-'EOF'
-                    {
-                      "registry-mirrors": ["https://ubylzbxo.mirror.aliyuncs.com"]
-                    }
-                    EOF
-                    sudo systemctl daemon-reload
-                    sudo systemctl restart docker
-            # 解决trying to connect to the Docker daemon socket
-                sudo groupadd docker #添加docker用户组
-                sudo gpasswd -a $XXX docker #检测当前用户是否已经在docker用户组中，其中XXX为用户名，例如我的，liangll
-                sudo gpasswd -a $USER docker #将当前用户添加至docker用户组
-                newgrp docker #更新docker用户组
-                
-        # Windows中
-            https://blog.csdn.net/zzq060143/article/details/91050272#1docker%E7%9A%84%E5%AE%89%E8%A3%85
-            https://www.runoob.com/docker/windows-docker-install.html
-            https://blog.csdn.net/qq_41723615/article/details/92799469
-        
-    # 2.设置Docker下载镜像源
-        阿里云下载：yum-config-manager --add-repo http://mirrors.aliyum.com/docker-ce/linux/centos/docker-ce.repo
-        
-    # 3.安装Docker
-        yum makacahe fast 
-        yum -y install docker-ce
-        
-    # 4.启动，并设置为开机自动启动，测试
-        # 启动Docker服务
-            systemctl start docker-ce
-        # 设置开机自动启动
-            systemctl enable docker
-        # 测试
-            docker run docker-hello
 
 # 搜索镜像
     docker search 镜像名
@@ -305,11 +305,14 @@
             -n 3: 上3次运行过的
             --digests: 显示镜像的摘要信息
             --no-trunc: 显示完整的镜像信息
-    # 查看容器的日志
-        # docker logs -f 容器id
-            -f: 可以滚动查看日志的最后几行
+    # 进入到容器当中
+        docker attach 容器id
+    # 让容器的交互式模拟终端执行命令（linux命令），不需要进入容器
+        docker exec -it 容器id 命令
+    # 从容器内拷贝文件到主机上
+        docker cp 容器id:path/file 宿主机路径
     # 进入到容器的内部
-        # docker exec -it 容器id /bin/bash == docker attach -it 容器id
+        # docker exec -it 容器id /bin/bash == docker attach 容器id
             -i: 以交互模式运行容器，通常与-t同时使用
             -t: 容器重新分配一个伪输入终端，通常与-i同时使用
             退出容器
@@ -335,17 +338,9 @@
             -t: 显示时间
             -f: 不停地追加，可持续的看日志
             --tail 3: 看倒数三行日志
-    # 查看容器内运行的进程
-        docker top 容器id
-    # 进入到容器当中
-        docker attach 容器id
-    # 让容器的交互式模拟终端执行命令（linux命令），不需要进入容器
-        docker exec -it 容器id 命令
-    # 从容器内拷贝文件到主机上
-        docker cp 容器id:path/file 宿主机路径
-# end #
 
-# Docker的中央仓库 #
+
+# Docker的中央仓库
 
 # 1.Docker的官方中央仓库，这个仓库的镜像的最全的，但是下载速度较慢
     https://hub.docker.com
@@ -364,9 +359,8 @@
         systemctl daemon-reload
         systemctl restart docker
     
-# end #
 
-# Docker应用 #
+# Docker应用
 
     # 先停止系统中的tomcat和mysql服务
         # 进入tomcat目录
@@ -515,8 +509,8 @@
             # 去GitHub官网搜索docker-compose，下载1.24.1版本的Docker-Compose
                 连接地址：https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
             # 将下载好的文件拖拽到Linux系统中
-                ~# mv docker-compose-Linux-x86_64 /usr/local
-                cd /usr/local
+                ~# mv docker-compose-Linux-x86_64 /usr/local/
+                cd /usr/local/
                 mv docker-compose-Linux-x86_64 docker-compose
                 # 添加可执行权限
                     chmod 777 docker-compose
@@ -525,7 +519,7 @@
                 pwd 复制路径
                 # 修改环境变量
                     vim /etc/profile
-                        在最后面将路径添加到export PATH=后面
+                        在最后面将路径添加到export PATH=$PATH:后面
                 # 重新加载环境变量
                     source /etc/profile
                 # 测试docker-compose是否加载成功

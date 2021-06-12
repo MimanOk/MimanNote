@@ -8,9 +8,6 @@ html1.css('')
 html2.cssselect('')
 
 
-# 第一个以后的元素
-    li:gt(1)
-
 # 获取标签下文本
     ::text
   
