@@ -1,1 +1,213 @@
--> 浏览器有跨域限制
+--- 简介 ---
+    - 起源
+        - 2005年发布，采用Python语言编写的开源文本框架
+        - 早期Django主做新闻和内容管理
+        - 重量级的Python Web框架，Django配备了常用的大部分组件
+    - 组件
+        - 基本配置文件/路由系统
+        - 模型层(M)/模板层(T)/视图层(V)
+        - Cookies和Session
+        - 分页及发邮件
+        - Admin管理后台
+    - 用途
+        - 网站/微信公众号/小程序后端开发
+        - 人工智能平台融合
+    - 版本
+        - 当前笔记版本: 2.2.12。支持的Python版本: 3.5, 3.6, 3.7, 3.8
+    - 网站
+        - Django官网: http://www.djangoproject.com
+        - Django中文文档参考网站: https://yiyibooks.cn/
+
+--- 安装 ---
+    - windows
+        - pip3 install django==2.2.12
+        - 检查是否安装成功
+            - pip3 freeze | find /I "Django"
+    - ubuntu
+        - 在线安装
+            - sudo pip3 install django==2.2.12
+        - 离线安装
+            - 将安装包复制到虚拟机
+            - 解压缩: tar -xvf Django-2.2.12.tar.gz
+            - 进入目录: cd Django-2.2.12
+            - 执行安装: sudo python3 setup.py install
+        - 检查是否安装成功
+            - sudo pip3 freeze | grep -i "Django"
+
+--- 使用 ---
+    - 创建项目
+        - django-admin startproject 项目名
+    - 启动服务
+        - 测试开发阶段的启动方式
+            - 终端cd到项目文件夹，例如cd mysite1
+            - 进入到项目文件夹后，执行python3 manage.py runserver启动Django服务
+            -- 注：该启动方式下，Django在前台启动服务，默认监听端口：8000
+            - 浏览器访问http://127.0.0.1:8000可看到Django的启动页面
+            -- 注：如果想更换端口，可以使用python3 manage.py runserver 端口号
+    - 关闭服务
+        - 方式一：在runserver启动终端下
+            - 执行：Ctrl+C
+        - 方式二：在其他终端下
+            - 执行：sudo lsof -i:8000 查询出Django的进程id
+            - 执行：kill -9对应Django进程id
+    - 项目结构
+        - manage.py 包含项目管理的子命令，如：
+            - python3 manage.py runserver 启动服务
+            - python3 manage.py startapp 创建应用
+            - python3 manage.py migrate 数据库迁移
+            - ...
+            - 直接执行python3 manage.py可列出Django的所有子命令
+        - 项目同名文件夹：mysite1/mysite1
+            - __init__: Python包的初始化文件
+            - wsgi.py: WEB服务网关的配置文件(Django正启动时需要用到)
+            - urls.py: 项目的主路由配置(HTTP请求进入Django时优先调用该文件)
+            - settings.py: 项目的配置文件(包含项目启动时需要的配置)
+        - settings.py
+            - settings.py包含了Django项目启动的所有配置项
+            - 配置项分为 公有配置 和 自定义配置
+            - 项目绝对路径：BASE_DIR = 'xxx'
+            - 启用调试模式：DEBUG = True
+            - 公有配置(Django官方提供的基础配置 https://docs.djangoproject.com/en/2.2/ref/settingss/)
+                - ALLOWED_HOSTS(设置允许访问到本项目的host头值)
+                    - [],表示只有请求头中host为127.0.0.1和localhost能访问本项目，DEBUG = True时有效
+                    - ['*'],表示任何请求头的host都能访问到当前项目
+                    - 如果要在局域网其他主机也能访问此主机的Django服务，启动方式如下
+                        - python3 manage.py runserver 0.0.0.0:5000
+                        - 指定网络设备如果内网环境下其他主机想正常访问该站点，需加ALLOWED_HOSTS=['内网ip']
+                - 语言配置
+                    - 英文
+                        - LANGUAGE_CODE = 'en-us'
+                    - 中文
+                        - LANGUAGE_CODE = 'zh-Hans'
+                - 时区
+                    - 世界标准时间(格林)
+                        - TIME_ZONE = 'UTC'
+                    - 中国时区(东巴)
+                        - TIME_ZONE = 'Asia/Shanghai'
+            - 自定义配置
+                - 变量名大写，且尽量个性化，以防覆盖公有配置，如：SQL_PORT = 3306
+    - 路由配置
+        - settings.py中的ROOT_URLCONF指定了主路由配置列表urlpatterns的文件位置
+        - file: 项目同名文件夹下/urls.py
+            urlpatterns = [
+                # 127.0.0.1:8000/page/2021
+                path('page/2021/', views.page_2021),
+                ...(此处配置主路由)
+            ]
+        - path
+            - 导入
+                - from django.urls import path
+            - 语法
+                - path(route, views, name=None)
+            - 参数
+                - route:字符串类型，匹配的请求路径
+                - views:指定路径所对应的视图处理函数的名称
+                - name:为地址起别名，在模板中地址反向解析时用
+            - 转换器
+                - str    匹配除了'/'之外的非空字符串
+                - int    匹配0或任何正整数，返回一个int
+                - slug   匹配任意由ASCII字母或数字以及连字符(-)和下划线组成的短标签
+                - path   匹配非空字段，包括路径分隔符'/'
+                - 使用样例
+                    - user/<str:name>        user/huoyijun   视图函数参数name=huoyijun
+                    - user/<int:age>         user/25         视图函数参数age=25
+                    - user/<slug:time>       user/2021-06-22 视图函数参数time=2021-06-22
+                    - user/<path:infoPath>   user/info/other 视图函数参数infoPath=info/other
+        - re_path
+            - 导入
+                - from django.urls import re_path
+            - 语法
+                - path(route, views, name=None)
+            - 参数
+                - route:Python版的正则(?P<arg>exp)
+                    re_path('^huoyijun/(?P<Y>\d{4})/(?P<m>\d{1,2})/(?P<d>\d{1,2})$', views.huoyijun_time)
+    - 请求中的方法
+        - HTTP1.0最常用的三种请求方法：GET,POST和HEAD
+        - HTTP1.1新增了五种请求方法：OPTIONS,PUT,DELETE,TRACE和CONNECT方法
+            - PUT       从客户端向服务器传送的数据取代指定的文档的内容
+            - DELETE    请求服务器删除指定的页面
+            - CONNECT   HTTP/1.1协议中预留给能够将连接改为管道方式的代理服务器
+            - OPTIONS   允许客户端查看服务器性能
+            - TRACE     回显服务器收到的请求，主要用于测试或诊断
+    - Django中的请求
+        - 请求在Django中实则就是视图函数的第一个参数，即HttpRequest对象
+        - Django接收到http协议的请求后，会根据请求数据报文创建HttpRequest对象
+        - HttpRequest对象通过属性描述了请求的所有相关信息
+        
+        - path_info  # URL字符串
+        - method  # 字符串，表示HTTP请求方法，常用值：GET,POST
+        - GET: QueryDict查询字典的对象，包含get请求方式的所有数据
+        - POST: QueryDict查询字典的对象，包含post请求方式的所有数据
+        - FILES: 类似于字典的对象，包含所有的上传文件信息
+        - COOKIES: Python字典，包含所有的cookie，键和值都为字符串
+        - session: 似于字典的对象，表示当前回话
+        - body: 字符串，请求体的内容（POST或PUT）
+        - scheme: 请求协议（http/https）
+        - request.get_full_path(): 请求的完整路径
+        - request.META: 请求中的元数据（消息头）
+            - request.META['REMOTE_ADDR']: 客户端IP地址
+    - HttpResponse子类
+        - HttpResponseRedirect        重定向        302
+        - HttpResponseNotModified     未修改        304
+        - HttpResponseBadRequest      错误请求      400
+        - HttpResponseNotFound      没有对应的资源  404
+        - HttpResponseForbidden       请求被禁止    403
+        - HttpResponseServerError     服务器错误    500
+    - GET处理
+        - request.GET['参数名']  # QueryDict
+        - request.GET.get('参数名', '默认值')
+        - request.GET.getlist('参数名')
+    - POST处理
+        - request.POST['参数名']  # request.POST 绑定QueryDict
+        - request.POST.get('参数名', '默认值')
+        - request.POST.getlist('参数名')
+        - *注：取消csrf验证，否则Django将会拒绝客户端发来的POST请求，报403响应
+            - 取消csrf验证
+                - 注掉settings.py中MIDDLEWARE中的CsrfViewMiddleWare的中间件
+    - Django的设计模式及模板层
+        - 
+
+--- 总结 ---
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 浏览器有跨域限制
+

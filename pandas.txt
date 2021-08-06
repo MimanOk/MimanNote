@@ -2,29 +2,29 @@
     pip3 install pandas -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # pandas简介
-    # pandas是一个强大的Python数据分析工具包，是基于NumPy构建的
-    ## pandas的主要功能
-        # 具备对其功能的数据结构DataFrame、Series
-        # 集成时间序列功能
-        # 提供丰富的数学运算和操作
-        # 灵活处理缺失数据
+    - pandas是一个强大的Python数据分析工具包，是基于NumPy构建的
+    - pandas的主要功能
+        - 具备对其功能的数据结构DataFrame、Series
+        - 集成时间序列功能
+        - 提供丰富的数学运算和操作
+        - 灵活处理缺失数据
 
 # 使用
     import pandas as pd
     
-    ## Series:类似字典，当字典使用
+    - Series:类似字典，当字典使用
         sr = pd.Series([1,2,3])  # 默认索引（key），从0开始递增
         sr = pd.Series([1,2,3],index=['a','b','c'])  # 手动设置索引，但原来的默认索引依然可用
-        ### 索引
+        - 索引
             sr[0] == sr['a']
-            # sr[['a','c']]  # 取索引为a和c的值
-        ### 切片
+            - sr[['a','c']]  # 取索引为a和c的值
+        - 切片
             sr[0:3] == sr['a':'c']
-        # sr.index  # 查看索引
-        # sr.values  # 查看值
-        # 与python字典不同的是，遍历sr时默认遍历的是值而不是key，这是根据实际需求设定的
+        - sr.index  # 查看索引
+        - sr.values  # 查看值
+        - 与python字典不同的是，遍历sr时默认遍历的是值而不是key，这是根据实际需求设定的
         
-        ### 注意
+        - 注意
             为了避免歧义
             进行整数索引的时候，最好用sr.iloc
             进行标签索引的时候，最好用sr.loc
@@ -35,39 +35,39 @@
         
         sr1.add(sr2,fill_value=0)  # c=30,d=11
         
-        ### 判断空值
+        - 判断空值
             sr.isnull()
             sr.notnull()
             
-        ### 筛选
+        - 筛选
             sr[sr.notnull()]  # 选出非空值
             
-        ### 删除
+        - 删除
             sr.dropna()  # 删除缺失(nan)的行
             
-        ### 填充空值
+        - 填充空值
             sr.fillna(sr.mean())  # 用均值填充空值
 
-    ## DataFrame，二维数组对象
-        # DataFrame是一个表格型的数据结构，含有一组有序的列。DataFrame可以被看做
+    - DataFrame，二维数组对象
+        - DataFrame是一个表格型的数据结构，含有一组有序的列。DataFrame可以被看做
         是由Series组成的字典并且共用一个索引。
         
-        ### 创建方式
+        - 创建方式
             df = pd.DataFrame({'one':[1,2,3,4],'two':[4,3,2,1]})
             df = pd.DataFrame({'one':pd.Series([1,2,3],index=['a','b','c']),'two':pd.Series([1,2,3,4],index=['b','c','d','a'])})
     
-        ### csv文件读取与写入
+        - csv文件读取与写入
             df = pd.read_csv('path')
             df = pd.to_csv('path')
             
-        ### 常用属性
-            # index  # 获取属性
-            # T  # 转置
-            # columns  # 获取列索引
-            # values  # 获取值数组
-            # describe  # 获取快速统计
+        - 常用属性
+            - index  # 获取属性
+            - T  # 转置
+            - columns  # 获取列索引
+            - values  # 获取值数组
+            - describe  # 获取快速统计
             
-        ### 索引
+        - 索引
             df = pd.DataFrame({'a':pd.Series([1,2,3],index=['a','b','c']),'b':pd.Series([2,3,4],index=['a','b','c'])})
             df.loc['a'] == df.loc['a',] == df.loc['a',:] # 一行数据
             df['a'] == df.loc[:,'a'] # 一列数据
@@ -75,42 +75,42 @@
             df.loc[:,['a','b']]  # a,b列数据
             df.loc['a','b']  # a行b列
             
-        ### DataFrame对象在运算时，同样会进行数据对齐，其行索引和列索引分别对齐
+        - DataFrame对象在运算时，同样会进行数据对齐，其行索引和列索引分别对齐
         
-        ### DataFrame处理缺失数据的相关方法
-            # dropna(axis=0,how='any',...)  # 删除空值，默认删除整行
-            # fillna()  # 填充空值
-            # isnull()
-            # notnull()
+        - DataFrame处理缺失数据的相关方法
+            - dropna(axis=0,how='any',...)  # 删除空值，默认删除整行
+            - fillna()  # 填充空值
+            - isnull()
+            - notnull()
             
-            ## df.dropna()参数
+            - df.dropna()参数
                 axis=0  # 默认axis=0，以行为单位
                 axis=1  # 以列为单位，how参数为'any'时默认删除整列
                 
                 how='any'  # 默认how='any',只要该行有空值，就删除整行
                 how='all'  # 只有该行全为空值才删除
                 
-        ### 常用函数
-            # numpy通用函数同样适合pandas
-            #### mean(axis=0,skipna=False)
-            #### sum(axis=1)
-            #### sort_values()
+        - 常用函数
+            - numpy通用函数同样适合pandas
+            - mean(axis=0,skipna=False)
+            - sum(axis=1)
+            - sort_values()
                 df.sort_values(by='a')  # a列升序排序
                 df.sort_values(by='a',ascending=False)  # a列降序排序，默认ascending=True
                 
-            #### sort_index()
+            - sort_index()
                 df.sort_index()  # 按索引升序排序
                 df.sort_index(ascending=False)  # 按索引降序排序
                 
-    ## 时间对象处理
-        ### 产生对象数组:date_range
-            # start  # 开始时间
-            # end  # 结束时间
-            # periods  # 时间长度
-            # freq  # 时间频率，默认为'D'，可选H(our),W(eek),B(usiness),S(emi-)M(onth),(min)T(es),S(econd),A(year),1h20min(一小时20分钟)
-            # pd.date_range("2021-5-20",periods=24,freq="1h")
+    - 时间对象处理
+        - 产生对象数组:date_range
+            - start  # 开始时间
+            - end  # 结束时间
+            - periods  # 时间长度
+            - freq  # 时间频率，默认为'D'，可选H(our),W(eek),B(usiness),S(emi-)M(onth),(min)T(es),S(econd),A(year),1h20min(一小时20分钟)
+            - pd.date_range("2021-5-20",periods=24,freq="1h")
             
-        ### 时间序列
+        - 时间序列
             sr = pd.Series(np.arange(1000), index=pd.date_range('2021-01-01',periods=1000))
             sr["2021"]  # 选取2021年
             sr["2021-05"]  # 选取2021年5月
@@ -122,13 +122,13 @@
             
             sr.truncate(before="2021-05-05")  # 切除2021-05-05之前的数据
             
-    ## 文件处理
-        # 数据文件常用格式：csv(以某间隔符分割数据)
-        ### pandas读取文件：从文件名、URL、文件对象中加载数据
+    - 文件处理
+        - 数据文件常用格式：csv(以某间隔符分割数据)
+        - pandas读取文件：从文件名、URL、文件对象中加载数据
             read_csv  # 默认分隔符为逗号
             read_table  # 默认分隔符为制表符
             
-            #### 主要参数
+            - 主要参数
                 sep          指定分隔符，可用正则表达式如'\s+'
                 header=None  指定文件无列名
                 names        指定列名
@@ -137,13 +137,13 @@
                 na_values    指定某些字符串表示缺失值
                 parse_dates  指定某些列是否被解析为日期，类型为布尔值或列表
     
-        # 将a列作为索引，并且将a列转换为时间对象parse_dates=True为所有能转换成时间对象的都转换
+        - 将a列作为索引，并且将a列转换为时间对象parse_dates=True为所有能转换成时间对象的都转换
         pd.read_csv("file_path", index_col="a", parse_dates=["a"])
-        # 读取的文件每列都没有头标签,加names参数自定义设置，不加默认1,2,3
+        - 读取的文件每列都没有头标签,加names参数自定义设置，不加默认1,2,3
         pd.read_csv("file_path", header=None, names=['a','b','c'])
         
-        # 写入到csv文件：to_csv函数
-        ### 写入文件函数的主要参数
+        - 写入到csv文件：to_csv函数
+        - 写入文件函数的主要参数
             sep  # 指定文件分隔符
             na_rep  # 指定缺失值转换的字符换，默认为空字符串
             header=False  # 不输出列名一行

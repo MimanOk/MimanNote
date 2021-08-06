@@ -173,8 +173,8 @@
             return x + 6;
           };
 
-# hook某个函数
-    # hook eval
+# hk某个函数
+    # hk eval
         // 保存原始方法
         window.__cr_eval = window.eval;
         // 重写eval方法
@@ -189,7 +189,7 @@
         _myeval.toString = window.__cr_eval.toString;
         Object.defineProperty(window, 'eval', {value: _myeval});
     
-    # hook Function
+    # hk Function
         window.__cr_fun = window.Function;
         var myfun = function(){
             var args = Array.prototype.slice.call(arguments, 0, -1).join(","), src = arguments[arguments.length - 1]
@@ -204,106 +204,106 @@
         
         
         (function(){
-            var hk_console_log = console.log;
+            window.hk_console_log = console.log;
             console.log = function(v){};
         })();
     
     
-    # hook JSON.stringify、JSON.parse
+    # hk JSON.stringify、JSON.parse
         var my_stringify = JSON.stringify;
         JSON.stringify = function(params){
-            console.log("hook", params);
+            console.log("hk", params);
             debugger;
             return my_stringify(params);
         };
 
         var my_parse = JSON.parse;
         JSON.parse = function(params){
-            console.log("hook", params);
+            console.log("hk", params);
             debugger;
             return my_parse(params);
         };
     
-    # hook cookie
-        hook某一个cookie设置的地方
+    # hk cookie
+        hk某一个cookie设置的地方
 
         (function(){
-            var hk_document_cookie = document.cookie;
+            window.hk_document_cookie = document.cookie;
             Object.defineProperty(document, 'cookie', {
                 set: function(cookie) {
                     //if(cookie.indexOf('RM4hZBv0dDon443M') != -1){
                         debugger;
                     //};
-                    hk_document_cookie = cookie;
+                    window.hk_document_cookie = cookie;
                 }
             });
         })();
         
-        // hook other
+        // hk other
         (function(){
-            var hk_window_CryptoJS = window.CryptoJS;
+            window.hk_window_CryptoJS = window.CryptoJS;
             Object.defineProperty(window, 'CryptoJS', {
                 set: function(v) {
                     debugger;
-                    hk_window_CryptoJS = v;
+                    window.hk_window_CryptoJS = v;
                 },
                 get: function(v){
                     debugger;
-                    return hk_window_CryptoJS[v];
+                    return window.hk_window_CryptoJS[v];
                 },
             });
         })();
         
         (function(){
-            var hk_window_$ss = window['_$ss'];
+            window.hk_window_$ss = window['_$ss'];
             Object.defineProperty(window, '_$ss', {
                 set: function(v) {
                     debugger;
-                    hk_window_$ss = v;
+                    window.hk_window_$ss = v;
                 },
                 get: function(v){
                     debugger;
-                    return hk_window_$ss[v];
+                    return window.hk_window_$ss[v];
                 },
             });
         })();
         
         (function(){
-            var hk_eval = eval;
-            eval = function(v){
+            window.hk_window_eval = window.eval;
+            window.eval = function(v){
                 debugger;
-                return hk_eval(v);
+                return window.hk_window_eval(v);
             };
         })();
         
         (function(){
-            var hook_window_url = window.url;
-            var hook_document_URL = document.URL;
-            var hook_document_domain = document.domain;
+            window.hk_window_url = window.url;
+            window.hk_document_URL = document.URL;
+            window.hk_document_domain = document.domain;
             
             
             Object.defineProperty(window, "url", {
                 get: function(){
                     debugger;
-                    return hook_window_url;
+                    return window.hk_window_url;
                 }
             });
             Object.defineProperty(document, "URL", {
                 get: function(){
                     debugger;
-                    return hook_document_URL;
+                    return window.hk_document_URL;
                 }
             });
             Object.defineProperty(document, "domain", {
                 get: function(){
                     debugger;
-                    return hook_document_domain;
+                    return window.hk_document_domain;
                 }
             });
         })();
         
     
-    # hook所有cookie
+    # hk所有cookie
         var cookie_cache = document.cookie;
         Object.defineProperty(document, 'cookie', {
             get: function(){
@@ -332,9 +332,9 @@
             },
         });
     
-    # hook window对象
-        var window_flag_1 = 'object1'; // 修改为需要hook的对象
-        var window_flag_2 = 'object2'; // hook对象的对象
+    # hk window对象
+        var window_flag_1 = 'object1'; // 修改为需要hk的对象
+        var window_flag_2 = 'object2'; // hk对象的对象
 
         var key_value_map = {};
         var window_value = window[window_flag_1];
@@ -370,7 +370,7 @@
             });
         };
     
-    # hook WebSocket
+    # hk WebSocket
         WebSocket.prototype.senda = WebSocket.prototype.send;
         WebSocket.prototype.send = function(data){
             console.log('Hook WebSocket', data);

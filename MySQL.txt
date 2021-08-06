@@ -257,8 +257,9 @@
 
 # 分组求和带总和
     # select name, sum(age) as sum_age from student group by name with rollup;
-总和设置别名
-    # select coalesce(name, 别名), sum(age) as sum_age from student group by name with rollup;
+    
+# 总和设置别名
+    # select coalesce(name, '别名'), sum(age) as sum_age from student group by name with rollup;
 
 # 外键关联
     # create table student(id int(11) auto_increment, primary key (id), day int not null, stu_id int(11) not null,
@@ -285,7 +286,7 @@
     # select * from A left join B on A.a=B.b union select * from A right join B on A.a=B.b;
 
 # 事务
-    # 开启一个事务：begain；
+    # 开启一个事务：begin;
     # 出现问题回滚：rollback;  # 回滚后事务结束
     # 提交数据：commit；提交后不可回滚
 
@@ -304,7 +305,7 @@
 # pycharm中 python3.6.5
     # pycharm中默认开启事务
     # import pymysql
-    # conn = pymysql.connect(host="", port="", user="", password="", port=3306, db="", charset="utf8")
+    # conn = pymysql.connect(host="", port="", user="", password="", db="", charset="utf8")
     # cur = coon.cursor()
     ## 插入单条
         # cur.execute("INSERT INTO taobao VALUES(%s, %s, %s)", [n1, n2, n3])

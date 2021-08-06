@@ -1,23 +1,95 @@
-﻿# 查看parrot镜像源
-    # /etc/apt/sources.list.parrot文件下说可以用”parrot-mirror-selector“去查看或修改镜像源。
+﻿--- 简介 ---
 
-# cat: 查看文件内容  # 阻塞式
-# tail: 查看文件内容  # 非阻塞式
-
-# centos #
-# uname: 用于打印当前系统相关信息（内核版本号、硬件架构、主机名称和操作系统类型等）
-    uname -r #>2.6.32-642.el6.x86_64
-        2.6.32-642:系统内核版本
+- 各Linux发行版
+    - Kali Linux
+        - 用于道德黑客和渗透测试。
+        - 基于Debian
+        - 下载地址：https://www.kali.org/downloads/
         
-# 查看系统版本
+    - BackBox
+        - 用于渗透测试和安全评估
+        - 基于Ubuntu
+        - 下载地址：https://www.backbox.org/downloads/
+        
+    - Parrot Security os
+        - 用于渗透测试
+        - 基于Debian
+        - 下载地址：https://www.parrotsec.org/download/
+
+
+--- 安装 ---
+
+- 使用U盘启动盘按网上教程安装
+
+
+--- 使用 ---
+
+- 脱坑
+    - parrot系统建议不要使用apt-get upgrade.因为ParrotOS是一个滚动发行版以及APT
+    工作原理。推荐使用以下命令：
+        - method 1
+            - sudo parrot-upgrade
+        - method 2
+            - sudo apt update
+            - sudo apt full-upgrade
+        - method 3
+            打开系统>管理>包管理器
+
+    - 安装某个包前，务必sudo apt-get dist-upgrade升级系统，
+    如果知道安装的包不会因为系统版本太低而自动错删系统依赖，请忽略。
+    
+    - 没有十足把握，请不要轻易sudo apt-get autoclean，否则删掉某些重要依赖会很麻烦。
+
+
+- 添加虚拟网卡
+    - 法一
+        - sudo ifconfig eth0:0 192.168.1.1 up  # 创建
+        - sudo ifconfig eth0:0 down  # 删除
+        - 缺点
+            - 重启服务器或者网络后，虚拟网卡就没了
+            - 虚拟网卡和原网卡物理地址一样，无法用来创建虚拟机
+        
+    - 法二，Ubuntu下
+        - sudo vim /etc/network/interfaces  # 在文件中按葫芦画瓢
+        - sudo /etc/init.d/networking restart
+        - 优点
+            - 重启服务器或者网卡配置不会丢失
+        - 缺点
+            - 虚拟网卡和原网卡物理地址一样，无法用来创建虚拟机
+    
+    - 法三
+        - brctl show  # 显示网桥信息
+        - brctl addbr virbr0  # 添加网桥
+        - ip link set virbr0 up  # 激活网桥
+        - tunctl -b  # 执行命令后会生成一个tap，后缀从0，1，2一次递增
+        - ip link set tap0 up  # 激活创建的tap
+        - brctl addif virbr0 tap0  # 将tap0虚拟网卡添加到virbr0网桥上
+        - ifconfig virbr0 169.254.251.4 up  # 给网桥配置ip地址
+        - brctl delif virbr1 eth5  # 将virbr1网桥上绑定的eht5网卡解除
+        - brctl addif virbr1 eth6  # 给virbr1网桥绑定eth6网卡
+
+- 查看parrot镜像源
+    - /etc/apt/sources.list.parrot文件下说可以用"parrot-mirror-selector"去查看或修改镜像源。
+
+- cat: 查看文件内容  # 阻塞式
+- tail: 查看文件内容  # 非阻塞式
+
+- centos
+    - uname: 用于打印当前系统相关信息（内核版本号、硬件架构、主机名称和操作系统类型等）
+        uname -r #>2.6.32-642.el6.x86_64
+            2.6.32-642:系统内核版本
+
+
+- 查看系统版本
     cat /etc/redhat-release
-# end #
 
-# 查看pip镜像
-  # cat ~/.pip/pip.conf
 
-# ll命令结果详解 #
-# 结果最左边一小列表示该文件的类型：
+- 查看pip镜像
+    - cat ~/.pip/pip.conf
+
+
+- ll命令结果详解 #
+- 结果最左边一小列表示该文件的类型：
 	“-”表示普通文件；
 	“d”表示目录；
 	“l”表示链接文件；
@@ -26,12 +98,12 @@
 	“c”表示字符设备文件；
 	“s”表示套接字文件；
 
-# 目录/连接个数，结果第二大列：
+- 目录/连接个数，结果第二大列：
 	文件连接个数，.文件包含上级（../）、本地（.）目录
 	普通文件只有上级目录
 	*结尾的是可执行文件
 	
-# 字体颜色
+- 字体颜色
 	在大多数的linux shell窗口中，还能用颜色来区分不同文件的属性：
 
 	灰白色表示普通文件；
@@ -41,635 +113,636 @@
 	亮蓝色表示链接文件；
 	亮黄色表示设备文件；
 
-# end #
 
-# 压缩与解压 #
-ubuntu 下rar解压工具安装方法：
+- 压缩与解压
+    ubuntu 下rar解压工具安装方法：
 
-压缩功能
+    压缩功能
 
-安装 sudo apt-get install rar
-卸载 sudo apt-get remove rar
+    安装 sudo apt-get install rar
+    卸载 sudo apt-get remove rar
 
-解压功能
+    解压功能
 
-安装 sudo apt-get install unrar
-卸载 sudo apt-get remove unrar
+    安装 sudo apt-get install unrar
+    卸载 sudo apt-get remove unrar
 
 
 
-ubuntu解压命令全览
+    ubuntu解压命令全览
 
-.tar
+    .tar
 
-解包：tar xvf FileName.tar
+    解包：tar xvf FileName.tar
 
-打包：tar cvf FileName.tar DirName
+    打包：tar cvf FileName.tar DirName
 
-注：tar是打包，不是压缩！
+    注：tar是打包，不是压缩！
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.gz
+    .gz
 
-解压1：gunzip FileName.gz
+    解压1：gunzip FileName.gz
 
-解压2：gzip -d FileName.gz
+    解压2：gzip -d FileName.gz
 
-压缩：gzip FileName
+    压缩：gzip FileName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.tar.gz 和 .tgz
+    .tar.gz 和 .tgz
 
-解压：tar zxvf FileName.tar.gz
+    解压：tar zxvf FileName.tar.gz
 
-压缩：tar zcvf FileName.tar.gz DirName
+    压缩：tar zcvf FileName.tar.gz DirName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.bz2
+    .bz2
 
-解压1：bzip2 -d FileName.bz2
+    解压1：bzip2 -d FileName.bz2
 
-解压2：bunzip2 FileName.bz2
+    解压2：bunzip2 FileName.bz2
 
-压缩： bzip2 -z FileName
+    压缩： bzip2 -z FileName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.tar.bz2
+    .tar.bz2
 
-解压：tar jxvf FileName.tar.bz2
+    解压：tar jxvf FileName.tar.bz2
 
-压缩：tar jcvf FileName.tar.bz2 DirName
+    压缩：tar jcvf FileName.tar.bz2 DirName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.bz
+    .bz
 
-解压1：bzip2 -d FileName.bz
+    解压1：bzip2 -d FileName.bz
 
-解压2：bunzip2 FileName.bz
+    解压2：bunzip2 FileName.bz
 
-压缩：未知
+    压缩：未知
 
-.tar.bz
+    .tar.bz
 
-解压：tar jxvf FileName.tar.bz
+    解压：tar jxvf FileName.tar.bz
 
-压缩：未知
+    压缩：未知
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.Z
+    .Z
 
-解压：uncompress FileName.Z
+    解压：uncompress FileName.Z
 
-压缩：compress FileName
+    压缩：compress FileName
 
-.tar.Z
+    .tar.Z
 
-解压：tar Zxvf FileName.tar.Z
+    解压：tar Zxvf FileName.tar.Z
 
-压缩：tar Zcvf FileName.tar.Z DirName
+    压缩：tar Zcvf FileName.tar.Z DirName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.zip
+    .zip
 
-解压：unzip FileName.zip
+    解压：unzip FileName.zip
 
-压缩：zip FileName.zip DirName
+    压缩：zip FileName.zip DirName
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.rar
+    .rar
 
-解压：rar x FileName.rar
+    解压：rar x FileName.rar
 
-压缩：rar a FileName.rar DirName
+    压缩：rar a FileName.rar DirName
 
-rar请到：http://www.rarsoft.com/download.htm 下载！
+    rar请到：http://www.rarsoft.com/download.htm 下载！
 
-解压后请将rar_static拷贝到/usr/bin目录（其他由$PATH环境变量指定的目录也可以）：
+    解压后请将rar_static拷贝到/usr/bin目录（其他由$PATH环境变量指定的目录也可以）：
 
-[root@www2 tmp]# cp rar_static /usr/bin/rar
+    [root@www2 tmp]# cp rar_static /usr/bin/rar
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.lha
+    .lha
 
-解压：lha -e FileName.lha
+    解压：lha -e FileName.lha
 
-压缩：lha -a FileName.lha FileName
+    压缩：lha -a FileName.lha FileName
 
-lha请到：http://www.infor.kanazawa-it.ac.jp/~ishii/lhaunix/下载！
+    lha请到：http://www.infor.kanazawa-it.ac.jp/~ishii/lhaunix/下载！
 
->解压后请将lha拷贝到/usr/bin目录（其他由$PATH环境变量指定的目录也可以）：
+    >解压后请将lha拷贝到/usr/bin目录（其他由$PATH环境变量指定的目录也可以）：
 
-[root@www2 tmp]# cp lha /usr/bin/
+    [root@www2 tmp]# cp lha /usr/bin/
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.rpm
+    .rpm
 
-解包：rpm2cpio FileName.rpm | cpio -div
+    解包：rpm2cpio FileName.rpm | cpio -div
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
 
-.deb
+    .deb
 
-解包：ar p FileName.deb data.tar.gz | tar zxf -
+    解包：ar p FileName.deb data.tar.gz | tar zxf -
 
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.
+    ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.
 
-tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ace .lha .lzh .lzx .lzs .arc .sda .sfx .lnx .zoo .cab .kar .cpt .pit .sit .sea
+    tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ace .lha .lzh .lzx .lzs .arc .sda .sfx .lnx .zoo .cab .kar .cpt .pit .sit .sea
 
-解压：sEx x FileName.*
+    解压：sEx x FileName.*
 
-压缩：sEx a FileName.* FileName
-# end #
+    压缩：sEx a FileName.* FileName
 
-# 修改镜像源
-    # sudo vim /etc/apt/sources.list.d/parrot.list
-    # 源1（中国科技大学）：deb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
-    # 源2（北京清华大学）：deb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
-    # 等完成后再输入 sudo apt-get dist-upgrade 生效
-    # 安装搜狗输入法
+
+- 修改镜像源
+    - sudo vim /etc/apt/sources.list.d/parrot.list
+    - 源1（中国科技大学）：deb http://mirrors.ustc.edu.cn/parrot parrot main contrib non-free
+    - 源2（北京清华大学）：deb https://mirrors.tuna.tsinghua.edu.cn/parrot main contrib non-free
+    - 等完成后再输入 sudo apt-get dist-upgrade 生效
+
+- 安装搜狗输入法
 	sudo apt --fix-broken install
 	等更新完 再次输入 apt-get update 然后输入 apt-get dist-upgrade
 	sudo apt-get install fcitx fcitx-frontend-gtk2 fcitx-module-dbus fcitx-bin fcitx-frontend-gtk3 fcitx-module-kimpanel fcitx-config-common fcitx-frontend-qt4 fcitx-module-lua fcitx-config-gtk fcitx-frontend-qt5 fcitx-modules fcitx-data fcitx-module-x11 fcitx-frontend-all fcitx-libs-dev fcitx-ui-classic
 	关机重启
 
-# 源代码构建安装python #
-注：安装命令Centos下为yum，Ubuntu下为apt
-下面使用yum:
-# 下载 wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
-# 解压缩和解归档:
-    # xz -d Python-3.7.3.tar.xz
-    # tar -xvf Python-3.7.3.tar
-# 安装gcc: yum install gcc
-# 安装依赖：yum -y install zlib-devel bzip2-devel openssl=devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel libpcap-devel xz-devel libffi-devel
-# 进入Python源代码目录做安装前准备工作
-    # cd Python-3.7.3
-	# 执行 ./configure --prefix=/usr/local/python37 --enable-optimizations(启用优化)  # configure(源码中自带): 修改安装路径
-# 构建安装
-	make && make install
-# end #
+- 源代码构建安装python
+    注：安装命令Centos下为yum，Ubuntu下为apt
+    下面使用yum:
+    - 下载 wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
+    - 解压缩和解归档:
+        - xz -d Python-3.7.3.tar.xz
+        - tar -xvf Python-3.7.3.tar
+    - 安装gcc: yum install gcc
+    - 安装依赖：yum -y install zlib-devel bzip2-devel openssl=devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel libpcap-devel xz-devel libffi-devel
+    - 进入Python源代码目录做安装前准备工作
+        - cd Python-3.7.3
+        - 执行 ./configure --prefix=/usr/local/python37 --enable-optimizations(启用优化)  # configure(源码中自带): 修改安装路径
+    - 构建安装
+        make && make install
 
-# 源代码构建安装Redis #
-  # 登入网址：https://redis.io 复制下载链接
-  # 在linux交互式命令模式下输入：wget http://download.redis.io/release/redis-5.0.4.tar.gz
-  # 解压：gunzip redis-5.0.4.tar.gz
-	 # tar -xvf redis-5.0.4.tar
-  # 删除tar文件(可忽略)
-	 # rm -f redis-5.0.4.tar
-  # 进入redis文件: cd redis-5.0.4.tar/ 里面有Makefile文件，可以利用C语言构建安装
-	 # 执行: make && make install
-# end #
 
-# 源代码构建安装git-2.21.0版本#
-  # 进入https://git-scm.com首页，找到右下Tarballs点击进入复制对应版本连接地址
-  # wget url
-  # 解压缩: xz -d file.xz  # -d: decompression(解压)
-  # 解归档: tar -xvf file.tar
-  # cd git-2.21.0.tar  # 进入源代码文件
-  # 源码安装需要Makefile文件，还可以通过configure文件来修改安装路径
-  # 补依赖: yum install libcurl-devel
-  # 修改安装路径: ./configure --prefix=/usr/local/
-  # 构建并安装: make && make install
-  # 查看是否安装: git --version
-# end #
+- 源代码构建安装Redis
+    - 登入网址：https://redis.io 复制下载链接
+    - 在linux交互式命令模式下输入：wget http://download.redis.io/release/redis-5.0.4.tar.gz
+    - 解压：gunzip redis-5.0.4.tar.gz
+        - tar -xvf redis-5.0.4.tar
+    - 删除tar文件(可忽略)
+        - rm -f redis-5.0.4.tar
+    - 进入redis文件: cd redis-5.0.4.tar/ 里面有Makefile文件，可以利用C语言构建安装
+        - 执行: make && make install
 
-# vim #
-  # !v  # 快速执行上一次使用的vim命令
-  # !q  # 快速执行上一次执行命令
 
-# 创建vim配置文件
-    # cd ~
-    # touch .vimrc  # 创建文件
-    # vim .vimrc  # 用vim编辑
+- 源代码构建安装git-2.21.0版本#
+    - 进入https://git-scm.com首页，找到右下Tarballs点击进入复制对应版本连接地址
+    - wget url
+    - 解压缩: xz -d file.xz  # -d: decompression(解压)
+    - 解归档: tar -xvf file.tar
+    - cd git-2.21.0.tar  # 进入源代码文件
+    - 源码安装需要Makefile文件，还可以通过configure文件来修改安装路径
+    - 补依赖: yum install libcurl-devel
+    - 修改安装路径: ./configure --prefix=/usr/local/
+    - 构建并安装: make && make install
+    - 查看是否安装: git --version
+- end #
+
+- vim #
+    - !v  # 快速执行上一次使用的vim命令
+    - !q  # 快速执行上一次执行命令
+
+- 创建vim配置文件
+    - cd ~
+    - touch .vimrc  # 创建文件
+    - vim .vimrc  # 用vim编辑
 	
-	# 加入如下配置：
-    # set nu  # 显示行号
-    # syntax on  # 高亮语法
-    # set ts=4  # 制表键为4个空格
-    # set expandtab  # 自动将制表键变成4个空格
-    # set autoindent  # 自动缩进
-    # set ruler  # 显示光标所在位置
-    # set nohls  # 设置大文件中搜索的时候不用高亮
+    - 加入如下配置：
+    - set nu  # 显示行号
+    - syntax on  # 高亮语法
+    - set ts=4  # 制表键为4个空格
+    - set expandtab  # 自动将制表键变成4个空格
+    - set autoindent  # 自动缩进
+    - set ruler  # 显示光标所在位置
+    - set nohls  # 设置大文件中搜索的时候不用高亮
 
-# 移动光标
-	# hjkl:左下上右
-    # 10h, 20j, 5k, 3l: 向左移10个字符，向下移动20行，向上移动5行，向右移动3字符
-	# 光标移到文件末尾
-    # G
-	# 光标到300行
-    # 300G
-	# 光标移到行首
-    # 1G或gg或0
-	# 光标移到行尾
-    # $
-	# 光标移到下一个单词
-    # w
-	# 光标不动，往下翻一行
-    # Ctrl+e
-	# 光标不动，往上翻一行
-    # Ctrl+y
-	# 向下翻页
-    # Ctrl+f
-	# 向上翻页
-    # Ctrl+b
+- 移动光标
+    - hjkl:左下上右
+    - 10h, 20j, 5k, 3l: 向左移10个字符，向下移动20行，向上移动5行，向右移动3字符
+    - 光标移到文件末尾
+    - G
+    - 光标到300行
+    - 300G
+    - 光标移到行首
+    - 1G或gg或0
+    - 光标移到行尾
+    - $
+    - 光标移到下一个单词
+    - w
+    - 光标不动，往下翻一行
+    - Ctrl+e
+    - 光标不动，往上翻一行
+    - Ctrl+y
+    - 向下翻页
+    - Ctrl+f
+    - 向上翻页
+    - Ctrl+b
 
-# 复制
-	# 复制一行
-    # yy
-	# 从光标所在位置复制100行
-    # 100yy
+- 复制
+    - 复制一行
+    - yy
+    - 从光标所在位置复制100行
+    - 100yy
 	
-	# 粘贴一次
-    # p
-	# 从光标所在位置粘贴100次
-    # 100p
+    - 粘贴一次
+    - p
+    - 从光标所在位置粘贴100次
+    - 100p
 	
-	# 删除一行
-    # dd
-	# 从光标所在位置删除100行
-    # 100dd
+    - 删除一行
+    - dd
+    - 从光标所在位置删除100行
+    - 100dd
 	
-# 撤销
-    # u  # undo
+- 撤销
+    - u  # undo
 
-# 恢复，重做
-    # Ctrl+r
+- 恢复，重做
+    - Ctrl+r
 
-# 分屏显示
-	# 查看打开的文件
-    # ls
-	# 切换文件
-    # :b 2  # 切换至第二个
-	# 分屏
-    # :vs  # 垂直分屏
-    # :sp  # 水平拆分
-	# 切换当前窗口
-    # Ctrl+w两次
-	# 全部保存退出
-    # :wqa
+- 分屏显示
+    - 查看打开的文件
+    - ls
+    - 切换文件
+    - :b 2  # 切换至第二个
+    - 分屏
+    - :vs  # 垂直分屏
+    - :sp  # 水平拆分
+    - 切换当前窗口
+    - Ctrl+w两次
+    - 全部保存退出
+    - :wqa
 	
-# 区分两个文件不同
-    # vim -d file1 file2
+- 区分两个文件不同
+    - vim -d file1 file2
 
-# vim强制修改只读文件(亲测Ubuntu16中不适用)
-    # w !sudo tee %
+- vim强制修改只读文件(亲测Ubuntu16中不适用)
+    - w !sudo tee %
 	
-# 录制宏
-	# 示例：注释代码
-    # 命令模式按q再按你要定义的宏名如a，左下角会出现recording
-    # 按0--输入#--按j 完成后按q结束录制
-	# 播放宏
-    # 播放次数@宏名，如：5@a(a是寄存器)  # 注释5行
+- 录制宏
+    - 示例：注释代码
+    - 命令模式按q再按你要定义的宏名如a，左下角会出现recording
+    - 按0--输入#--按j 完成后按q结束录制
+    - 播放宏
+    - 播放次数@宏名，如：5@a(a是寄存器)  # 注释5行
 	
-# 搜索
+- 搜索
 	:/ 从下往上搜
 	:? 从上往下搜
 	n / N: 正向搜索 / 反向搜索
 	
-# 替换
+- 替换
 	:1,$s/旧内容/新内容/cgie  # 1,$:第1行到最后一行；s:替换；c:确认(confirm)；g:全局(加g后一行可以匹配多个)；i:不区分大小写(ignore case)；e:忽略错误(error)
 
-# end #
+- end #
 
-# find #
-	# 找到根目录下所有的html文件
-    # find / -name "*.html"  # -name:查找文件名
-	# 查找根目录下文件大小超过10M的文件
-    # find / -size +10M  # +: 大于；-: 小于
-	# 查找根目录下一天内修改过的文件
-    # find / -mtime 0  # -ctime:创建时间；-atime:最后访问时间；0:一天内；1:
-	# 查找文件类型
-    # find / -type -d  # -d:文件夹 -f:普通文件 -l:软(符号)连接 -s:套接字,socket文件
-# end #
+- find #
+    - 找到根目录下所有的html文件
+    - find / -name "*.html"  # -name:查找文件名
+    - 查找根目录下文件大小超过10M的文件
+    - find / -size +10M  # +: 大于；-: 小于
+    - 查找根目录下一天内修改过的文件
+    - find / -mtime 0  # -ctime:创建时间；-atime:最后访问时间；0:一天内；1:
+    - 查找文件类型
+    - find / -type -d  # -d:文件夹 -f:普通文件 -l:软(符号)连接 -s:套接字,socket文件
+- end #
 
-# grep #
-  # grep "want find" file.txt
-  # 以正则表达式查找grep -E "expression" file.txt
-  # 查找结果中不显示带有grep的结果: ps -ef | grep redis | grep -v grep
-# end #
+- grep #
+    - grep "want find" file.txt
+    - 以正则表达式查找grep -E "expression" file.txt
+    - 查找结果中不显示带有grep的结果: ps -ef | grep redis | grep -v grep
+- end #
 
-# 软链接
-    # ln -s path/exe1 path/exe2  # 像Windows的快捷键
-    # unlink path/exe2  # 取消链接
-# 硬链接
-    # ln path/exe1 path/exe2  # 给磁盘文件增加了新的引用，引用数不为0文件就不会消失
+- 软链接
+    - ln -s path/exe1 path/exe2  # 像Windows的快捷键
+    - unlink path/exe2  # 取消链接
+- 硬链接
+    - ln path/exe1 path/exe2  # 给磁盘文件增加了新的引用，引用数不为0文件就不会消失
 	取消硬链接时可以使用unlink取消任何一个，对其他文件没有影响。
 	也可以直接使用rm命令删除
 
-# ssh #
-	# 登录
-    # ssh user@ip
-	# 拷贝文件
-    # scp -r path/file user@ip:/path
-# end #
+- ssh #
+    - 登录
+    - ssh user@ip
+    - 拷贝文件
+    - scp -r path/file user@ip:/path
+- end #
 
-# sftp #  # 安全文件传输(save file transtfer protocol)
-	# 登录
-    # sftp user@ip
-	# 对本地计算机操作时命令前加l(local)
-	# 上传文件
-    # put file
-	# 下载文件
-    # get file
-# end #
+- sftp #  # 安全文件传输(save file transtfer protocol)
+    - 登录
+    - sftp user@ip
+    - 对本地计算机操作时命令前加l(local)
+    - 上传文件
+    - put file
+    - 下载文件
+    - get file
+- end #
 
-# 网络可达性检查 #
-  # ping 返回的结果中
+- 网络可达性检查
+    - ping 返回的结果中
 	 # icmp: Internet Control Manger Protocol
 	 # ttl: time to live 数据每过一个路由器，存活次数减1，初始次数64
+
+
+- 管理程序
+    - systemctl start exec
+    - systemctl stop exec
+    - systemctl enable exec  # 允许开机自启
+    - systemctl disable exec  # 不允许开机自启
+
+
+- 查看网络状态
+    - netstat -nap
+
+
+- 进程操作相关命令
+    - 把命令放到后台运行: 命令 &
+    - 把前台命令停下来放到后台: Ctrl+z 
+    - 查看简略进程: ps
+    - 查看所有进程: ps -ef
+    - 查看进程数: ps aux | wc -l
+    - 查看任务: jobs
+    - 查看mysql是否启用: ps -ef | grep -i mysql
+    - 将服务放到前台: fg %编号  # 编号：jobs查看到[中的数字]; fg: foreground
+    - 将服务放到后台: fg %编号 或者 Ctrl+z
+    - 结束进程: kill -9 PID # -9:强制
+    - 类似windows下的任务管理器: top
+
+
+- 查看服务运行状态
+    
 	
-# end #
 
-# 管理程序 #
-  # systemctl start exec
-  # systemctl status exec
-  # systemctl enable exec  # 允许开机自启
-  # systemctl disable exec  # 不允许开机自启
-# end #
+- 防火墙
+    - 允许远程访问6379端口
+        - 依次输入
+        /etc/init.d/iptables stop
+        /sbin/iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
+        /etc/init.d/iptables save
+        service iptables restart
+        可以查看一下是否开放成功，检查状态的代码：/etc/init.d/iptables status
+    - 其他
+        Ubuntu使用命令
+        1.查看防火墙当前状态
+        sudo ufw status
+        2.开启防火墙
+        sudo ufw enable
+        3.关闭防火墙
+        sudo ufw disable
+        4.查看防火墙版本
+        sudo ufw version
+        5.默认允许外部访问本机
+        sudo ufw default allow
+        6.默认拒绝外部访问主机
+        sudo ufw default deny
+        7.允许外部访问53端口
+        sudo ufw allow 53
+        8.拒绝外部访问53端口
+        sudo ufw deny 53
+        9.允许某个IP地址访问本机所有端口
+        sudo ufw allow from 192.168.0.1
 
-# 查看网络状态 #
-  # netstat -nap
-# end #
-
-# 进程操作相关命令 #
-  # 把命令放到后台运行: 命令 &
-  # 把前台命令停下来放到后台: Ctrl+z 
-  # 查看简略进程: ps
-  # 查看所有进程: ps -ef
-  # 查看进程数: ps aux | wc -l
-  # 查看任务: jobs
-  # 查看mysql是否启用: ps -ef | grep -i mysql
-  # 将服务放到前台: fg %编号  # 编号：jobs查看到[中的数字]; fg: foreground
-  # 将服务放到后台: fg %编号 或者 Ctrl+z
-  # 结束进程: kill -9 PID # -9:强制
-  # 类似windows下的任务管理器: top
-# end #
-
-# 查看某个服务是否在运行 #
+        CentOS6使用命令：
+        查看防火墙状态、： service iptables status
+        关闭防火墙： service iptables stop
+        开启防火墙： service iptables start
+        永久关闭防火墙：service iptables off
+        
+        CentOS7使用命令 ：
+        查看防火墙状态：firewall-cmd --state
+        关闭防火墙：systemctl stop firewalld.service
+        开机禁止启动防火墙：systemctl disable firewalld.service
+        开启防火墙：systemctl start firewalld.service
+        如果开启防火墙遇到：unit is masked 执行以下指令
+        systemctl unmasked firewalld.service
 
 	
-# end #
+- 文件系统、硬盘查看
+    - 文件系统、类型、容量、已用、可用、挂载点
+    - df -hT
+    - 文件系统、容量、已用、可用、挂载点
+    - df -hl
+    - 文件系统、块、已用、可用、挂载点
+    - df -lm
+    - 列出当前文件夹中的文件大小及文件名并以升序排序
+    - du -sh * | sort -h
+    - 查看硬盘的详细信息
+    - fdisk -l
 
-# 防火墙 #
-# 允许远程访问6379端口
-    # 依次输入
-	/etc/init.d/iptables stop
-	/sbin/iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
-	/etc/init.d/iptables save
-	service iptables restart
-	可以查看一下是否开放成功，检查状态的代码：/etc/init.d/iptables status
-# 其他
-	Ubuntu使用命令
-	1.查看防火墙当前状态
-	sudo ufw status
-	2.开启防火墙
-	sudo ufw enable
-	3.关闭防火墙
-	sudo ufw disable
-	4.查看防火墙版本
-	sudo ufw version
-	5.默认允许外部访问本机
-	sudo ufw default allow
-	6.默认拒绝外部访问主机
-	sudo ufw default deny
-	7.允许外部访问53端口
-	sudo ufw allow 53
-	8.拒绝外部访问53端口
-	sudo ufw deny 53
-	9.允许某个IP地址访问本机所有端口
-	sudo ufw allow from 192.168.0.1
-
-	CentOS6使用命令：
-	查看防火墙状态、： service iptables status
-	关闭防火墙： service iptables stop
-	开启防火墙： service iptables start
-	永久关闭防火墙：service iptables off
-	
-	CentOS7使用命令 ：
-	查看防火墙状态：firewall-cmd --state
-	关闭防火墙：systemctl stop firewalld.service
-	开机禁止启动防火墙：systemctl disable firewalld.service
-	开启防火墙：systemctl start firewalld.service
-	如果开启防火墙遇到：unit is masked 执行以下指令
-	systemctl unmasked firewalld.service
-# end #
-	
-# 文件系统、硬盘查看
-	# 文件系统、类型、容量、已用、可用、挂载点
-    # df -hT
-	# 文件系统、容量、已用、可用、挂载点
-    # df -hl
-	# 文件系统、块、已用、可用、挂载点
-    # df -lm
-	# 列出当前文件夹中的文件大小及文件名并以升序排序
-    # du -sh * | sort -h
-	# 查看硬盘的详细信息
-    # fdisk -l
-
-# give up waiting for suspend/resume device的问题 #
+- give up waiting for suspend/resume device的问题
 	如果分区UUID发生变动
 	1、同步修改/etc/fstab和/etc/initramfs/conf.d/resume（如果配置了交换分区的话）
-	# 重新生成引导文件/boot/initrd.img 
+    - 重新生成引导文件/boot/initrd.img 
 	2、执行命令update-initramfs -u -k all
 	3、重启即可
 	update-initramfs -u -k all (这个-k参数用来指定内核，如果写all就是更新全部内核)
-# end #
 
-# 格式化硬盘
-    # mkfs -t ext4 /dev/sda6 或 mke2fs -t ext4 /dev/sda6 或 mkfs.ext4 /dev/sda6
 
-# 挂载硬盘
-	# sudo mount 硬盘地址 要挂载的地址
-    # sudo mount /dev/sda6 /home
-	# 卸载
-    # sudo umount 挂载的地址
+- 格式化硬盘
+    - mkfs -t ext4 /dev/sda6 或 mke2fs -t ext4 /dev/sda6 或 mkfs.ext4 /dev/sda6
+
+- 挂载硬盘
+    - sudo mount 硬盘地址 要挂载的地址
+    - sudo mount /dev/sda6 /home
+    - 卸载
+    - sudo umount 挂载的地址
 	
-# 实现系统重启后自动挂载
-    # vim /etc/fstab 最后一行添加/dev/sda6 /home ext4 defaults 1 2
+- 实现系统重启后自动挂载
+    - vim /etc/fstab 最后一行添加/dev/sda6 /home ext4 defaults 1 2
 	
-# 磁盘分区
-    # sudo fdisk /etc/sda
+- 磁盘分区
+    - sudo fdisk /etc/sda
 	d 删除
 	n 创建
 	t 修改分区标志
 	
-# 交换分区挂载UUID标识符
-	# 打印swap的UUID
-    # awk '/swap/ { print $1 }' /etc/fstab
-	# 打印home的UUID
-    # awk '/home/ { print $1 }' /etc/fstab
-	# 打印所有的UUID
-    # awk '// { print $1 }' /etc/fstab
-	# 有关UUID所在文件
-    # /etc/fstab
+- 交换分区挂载UUID标识符
+    - 打印swap的UUID
+    - awk '/swap/ { print $1 }' /etc/fstab
+    - 打印home的UUID
+    - awk '/home/ { print $1 }' /etc/fstab
+    - 打印所有的UUID
+    - awk '// { print $1 }' /etc/fstab
+    - 有关UUID所在文件
+    - /etc/fstab
 
-# 查询分区UUID值
-    # ls -al /dev/disk/by-uuid
-    # dumpe2fs -h /dev/sda5
-    # 通过blkid命令
+- 查询分区UUID值
+    - ls -al /dev/disk/by-uuid
+    - dumpe2fs -h /dev/sda5
+    - 通过blkid命令
 	blkid /dev/sdb1  或直接使用 blkid命令
 	/dev/sdb1: LABEL="SAN" UUID="f535fef8-f392-4c84-8e7a-85915d9179fb" TYPE="ext4"
 	
-# 手动更改系统UUID(暂时测试无效)
-	# 获取uuid #
-	# Ubuntu
-    # sudo uuid | xargs tune2fs /dev/sda1 -U
-	# centos
-    # sudo uuidgen | xargs tune2fs /dev/sda1 -U
-	# end #
+- 手动更改系统UUID(暂时测试无效)
+    - 获取uuid #
+    - Ubuntu
+    - sudo uuid | xargs tune2fs /dev/sda1 -U
+    - centos
+    - sudo uuidgen | xargs tune2fs /dev/sda1 -U
+    - end #
 	
-    # xfs_admin -U new_uuid /dev/sda1  # 给sda1更换uuid
+    - xfs_admin -U new_uuid /dev/sda1  # 给sda1更换uuid
 	
-# 关闭交换分区
-    # sudo swapoff -a 或 swapoff /etc/sda5
-	# 查看是否关闭
-    # free -m
-# 设立交换分区
-    # mkswap /dev/sdb5
+- 关闭交换分区
+    - sudo swapoff -a 或 swapoff /etc/sda5
+    - 查看是否关闭
+    - free -m
+    
+- 设立交换分区
+    - mkswap /dev/sdb5
 	建立完交换分区后，需要对该分区进行启用 swapon /dev/sdb6  使用swapon -s查看是否启用
 	
-# 文件压缩
-	tar cvf /tmp/result.rar /aim
-# 文件解压
-	tar xvf 
     
-# 文件属性
+- 文件属性
 	用户 组 所有 wrx
-# 修改文件属性
+
+
+- 修改文件属性
    - sudo chmod a+w file_name
-   
-# 挂载：sudo mount /dev/sr0 /mnt/cdrom -#将/dev/sr0挂载到/mnt/cdrom
 
-# ssh
-    # 允许远程连接：vim /etc/ssh/sshd_config -#PermitRootLogin yes
 
-# 在.bashrc文件中添加一个python文件再source .bashrc运行，被添加的python文件会被执行
+- 挂载：sudo mount /dev/sr0 /mnt/cdrom -#将/dev/sr0挂载到/mnt/cdrom
 
-# 临时配置命令别名
-    # Terminal中alias 简写命令="bash 要执行的命令"
-	# 取消别名
-    # unalias 简写命令
 
-# 永久配置命令别名：vim ~/.bashrc -#alias 简写命令="bash 要执行的命令"
-    # 示例：alias pycharm="bash /home/bobby/Downloads/pycharm-2020.1/bin/pycharm.sh"
-    # 再执行source ~/.bashrc使改动后的.bashrc文件生效
-    # 在输入pycharm即可以快捷方式启动pycharm
+- ssh
+    - 允许远程连接：vim /etc/ssh/sshd_config -#PermitRootLogin yes
 
-# MySql #
-# 安装MySQL：sudo apt-get install mysql-server
-# 判断mysql是否启动：ps aux|grep mysqld
-# 配置mysql可以远程连接：vim /etc/mysql/mysql.conf.d/mysqld.cnf
-    # 将bind-address的值（只在本地ip监听127.0.0.1）改为：0.0.0.0，监听外部ip
-    # 再重启mysql：sudo service mysql restart
-# end #
 
-# redis #
-# 安装redis：sudo apt-get install redis-server
-# 配置redis可以远程连接：vim /etc/redis/redis.conf
-    # 将bind 127.0.0.1 注释
-    # daemonize的值设为no
-    # 关闭保护模式  protected-mode  no  # 可远程telnet
-# 配置密码
-    # requirepass 密码
-    # 再重启redis：sudo service redis restart
-# 用密码登录
-    # redis-cli -a pwd
-# end #
+- 在.bashrc文件中添加一个python文件再source .bashrc运行，被添加的python文件会被执行
 
-# 安装python3.6：sudo apt-get install python3.6
-# 安装pip3：python3.6下载后自带pip3，只需建立软连接
-    # ln -s /opt/python3.6/bin/pip3 /usr/bin/pip3  # 可能路径有变动
-	或是
-    # sudo apt-get install python3-pip
 
-# scrapy #
+- 临时配置命令别名
+    - Terminal中alias 简写命令="bash 要执行的命令"
+    - 取消别名
+    - unalias 简写命令
+
+
+- 永久配置命令别名：vim ~/.bashrc -#alias 简写命令="bash 要执行的命令"
+    - 示例：alias pycharm="bash /home/bobby/Downloads/pycharm-2020.1/bin/pycharm.sh"
+    - 再执行source ~/.bashrc使改动后的.bashrc文件生效
+    - 在输入pycharm即可以快捷方式启动pycharm
+
+- MySql
+    - 安装MySQL：sudo apt-get install mysql-server
+    - 判断mysql是否启动：ps aux|grep mysqld
+    - 配置mysql可以远程连接：vim /etc/mysql/mysql.conf.d/mysqld.cnf
+        - 将bind-address的值（只在本地ip监听127.0.0.1）改为：0.0.0.0，监听外部ip
+        - 再重启mysql：sudo service mysql restart
+
+
+- redis
+    - 安装redis：sudo apt-get install redis-server
+    - 配置redis可以远程连接：vim /etc/redis/redis.conf
+        - 将bind 127.0.0.1 注释
+        - daemonize的值设为no
+        - 关闭保护模式  protected-mode  no  # 可远程telnet
+    - 配置密码
+        - requirepass 密码
+        - 再重启redis：sudo service redis restart
+    - 用密码登录
+        - redis-cli -a pwd
+
+
+- 安装python3.6：sudo apt-get install python3.6
+    - 安装pip3：python3.6下载后自带pip3，只需建立软连接
+        - ln -s /opt/python3.6/bin/pip3 /usr/bin/pip3  # 可能路径有变动
+        或是
+        - sudo apt-get install python3-pip
+
+- scrapy
 	pip3 安装scrapy之后，提示：bash: scrapy: 未找到命令
-解决方法：
-    创建软连接
-    # sudo ln -s /home/用户名/.local/bin/scrapy /usr/bin/scrapy  # 就像Windows下的快捷方式
-# end #
+    解决方法：
+        创建软连接
+        - sudo ln -s /home/用户名/.local/bin/scrapy /usr/bin/scrapy  # 就像Windows下的快捷方式
 
-# 安装mongodb：sudo apt-get install mongodb
 
-# 单纯复制虚拟机存储目录来复制出的虚拟机，下次打开的时候选择已复制的话，
+- 安装mongodb：sudo apt-get install mongodb
+
+- 单纯复制虚拟机存储目录来复制出的虚拟机，下次打开的时候选择已复制的话，
 	虚拟机软件会自行更改该新虚拟机的MAC地址，但SID这个是不会更改的。
 	克隆道理也是和上面一样，完整克隆和手动复制本质没差别，操作逻辑和上面一样。
 	只有链接克隆实际上是保留母虚拟机状态，子虚拟机仅存储和母虚拟机不同的数据，
 	这种短时间内差异数据最小，占用磁盘空间最少。但SID还是一样的。
 
-# 要更改SID，只能使用sysprep.exe做通用化处理，或者使用newsid之类的程序重新生成该系统的SID。
+- 要更改SID，只能使用sysprep.exe做通用化处理，或者使用newsid之类的程序重新生成该系统的SID。
 
-# 配置Fcitx选项：fcitx-config-gtk3
+- 配置Fcitx选项：fcitx-config-gtk3
 
-# 自动修复(依赖)安装问题：sudo apt-get -f install
+- 自动修复(依赖)安装问题：sudo apt-get -f install
 
-# sudo aptitude:找到损坏的软件再按修复命令
+- sudo aptitude:找到损坏的软件再按修复命令
 
-# 找到以so开头的安装包：sudo dpkg -l so*
+- 找到以so开头的安装包：sudo dpkg -l so*
 
-# 卸载软件包：sudo apt-get remove sougoupinyin
+- 卸载软件包：sudo apt-get remove sougoupinyin
 
-# 卸载并清除软件包配置：sudo apt-get purge sougoupinyin
+- 卸载并清除软件包配置：sudo apt-get purge sougoupinyin
 
-# 下载所有自动安装及不再使用的软件包：sudo apt-get autoremove
+- 下载所有自动安装及不再使用的软件包：sudo apt-get autoremove
 
-# 自动清除：sudo apt-get autoclean
+- 自动清除：sudo apt-get autoclean
 
-# 删除安装包后进不了桌面：ctrl+alt+f1进入tty1字符界面并登陆，然后删除/etc/X11/xini
+- 删除安装包后进不了桌面：ctrl+alt+f1进入tty1字符界面并登陆，然后删除/etc/X11/xini
 
-# 个性设置 #
-	# root 和 其他用户
-    # vim .bashrc
+- 个性设置
+    - root 和 其他用户
+    - vim .bashrc
 	PS1='${debian_chroot:+($debian_chroot)}[\[\033[01;32m\]\h@\u\[\033[00m\]]:[\[\033[01;34m\]\w\[\033[00m\]]\n\[\033[00m\]\$ '
 	else
 		PS1='${debian_chroot:+($debian_chroot)}[\[\033[01;32m\]\h@\u\[\033[00m\]]:[\w]\$ '
-	# end #
 
-# 更换驱动 #
+
+- 更换驱动
 	删除之前安装的nvidia驱动，运行 sudo apt-get purge nvidia-*
 	添加第三方驱动源，运行 sudo add-apt-repository ppa:graphics-drivers/ppa
 	更新源，运行 sudo apt-get update
 	查询nvidia驱动可用版本，运行sudo apt-cache search nvidia-* 查询相应版本
 	安装驱动，运行 sudo apt-get install nvidia-384   （因为之前驱动就是384，所有我这里没有经过步骤4）
 	sudo reboot
-# end #
+    
 
-# 配置环境变量 #
-# 常见的环境变量：
+- 配置环境变量
+    - 常见的环境变量：
+        - /etc/profile
+        - /etc/profile.d/*.sh
+        - ~/.profile
+        - ~/.bashrc
+        - /etc/bashrc
 
-    # /etc/profile
-    # /etc/profile.d/*.sh
-    # ~/.profile
-    # ~/.bashrc
-    # /etc/bashrc
+        - 系统正常启动过程的环境变量的启动：
+        分支1：1->2->/etc/profile.d/lang.sh->/etc/sysc config/i18n; 分支2：->3->4->5->命令提示符 and 2->...
 
-    # 系统正常启动过程的环境变量的启动：
-	分支1：1->2->/etc/profile.d/lang.sh->/etc/sysc config/i18n; 分支2：->3->4->5->命令提示符 and 2->...
-
-	注：放在家目录（3,4）下的环境变量配置文件，只会对当前用户起作用
-	在/etc下的环境变量所有的用户都起作用
+        注：放在家目录（3,4）下的环境变量配置文件，只会对当前用户起作用
+        在/etc下的环境变量所有的用户都起作用
 	
-# 临时环境变量
-	# 与Windows命令提示符中的变化
-	    # set    # export
-	    # %PATH% # $PATH
-	    # ;      # :
-	    # \	    # /
-    # export PATH=$PATH:/usr/local/mysql/bin 为mysql环境
+- 临时环境变量
+    - 与Windows命令提示符中的变化
+	    - set    - export
+	    - %PATH% # $PATH
+	    - ;      - :
+	    - \	    - /
+    - export PATH=$PATH:/usr/local/mysql/bin 为mysql环境
 	
-# 永久变量
-    # 修改用户变量
+- 永久变量
+    - 修改用户变量
 	linux下每个用户目录下都有一个 ~/.profile文件,最后面加：export path=$path:/path1:/path2
-    # 修改全局变量
+    - 修改全局变量
 	在/etc/profile文件中做同上操作， 再source /etc/profile生效
 	
 	注：除了常见的变量path之外，还有很多系统变量我们可以通过echo来查看设置。
@@ -720,55 +793,55 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
          3.PATH变量
 
          4.调用/etc/profile.d/*.sh文件
-# end #
+- end #
 
-# 循环文件内容
-	# 直接在终端输入
-    # 1.for line in $(cat file_name); do echo $line; done
-    # 2.for line in 'cat file_name'; do echo $line; done
-    # 3.where read -r line; do echo $line; done < file_name
-	# bash脚本(分号变成'\n')
-	#!/bin/bash(执行时找到bash来运行程序)
+- 循环文件内容
+    - 直接在终端输入
+    - 1.for line in $(cat file_name); do echo $line; done
+    - 2.for line in 'cat file_name'; do echo $line; done
+    - 3.where read -r line; do echo $line; done < file_name
+    - bash脚本(分号变成'\n')
+    -!/bin/bash(执行时找到bash来运行程序)
 	for line in $(cat file_name)
 	do
 		echo $line
 	done
 	
-# 逐行卸载指定文件内的软件包(以安装的pip的包为例)
+- 逐行卸载指定文件内的软件包(以安装的pip的包为例)
 	for line in $(cat file_name); do sudo apt-get purge -y ${line%%=*}; done
 		
-# 安装Google拼音 #
+- 安装Google拼音 #
 一、安装前
-    # 在Ubuntu18.04下，谷歌拼音输入法是基于Fcitx输入法的。因此，我们需要首先安装Fcitx。
-    # 一般来说，Ubuntu最新版中都默认安装了Fcitx，但是为了确保一下，我们可以在系统终端中运行如下命令：
-    # sudo apt install fcitx
+    - 在Ubuntu18.04下，谷歌拼音输入法是基于Fcitx输入法的。因此，我们需要首先安装Fcitx。
+    - 一般来说，Ubuntu最新版中都默认安装了Fcitx，但是为了确保一下，我们可以在系统终端中运行如下命令：
+    - sudo apt install fcitx
 二、配置Fcitx
-    # 系统终端中输入命令：im-config（注：im-config是Input Method Configuration的缩写。）
+    - 系统终端中输入命令：im-config（注：im-config是Input Method Configuration的缩写。）
 	选中Fcitx，sudo reboot重启生效
 三、安装谷歌拼音输入法（Google Pinyin）
-    # 在Ubuntu18.04系统中安装谷歌拼音输入法（Google Pinyin）非常简单，
-    # 只需要下面这个命令：
-    # sudo apt install fcitx-googlepinyin
-    # 在出来的选项中输入y即可安装。
-    # 安装后运行如下命令配置谷歌拼音输入法：
-    # fcitx-config-gtk3
-    # 然后依次进行如下操作：
-    # 打开Input Method Confuguration窗口：
-    # 点击左下角 + 号，添加Google Pinyin输入法：
-    # 最后，用快捷键：Ctrl+Shift 切换输入法，就能看到你已经能用谷歌拼音输入法打字了：
+    - 在Ubuntu18.04系统中安装谷歌拼音输入法（Google Pinyin）非常简单，
+    - 只需要下面这个命令：
+    - sudo apt install fcitx-googlepinyin
+    - 在出来的选项中输入y即可安装。
+    - 安装后运行如下命令配置谷歌拼音输入法：
+    - fcitx-config-gtk3
+    - 然后依次进行如下操作：
+    - 打开Input Method Confuguration窗口：
+    - 点击左下角 + 号，添加Google Pinyin输入法：
+    - 最后，用快捷键：Ctrl+Shift 切换输入法，就能看到你已经能用谷歌拼音输入法打字了：
 	
-# end #
+- end #
 
-# Linux各目录及作用 #
+- Linux各目录及作用 #
 
 	FHS（英文：Filesystem Hierarchy Standard 中文：文件系统层次结构标准），多数 Linux 版本
 	采用这种文件组织形式，FHS 定义了系统中每个区域的用途、所需要的最小构成的文件和目录同时
 	还给出了例外处理与矛盾处理。 FHS 定义了两层规范。
 	
-    # 第一层是， / 下面的各个目录应该要放什么文件数据，例如 /etc应该要放置设置文件，
+    - 第一层是， / 下面的各个目录应该要放什么文件数据，例如 /etc应该要放置设置文件，
 	/bin 与 /sbin 则应该要放置可执行文件等等。
 	
-    # 第二层则是针对 /usr 及 /var 这两个目录的子目录来定义。例如 /var/log 放置系统登录文件、
+    - 第二层则是针对 /usr 及 /var 这两个目录的子目录来定义。例如 /var/log 放置系统登录文件、
 	/usr/share 放置共享数据等等。
 
 	/：根目录，一般根目录下只存放目录，不要存放件，/etc、/bin、/dev、/lib、/sbin应该和根目录放置在一个分区中
@@ -807,7 +880,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 
 	/var：放置系统执行过程中经常变化的文件，如随时更改的日志文件 /var/log，/var/log/message：所有的登录文件存放目录，/var/spool/mail：邮件存放的目录，/var/run:程序或服务启动后，其PID存放在该目录下。建议单独分区，设置较大的磁盘空间
  
-# 一切皆文件
+- 一切皆文件
 	Linux 对数据文件(.mp3、.bmp)，程序文件(.c、.h、*.o)，设备文件（LCD、触摸屏、鼠标），
 	网络文件( socket ) 等的管理都抽象为文件，使用统一的方式方法管理。
 	文件分类：
@@ -825,10 +898,10 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	管道文件主要用于在进程间传递数据的一种特殊文件。
 	7）套接口文件
 	主要用于不同计算机间网络通信的一种特殊文件。
-# end #
 
-# 开机错误 #
-	# 错误： 系统开机出现错误提示：piix4_smbus 0000:00:007.3： Host SMBus controller not enabled
+
+- 开机错误
+    - 错误： 系统开机出现错误提示：piix4_smbus 0000:00:007.3： Host SMBus controller not enabled
 	原因： 系统装入i2c_piix4模块所致，因为系统找不到这个模块，所以报错
 
 	处理方法：
@@ -842,7 +915,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 
 	4、重启reboot
 	
-	# 错误：piix4_smbus 0000:00:07.3: Host SMBus controller not enabled的方法，方法如下
+    - 错误：piix4_smbus 0000:00:07.3: Host SMBus controller not enabled的方法，方法如下
 
 	1、查明装入模块的确切名字
 	lsmod | grep i2c
@@ -856,9 +929,9 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	3、reboot
 
 	然后重启之后再也没有出现这个错误，网上说这个貌似是SMbus总线和ic2冲突的问题？
-# end #
 
-# 各个安装命令详解 #
+
+- 各个安装命令详解
 	一般来说著名的linux系统基本上分两大类：
 
 	1.RedHat系列：Redhat、Centos、Fedora等
@@ -884,7 +957,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 
 	rpm是redhat公司的一种软件包管理机制，直接通过rpm命令进行安装删除等操作，最大的优点是自己内部自动处理了各种软件包可能的依赖关系。
 
-    #------------------------------- *.rpm形式的二进制软件包[centos]
+    -------------------------------- *.rpm形式的二进制软件包[centos]
 	安装：rpm -ivh *.rpm
 	卸载：rpm -e packgename
 			rpm -q nginx  查看是否已经安装
@@ -909,7 +982,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	rpm -qc xxx
 	查询某个文件是那个rpm包产生：rpm -qf /etc/yum.conf
 	rpm -qpi xxx
-    #------------------------------- src.rpm 源代码分发软件包的安装与卸载
+    -------------------------------- src.rpm 源代码分发软件包的安装与卸载
 	Linux软件的源代码分发是指提供了该软件所有程序源代码的发布形式，需要用户自己编译成可执行的二进制代码并进行安装，其优点是配置灵活，可以随意去掉或保留某些功能/模块，适应多种硬件/操作系统平台及编译环境，缺点是难度较大，一般不适合初学者使用。
 	1、*.src.rpm形式的源代码软件包
 	安装：rpm -rebuild *.src.rpm
@@ -917,7 +990,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	rpm -ivh *.rpm
 	卸载：rpm -e packgename
 	说明：rpm –rebuild *.src.rpm命令将源代码编译并在/usr/src/dist/RPMS下生成二进制的rpm包，然后再安装该二进制包即可。packgename如前所述。
-    #-------------------------------dpkg【ubuntu】
+    --------------------------------dpkg【ubuntu】
 	dpkg -l | grep 'php'  使用dpkg -l 来查看已经安装了的软件
 	dpkg 是Debian[待宾] Package 的简写。为 Debian 专门开发的套件管理系统，方便软件的安装、更新及移除。所有源自Debian的Linux 发行版都使用 dpkg，例如 Ubuntu、Knoppix 等。
 	以下是一些 Dpkg 的普通用法：
@@ -938,7 +1011,7 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	8、dpkg-reconfigure <package>
 	重新配制一个已经安装的包裹，如果它使用的是 debconf (debconf 为包裹安装提供了一个统一的配制界面)。
 
-    #------------------------------- 使用yum和apt-get。软件管理方法的升级.
+    -------------------------------- 使用yum和apt-get。软件管理方法的升级.
 	yum的配置文件是/etc/yum.conf
 	1. 我们来先讲Redhat的yum 这种高级的包管理.
 	yum install gcc  [centos]
@@ -949,9 +1022,9 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	搜寻：yum search xxx
 	列出所有档案：yum list
 	查询档案讯息：yum info xxx
-	#sudo -s
-	#LANG=C
-	#yum -y install gcc gcc-c autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libpng libpng-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel
+    -sudo -s
+    -LANG=C
+    -yum -y install gcc gcc-c autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libpng libpng-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel
 	用YUM安装软件包
 	yum -y <package_name>
 	命令：yum install <package_name>
@@ -982,103 +1055,103 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	保持与RPM数据库的一致性
 	yum安装
 	CentOS 自带(yum-*.noarch.rpm)
-	#rpm -ivh yum-*.noarch.rpm
+    -rpm -ivh yum-*.noarch.rpm
 	在第一次启用yum之前首先需要导入系统的RPM-GPG-KEY：
-	#rpm --import /usr/share/doc/centos-release-3(4)/RPM-GPG-KEY-CentOS-3(4)
+    -rpm --import /usr/share/doc/centos-release-3(4)/RPM-GPG-KEY-CentOS-3(4)
 	yum指令
 	注:当第一次使用yum或yum资源库有更新时,yum会自动下载 所有所需的headers放置于/var/cache/yum目录下,所需时间可能较长.
 	rpm包的更新
 	检查可更新的rpm包
-	#yum check-update
+    -yum check-update
 	更新所有的rpm包
-	#yum update
+    -yum update
 	更新指定的rpm包,如更新kernel和kernel source
-	#yum update kernel kernel-source
+    -yum update kernel kernel-source
 	大规模的版本升级,与yum update不同的是,连旧的淘汰的包也升级
-	#yum upgrade
+    -yum upgrade
 	rpm包的安装和删除
 	安装rpm包,如xmms-mp3
-	#yum install xmms-mp3
+    -yum install xmms-mp3
 	删除rpm包,包括与该包有倚赖性的包
-	#yum remove licq
+    -yum remove licq
 	注:同时会提示删除licq-gnome,licq-qt,licq-text
 	yum暂存(/var/cache/yum/)的相关参数
 	清除暂存中rpm包文件
-	#yum clean packages
+    -yum clean packages
 	清除暂存中rpm头文件
-	#yum clearn headers
+    -yum clearn headers
 	清除暂存中旧的rpm头文件
-	#yum clean oldheaders
+    -yum clean oldheaders
 	清除暂存中旧的rpm头文件和包文件
-	#yum clearn 或#yum clearn all
+    -yum clearn 或#yum clearn all
 	注:相当于yum clean packages + yum clean oldheaders
 	包列表
 	列出资源库中所有可以安装或更新的rpm包
-	#yum list
+    -yum list
 	列出资源库中特定的可以安装或更新以及已经安装的rpm包
-	#yum list mozilla#yum list mozilla*
+    -yum list mozilla#yum list mozilla*
 	注:可以在rpm包名中使用匹配符,如列出所有以mozilla开头的rpm包
 	列出资源库中所有可以更新的rpm包
-	#yum list updates
+    -yum list updates
 	列出已经安装的所有的rpm包
-	#yum list installed
+    -yum list installed
 	列出已经安装的但是不包含在资源库中的rpm包
-	#yum list extras
+    -yum list extras
 	注:通过其它网站下载安装的rpm包
 	rpm包信息显示(info参数同list)
 	列出资源库中所有可以安装或更新的rpm包的信息
-	#yum info
+    -yum info
 	列出资源库中特定的可以安装或更新以及已经安装的rpm包的信息
-	#yum info mozilla#yum info mozilla*
+    -yum info mozilla#yum info mozilla*
 	注:可以在rpm包名中使用匹配符,如列出所有以mozilla开头的rpm包的信息
 	列出资源库中所有可以更新的rpm包的信息
-	#yum info updates
+    -yum info updates
 	列出已经安装的所有的rpm包的信息
-	#yum info installed
+    -yum info installed
 	列出已经安装的但是不包含在资源库中的rpm包的信息
-	#yum info extras
+    -yum info extras
 	注:通过其它网站下载安装的rpm包的信息
 	搜索rpm包
 	搜索匹配特定字符的rpm包
-	#yum search mozilla
+    -yum search mozilla
 	注:在rpm包名,包描述等中搜索
 	搜索有包含特定文件名的rpm包
-	#yum provides realplay
+    -yum provides realplay
 	增加资源库
 	例如:增加rpm.livna.org作为资源库
 	安装Livna.org rpms GPG key
-	#rpm --import http://rpm.livna.org/RPM-LIVNA-GPG-KEY
+    -rpm --import http://rpm.livna.org/RPM-LIVNA-GPG-KEY
 	检查GPG Key
-	# rpm -qa gpg-pubkey*
+    - rpm -qa gpg-pubkey*
 	显示Key信息
-	#rpm -qi gpg-pubkey-a109b1ec-3f6e28d5
+    -rpm -qi gpg-pubkey-a109b1ec-3f6e28d5
 	(注:如果要删除Key,使用#rpm -e gpg-pubkey-a109b1ec-3f6e28d5)
 	yum常用的命令
-	# yum install xxx            安装xxx软件
-	# yum info xxx                查看xxx软件的信息
-	# yum remove xxx        删除软件包
-	# yum list                        列出软件包
-	# yum clean                    清除缓冲和就的包
-	# yum provides xxx        以xxx为关键字搜索包（提供的信息为关键字）
-	# yum search xxx           搜索软件包（以名字为关键字）
-	# yum groupupdate xxx
-	# yum grouplist xxx
-	# yum groupremove xxx
+    - yum install xxx            安装xxx软件
+    - yum info xxx                查看xxx软件的信息
+    - yum remove xxx        删除软件包
+    - yum list                        列出软件包
+    - yum clean                    清除缓冲和就的包
+    - yum provides xxx        以xxx为关键字搜索包（提供的信息为关键字）
+    - yum search xxx           搜索软件包（以名字为关键字）
+    - yum groupupdate xxx
+    - yum grouplist xxx
+    - yum groupremove xxx
 	这三个都是一组为单位进行升级 列表和删除的操作。。比如 "Mysql Database"就是一个组会同时操作相关的所有软件包；
-	# yum update                系统升级
-	# yum list available        列出所有升级源上的包；
-	# yum list updates         列出所有升级源上的可以更新包；
-	# yum list installed         列出已经安装的包；
-	# yun update kernel       升级内核；
+    - yum update                系统升级
+    - yum list available        列出所有升级源上的包；
+    - yum list updates         列出所有升级源上的可以更新包；
+    - yum list installed         列出已经安装的包；
+    - yun update kernel       升级内核；
 	yum常用的源
 	1) 自动选择最快的源
 	由于yum中有的mirror速度是非常慢的，如果yum选择了这个mirror，这个时候yum就会非常慢，对此，可以下载fastestmirror插件，它会自动选择最快的mirror：
-	#yum install yum-fastestmirror
+    -yum install yum-fastestmirror
 	配置文件：（一般不用动）/etc/yum/pluginconf.d/fastestmirror.conf
 	你的yum镜像的速度测试记录文件：/var/cache/yum/timedhosts.txt
 	(2)使用图形界面的yum
 	如果觉得命令行的yum不方便，那么可以使用图形化的yumex，这个看起来更方便，因为可以自由地选择软件仓库：
-	#yum install yumex
+    -yum install yumex
 	然后在系统工具中就可以看到yum extender了。实际上系统自带的“添加/删除程序“也可以实现图形化的软件安装，但有些yumex的功能它没有。
 	2.讲讲Ubuntu中的高级包管理方法apt-get
 	配置文件/etc/apt/sources.list
@@ -1115,26 +1188,26 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
 	apt-get source package 下载该包的源代码
 	sudo apt-get clean && sudo apt-get autoclean 清理无用的包（慎用）
 	sudo apt-get check 检查是否有损坏的依赖
-# end #
 
-# ubuntu18.0安装chrome #
-    # 将下载源加入到系统的源列表
+
+- ubuntu18.0安装chrome
+    - 将下载源加入到系统的源列表
         sudo wget http://www.linuxidc.com/files/repo/google-chrome.list -P /etc/apt/sources.list.d/
-    # 导入谷歌软件的公钥，用于对下载软件进行验证。
+    - 导入谷歌软件的公钥，用于对下载软件进行验证。
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | sudo apt-key add -
-    # 用于对当前系统的可用更新列表进行更新。（更新依赖）
+    - 用于对当前系统的可用更新列表进行更新。（更新依赖）
         sudo apt-get update
-    # 谷歌 Chrome 浏览器（稳定版）的安装。（安装软件）
+    - 谷歌 Chrome 浏览器（稳定版）的安装。（安装软件）
         sudo apt-get install google-chrome-stable
-    # 启动谷歌 Chrome 浏览器。
+    - 启动谷歌 Chrome 浏览器。
         /usr/bin/google-chrome-stable
-    # 然后添加到状态栏即可
+    - 然后添加到状态栏即可
 
-    # 若报错：无法安全地用该源进行更新，所以默认禁用该源
+    - 若报错：无法安全地用该源进行更新，所以默认禁用该源
         九宫格 -# 打开“软件和更新” -# “其他软件” -#点击不能用软件源，删除
-# end #
 
-# centos7安装chrome #
+
+- centos7安装chrome
     1.配置yum下载源：
 
     在目录 /etc/yum.repos.d/ 下新建文件 google-chrome.repo
@@ -1161,11 +1234,39 @@ tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ac
     赋予执行权限并将其赋给要执行的用户
     chmod 755 /usr/bin/chromedriver
     chown xxx:xxx /usr/bin/chromedriver
-# end #
 
 
+--- 疑难杂症 ---
+
+- sudo apt-get update 出现：由于没有公钥，无法验证下列签名：NO_PUBKEY F42...
+    - 解决方法：
+        - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F42...
 
 
+- 解决vi乱码问题
+    - 修改vi配置vi/etc/virc增加一行：setfileencodings=utf-8,gbk,ucs-bom,cp936 
+
+- 赋予root权限 
+    - 法1：修改 /etc/sudoers 文件，找到下面一行，把前面的注释（#）去掉 
+        ## Allows people in group wheel to run all commands 
+        %wheel    ALL=(ALL)    ALL 
+        然后修改用户，使其属于root组（wheel），命令如下： 
+        #usermod -g root tommy 
+        修改完毕，现在可以用tommy帐号登录，然后用命令 su - ，即可获得root权限进行操作。 
+    - 法2：修改 /etc/sudoers 文件，找到下面一行，在root下面添加一行，如下所示： 
+        ## Allow root to run any commands anywhere 
+        root    ALL=(ALL)     ALL 
+        tommy   ALL=(ALL)     ALL 
+        修改完毕，现在可以用tommy帐号登录，然后用命令 su - ，即可获得root权限进行操作。
+
+- 解决root权限问题
+    输入sudo gedit /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
+    在弹出的编辑框里输入：greeter-show-manual-login=true 保存关闭。
+    关闭之后，回到终端窗口，输入：sudo passwd root  回车
+    关机重启
+
+- 网络调配
+    - vim /etc/resolv.conf
 
 
 

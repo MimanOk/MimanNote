@@ -33,7 +33,26 @@
         str.isalpha()  # True
         str.isdigit()  # False
         "Mi888".isalnum()  # True  # 字母数字组合
-        
+    
+    # encode
+
+    　　简介：以 encoding 指定的编码格式编码 string，如果出错默认报一个 ValueError 的 异 常 ，
+        除非 errors 指 定 的 是 'ignore' 或 者'replace'。
+    　　语法格式：string.encode(encoding='**', errors='**')
+
+　　# decode
+
+    　　简介：以 encoding 指定的编码格式解码 string，如果出错默认报一个 ValueError 的 异 常 ，
+        除非 errors 指 定 的 是 'ignore' 或 者'replace'。
+    　　语法格式：string.decode(encoding='**', errors='**')
+
+        其中，第二个参数errors是控制错误处理的策略：
+
+        默认的参数就是strict，代表遇到非法字符时抛出异常；
+        如果设置为ignore，则会忽略非法字符；
+        如果设置为replace，则会用?取代非法字符；
+        如果设置为xmlcharrefreplace，则使用XML的字符引用。
+    
     # reduce()
         from functools import reduce
         def jiecheng(x, y)
@@ -145,6 +164,30 @@
             mi.name = "MimanOk"
             mi.name  # >>"MimanOk"
             del mi.name  # >>del name success!
+            
+        # 篡改fn3函数信息
+            import functools
+
+            def fn1(arg):
+                def fn2(func):
+                    @functools.wraps(func)  # 将func的函数信息赋值给fn3的函数信息，return的将是被篡改信息后的fn3
+                    def fn3(*args, **kwargs):
+                        if arg != "Miman":
+                            return "验证失败！"
+                        print("验证成功！")
+                        return func(*args, **kwargs)
+
+                    return fn3
+
+                return fn2
+
+            @fn1(arg=input("please input the key >>"))
+            def index(x, y):
+                return pow(x, y)
+
+            if __name__ == '__main__':
+                print(index.__name__)
+                print("the result is %s" % index(2, 3))
             
     # PyCharm实用快捷键
         替换查找
