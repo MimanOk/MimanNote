@@ -1,16 +1,16 @@
-# PythonWeb框架
-    # Django: 大而全，重武器，内部提供：ORM、Admin、中间件、Form、ModelForm、Sessoin、缓存、CSRF
-    # flask: 短小精悍、可扩展强、第三方组件丰富
-    # tornado: 短小精悍+异步非阻塞
+- PythonWeb框架
+    - Django: 大而全，重武器，内部提供：ORM、Admin、中间件、Form、ModelForm、Sessoin、缓存、CSRF
+    - flask: 短小精悍、可扩展强、第三方组件丰富
+    - tornado: 短小精悍+异步非阻塞
 
-# 重点掌握
-    # url
-    # methods
-    # endpoint
-    # @app.route('/index/<int: uid1>/<int: uid2>')
-    # url_for
+- 重点掌握
+    - url
+    - methods
+    - endpoint
+    - @app.route('/index/<int: uid1>/<int: uid2>')
+    - url_for
 
-# Flask框架是在如下基础(werkzeug)上建立起来的
+- Flask框架是在如下基础(werkzeug)上建立起来的
     from werkzeug.wrappers import Request, Response
     from werkzeug.serving import run_simple
     
@@ -20,21 +20,21 @@
         return "hello!"
         
     if __name__ == '__main__':
-        # 请求一旦到来，调用fn函数
+        - 请求一旦到来，调用fn函数
         run_simple('localhost', 5000, fn)
         
-    # 运行输出
+    - 运行输出
         *Running on http://localhost:5000 (Press CTRL+C to quit)
         
 
-# 路由系统
+- 路由系统
     @app.route('/login/<arg>')
     @app.route('/login/<int:post_id>')
     @app.route('/login/<float:post_id>')
     @app.route('/login/<path:path>')
     @app.route('/login', methods=['GET', 'POST'])
     
-    #常用的路由系统有以上五种，所有的路由系统都基于以下对应关系来处理
+    -常用的路由系统有以上五种，所有的路由系统都基于以下对应关系来处理
         DEFAULT_CONVERTERS = {
             'default': UnicodeConverter,
             'string' : UnicodeConverter,
@@ -46,7 +46,7 @@
         }
 
 
-# @app.route和app.add_url_rule参数
+- @app.route和app.add_url_rule参数
     rule,               URL规则
     view_func           视图函数名称
     defaults=None       默认值，当URL中无参数，函数需要参数时，使用defaults={'k': 'v'}为函数提供参数
@@ -90,7 +90,7 @@
                             if __name__ == '__main__':
                                 app.run()
 
-# 装饰器栗子
+- 装饰器栗子
     from flask import Flask
     import functools
     

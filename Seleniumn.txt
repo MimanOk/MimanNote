@@ -103,7 +103,7 @@
     参数：--omnibox-popup-count=”num”
     用途：将网址列弹出的提示选单数量改为num个
     参数：--enable-vertical-tabs
-    用途：调整chrome游览器标签存放在左边，非顶部
+    用途：调整chrome浏览器标签存放在左边，非顶部
     
 # chromeOptions: 是一个配置 chrome 启动时属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到
   # 设置 chrome 二进制文件位置: binary_location

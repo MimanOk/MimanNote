@@ -1,4 +1,4 @@
-﻿--- 简介 ---
+﻿- 简介 -
 
 - 各Linux发行版
     - Kali Linux
@@ -17,12 +17,12 @@
         - 下载地址：https://www.parrotsec.org/download/
 
 
---- 安装 ---
+- 安装 -
 
 - 使用U盘启动盘按网上教程安装
 
 
---- 使用 ---
+- 使用 -
 
 - 脱坑
     - parrot系统建议不要使用apt-get upgrade.因为ParrotOS是一个滚动发行版以及APT
