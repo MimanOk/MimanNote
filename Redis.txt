@@ -1,282 +1,291 @@
-﻿# 默认连接端口：6379
+﻿- 默认连接端口：6379
 
 
-# Redis优点
-    # 读写速度快，数据存放在内存中
-    # 支持数据类型丰富：string、hash、list、set、sorted
-    # 支持事务
-    # 可以用于缓存，消息队列，按key设置过期时间，到后期自动删除
-    # 支持数据持久化(将内存数据持久化到磁盘)，支持AOF和RDB两种持久化方式
+- Redis优点
+    - 读写速度快，数据存放在内存中
+    - 支持数据类型丰富：string、hash、list、set、sorted
+    - 支持事务
+    - 可以用于缓存，消息队列，按key设置过期时间，到后期自动删除
+    - 支持数据持久化(将内存数据持久化到磁盘)，支持AOF和RDB两种持久化方式
       从而进行数据恢复操作，可以有效地防止数据丢失
-    # 支持主从(master-slave)复制来实现数据备份，主机会自动将数据同步到从机
+    - 支持主从(master-slave)复制来实现数据备份，主机会自动将数据同步到从机
+
+- 安装
+	- https://www.runoob.com/redis/redis-install.html
+
+- 查看帮助
+    - 查看列表帮助文档: help @list
 
 
-# 查看帮助
-  # 查看列表帮助文档: help @list
+- pycharm中
+    - import redis   # 导入redis 模块
+    - redis 取出的结果默认是字节，我们可以设定 decode_responses=True 改成字符串
+        r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 
-# pycharm中
-import redis   # 导入redis 模块
+- 命令行下:
+    - 连接redis： redis-cli
+    - 连接redis： redis-cli -a 密码
+    - help @指令：列出详细帮助信息
+    - help 指令 ：列出简略帮助信息
+    - 用户验证： auth pass
+    - 启动redis服务并将服务放到后台运行：redis-server &
+    - 启动redis服务并设置密码: redis-server --requirepass 密码
+	- 窗口启动服务: redis-server redis.windows.conf
+	- 设置成windows下的服务: redis-server --service-install redis.windows-service.conf --loglevel verbose
+	- 卸载redis服务-------------redis-server --service-uninstall
+    - 开启redis服务-------------redis-server --service-start
+    - 停止redis服务-------------redis-server --service-stop
+	- redis.windows.conf------------redis的配置文件
+	- redis.server.exe-----------------服务器端
+	- redis-cli----------------------------命令行客户端
+	- redis-benchmark---------------redis的性能测试工具，测试redis在你配置在你的系统下的读写性能
 
 
-redis 取出的结果默认是字节，我们可以设定 decode_responses=True 改成字符串
-r = redis.Redis(host='localhost', port=6379, decode_responses=True)
-
-
-# 命令行下:
-    # 连接redis： redis-cli
-    # 连接redis： redis-cli -a 密码
-    # help @指令：列出详细帮助信息
-    # help 指令 ：列出简略帮助信息
-    # 用户验证： auth pass
-	# 启动redis服务并将服务放到后台运行：redis-server &
-	# 启动redis服务并设置密码: redis-server --requirepass 密码
-
-
-# Redis事务
-    ## 特点
-        # 单独的格里操作：事务中的所有命令会被序列化，按顺序执行，在执行的过程中不会被其他客户端送来的命令打断。
-        # 不保证原子性：redis中的一个事务中如果存在命令执行失败，那么其他命令依然会被执行，没有回滚机制
-    ## 事务命令
-        # MULTI  # 开启事务  # start trasaction
-        # 命令1  # 执行命令
-        # 命令2  ...
-        # EXEC  # 提交到数据库执行
-        # DISCARD  # 取消事务
-    ## 使用步骤
-        # 开启事务
+- Redis事务
+    - 特点
+        - 单独的格里操作：事务中的所有命令会被序列化，按顺序执行，在执行的过程中不会被其他客户端送来的命令打断。
+        - 不保证原子性：redis中的一个事务中如果存在命令执行失败，那么其他命令依然会被执行，没有回滚机制
+    - 事务命令
+        - MULTI  # 开启事务  # start trasaction
+        - 命令1  # 执行命令
+        - 命令2  ...
+        - EXEC  # 提交到数据库执行
+        - DISCARD  # 取消事务
+    - 使用步骤
+        - 开启事务
         | 127.0.0.1:6379> MULTI
         | OK
-        # 命令1入队列
+        - 命令1入队列
         | 127.0.0.1:6379> INCR n1
         | QUEUED
-        # 命令2入队列
+        - 命令2入队列
         | 127.0.0.1:6379> INCR n2
         | QUEUED
-        # 提交到数据库执行
+        - 提交到数据库执行
         | 127.0.0.1:6379> EXEC
         | 1) (integer) 1
         | 2) (integer) 2
         | 不能回滚！
-    ## 事务中命令错误处理机制
-        ### 命令语法错误，命令入队列失败，直接自动discard退出这个事务
-            # 这个在命令执行调用之前会发生错误。列如，这个命令可能有语法错误(错误的参数数量，错误的命令名)
-            # 命令错误会在进入事务队列后直接报错，并且大部分客户端会直接丢弃这个事务。
-        ### 命令语法没错，但类型操作有误，则事务执行调用之后失败，无法进行事务回滚
-            # 如对字符串进行了list命令操作，则在事务执行中失败，但其他所有的命令都会被执行。
-    ## 为什么redis不支持事务回滚
-        # redis是轻量级的缓存型数据库，设计初衷就是为了高速高效，回滚机制会影响redis性能效率。
+    - 事务中命令错误处理机制
+        - 命令语法错误，命令入队列失败，直接自动discard退出这个事务
+            - 这个在命令执行调用之前会发生错误。列如，这个命令可能有语法错误(错误的参数数量，错误的命令名)
+            - 命令错误会在进入事务队列后直接报错，并且大部分客户端会直接丢弃这个事务。
+        - 命令语法没错，但类型操作有误，则事务执行调用之后失败，无法进行事务回滚
+            - 如对字符串进行了list命令操作，则在事务执行中失败，但其他所有的命令都会被执行。
+    - 为什么redis不支持事务回滚
+        - redis是轻量级的缓存型数据库，设计初衷就是为了高速高效，回滚机制会影响redis性能效率。
 
 
-# Redis中的持久化方案
-    ## RDB
-        # 快照形式，定期把内存中的数据保存到磁盘。Redis默认支持的持久化方案。
+- Redis中的持久化方案
+    - RDB
+        - 快照形式，定期把内存中的数据保存到磁盘。Redis默认支持的持久化方案。
           速度快但是服务器断电的时候会丢失部分数据
-    ## AOF
-        # 把所有对reids数据库增删改查的操作命令保存到文件中。数据库恢复时把所有的命令执行一遍即可。
-    # 两种持久化方案同时开启使用AOF文件来恢复数据库，能保证数据的完整性，但是速度慢。
+    - AOF
+        - 把所有对reids数据库增删改查的操作命令保存到文件中。数据库恢复时把所有的命令执行一遍即可。
+    - 两种持久化方案同时开启使用AOF文件来恢复数据库，能保证数据的完整性，但是速度慢。
   
 
-# Redis分布式锁
-    ## 从redis2.8开始，set命令集成了两个参数，nx和ex。
-        # nx: 拿nx来抢锁，key不存在时创建
-        # ex: 添加过期时间，防止锁无法释放，造成死锁
-    ## 用法
-        # 成功获取锁，返回1，否侧返回0
-        # set key value nx ex 3  # 设置过期时间为3秒
-        # DEL key  # 释放锁
+- Redis分布式锁
+    - 从redis2.8开始，set命令集成了两个参数，nx和ex。
+        - nx: 拿nx来抢锁，key不存在时创建
+        - ex: 添加过期时间，防止锁无法释放，造成死锁
+    - 用法
+        - 成功获取锁，返回1，否侧返回0
+        - set key value nx ex 3  # 设置过期时间为3秒
+        - DEL key  # 释放锁
 
 
-# 缓存穿透
-    ## 原理
-        # 缓存数据库没有的数据，而用户反复发起请求，如假的用户ID
-    ## 场景
-        # 比如发起为id为"-1"的数据或id为特别大不存在的数据。这时的用户很可能是攻击者，
+- 缓存穿透
+    - 原理
+        - 缓存数据库没有的数据，而用户反复发起请求，如假的用户ID
+    - 场景
+        - 比如发起为id为"-1"的数据或id为特别大不存在的数据。这时的用户很可能是攻击者，
           攻击会导致数据库压力过大
-    ## 解决方案
-        # 请求校验，接口层增加校验，如对id做基础校验,id<=0的直接拦截
-        # 都无法取到数据时也可以将key-value对写成key-null，缓存有效时间比如30秒左右,这样可以防止用户攻击，反复用同一个id暴力攻击
+    - 解决方案
+        - 请求校验，接口层增加校验，如对id做基础校验,id<=0的直接拦截
+        - 都无法取到数据时也可以将key-value对写成key-null，缓存有效时间比如30秒左右,这样可以防止用户攻击，反复用同一个id暴力攻击
 
 
-# 缓存击穿
-    ## 原理
-        # 缓存没有，数据库有，一般是缓存时间到期，顺势并发太大
-    ## 解决方案
-        # 热点数据不过期
-        # 上锁，重新设计缓存的使用方式，当我们通过key去查询数据时，首先查询缓存，如果没有，
-          就通过分布式锁进行加锁，取得锁的进程差DB并设置缓存，然后解锁；其他进程如果发现
+- 缓存击穿
+    - 原理
+        - 缓存没有，数据库有，一般是缓存时间到期，顺势并发太大
+    - 解决方案
+        - 热点数据不过期
+        - 上锁，重新设计缓存的使用方式，当我们通过key去查询数据时，首先查询缓存，如果没有，
+          就通过分布式锁进行加锁，取得锁的进程查DB并设置缓存，然后解锁；其他进程如果发现
           有锁就等待，然后等解锁后返回缓存数据或者再次查询DB
           
 
-# 缓存雪崩
-    ## 原理
-        # 缓存中大批量数据过期，导致瞬时大批量不同请求注入DB
-    ## 解决方案
-        # 缓存设置随机时间(避免缓存设置相近的有效期；为有效期增加随机值)
-        # 热点数据不过期
+- 缓存雪崩
+    - 原理
+        - 缓存中大批量数据过期，导致瞬时大批量不同请求注入DB
+    - 解决方案
+        - 缓存设置随机时间(避免缓存设置相近的有效期；为有效期增加随机值)
+        - 热点数据不过期
 
 
-# string
-    ## 特点
-        # 简单key-value类型，value可以为字符串和数字
-    ## 使用场景
-        # 常规计数
-    ## 用法
-        # 设置单个set： set key value ex（存活时间，单位秒）px（存活时间，单位毫秒）nx（key存在就不设置）xx（key不存在就设置）
-        # 设置多个set： mset key1 value key2 value...
-        # 获取多个set： mget key1 key2
-        # 设置位setbit：  setbit offset 0或1
-        # del：删除key
-        # append：追加
-        # select：切换库
-        # keys *：列出当前库中所有key
-        # 获取并设置getset： getset key new_value
-        # 类似切片getrange： getrange key start end
-        # 计算位中的1：  countbit
-        # 自增incr：  incr key
-        # 自增incrby： incrby key increment
-        # 自增incrbyfloat： incrbyfloat key floatnum
-        # 自减decr： decr key
+- string
+    - 特点
+        - 简单key-value类型，value可以为字符串和数字
+    - 使用场景
+        - 常规计数
+    - 用法
+        - 设置单个set： set key value ex（存活时间，单位秒）px（存活时间，单位毫秒）nx（key存在就不设置）xx（key不存在就设置）
+        - 设置多个set： mset key1 value key2 value...
+        - 获取多个set： mget key1 key2
+        - 设置位setbit：  setbit offset 0或1
+        - del：删除key
+        - append：追加
+        - select：切换库
+        - keys *：列出当前库中所有key
+        - 获取并设置getset： getset key new_value
+        - 类似切片getrange： getrange key start end
+        - 计算位中的1：  countbit
+        - 自增incr：  incr key
+        - 自增incrby： incrby key increment
+        - 自增incrbyfloat： incrbyfloat key floatnum
+        - 自减decr： decr key
 
-# hash
-    ## 特点
-        # 是一个string类型的field和value的映射表，hash特别适合用于存储对象
-    ## 使用场景
-        # 存储部分可能需要变更的数据（比如用户信息）
-    ## 用法
-        # 单个hash设置： hset key field1 value
-        # 单个hash获取：hget key field1;  hgetall key;  hkeys key;  hvals value
-        # 多个hash设置：hmset key field1 value field2 value...
-        # 多个hash获取：hget key field1 field2
-        # hlen：获取有几个key
-        # 判断是否存在key：hexists key
-        # 删除field：hdel key field1 field2
-        # 自增：hincrby key field increment
-        # 自增hincrbyfloat： hincrbyfloat key floatnum
-        # hkeys key
-        # 正则查找：hscan key start_num match M*
-        # 正则查找并设置查找结果为iter：hscan_iter key start match M*（pycharm中使用）
+- hash
+    - 特点
+        - 是一个string类型的field和value的映射表，hash特别适合用于存储对象
+    - 使用场景
+        - 存储部分可能需要变更的数据（比如用户信息）
+    - 用法
+        - 单个hash设置： hset key field1 value
+        - 单个hash获取：hget key field1;  hgetall key;  hkeys key;  hvals value
+        - 多个hash设置：hmset key field1 value field2 value...
+        - 多个hash获取：hget key field1 field2
+        - hlen：获取有几个key
+        - 判断是否存在key：hexists key
+        - 删除field：hdel key field1 field2
+        - 自增：hincrby key field increment
+        - 自增hincrbyfloat： hincrbyfloat key floatnum
+        - hkeys key
+        - 正则查找：hscan key start_num match M*
+        - 正则查找并设置查找结果为iter：hscan_iter key start match M*（pycharm中使用）
 
-# list
-    ## 特点
-        # 有序可重复列表
-    ## 适用场景
-        # 关注列表、粉丝列表、消息队列等
-    ## 用法
-        # 往列表左边放数据：lpush name 1 2 3
-        # 往列表右边放数据：rpush name 1 2 3
-        # 取全部数据：lrange name 0 - 1
-        # llen：获取列表长度
-        # linsert name before|afer pivot value
-        # 按索引设置lset：lset name index value
-        # lrem name（列表名） count（删除数量） value（要删除的值）
-        # lpop：从左侧获取第一个元素并移除
-        # ltrim,移除选定范围外的元素：ltrim start end
-        # blpop key timeout：在指定时间内从列表左边取出元素并返回
-        # 从列表1右边取出一个元素放到列表2左边：rpoplpush list1 list2
-        # 指定时间内从列表1右边取出一个元素放到列表2左边：brpoplpush list1 list2 timeout （可以从另一个线程中get数据到当前线程）
-# 列表（redis模块）
-    #  db.blpop("标识", 0)[1]：取以"标识"开头的数据，rpush时"标识"与数据用空格隔开
+- list
+    - 特点
+        - 有序可重复列表
+    - 适用场景
+        - 关注列表、粉丝列表、消息队列等
+    - 用法
+        - 往列表左边放数据：lpush name 1 2 3
+        - 往列表右边放数据：rpush name 1 2 3
+        - 取全部数据：lrange name 0 - 1
+        - llen：获取列表长度
+        - linsert name before|afer pivot value
+        - 按索引设置lset：lset name index value
+        - lrem name（列表名） count（删除数量） value（要删除的值）
+        - lpop：从左侧获取第一个元素并移除
+        - ltrim,移除选定范围外的元素：ltrim start end
+        - blpop key timeout：在指定时间内从列表左边取出元素并返回
+        - 从列表1右边取出一个元素放到列表2左边：rpoplpush list1 list2
+        - 指定时间内从列表1右边取出一个元素放到列表2左边：brpoplpush list1 list2 timeout （可以从另一个线程中get数据到当前线程）
+- 列表（redis模块）
+    -  db.blpop("标识", 0)[1]：取以"标识"开头的数据，rpush时"标识"与数据用空格隔开
 
-# set
-    ## 特点
-        # 无序不重复列表
-    ## 适用场景
-        # 存储并计算关系(如微博，关注人或粉丝存放在集合，可以通过交集、并集、差集等操作实现共同关注、共同喜好等功能)
-    ## 用法
-        # sadd: sadd key value1 value2...  # 增加集合元素
-        # smembers: smembers key  # 查看集合元素
-        # scrad: scard key  # 获取对应集合中元素个数
-        # sdiff: sdiff key1 key2...  # 差集,第一个key和其他key的不同元素
-        # sdiffstore: sdiffstore new_key key1 key2...  # 差集,第一个key和其他key的不同元素存到新的集合中
-        # sinter: sinter key1 key2...  # 交集,都有的元素
-        # sunion: sunion key1 key2  # 并集,相当于集合间相加
-        # sunionstore: sunionstore key key1 key2  # 并集,并存储
-        # sismember: sismember key value  # 查看是否有该成员
-        # smove: somve source destination member  # 将某个成员从一个集合中移动到另一个集合中
-        # spop: spop key  # 从集合的右侧移除一个元素并将其返回
-        # srandmember: srandmember key numbers  # 从集合中随机获取numbers个元素
-        # srem: srem key values  # 从key中删除指定的某些值
-        # sscan: sscan key start match M*  # 正则查找
-        # sscan_iter: sscan_iter key start match M*（pycharm中使用）  # 正则查找并设置查找结果为iter
+- set
+    - 特点
+        - 无序不重复列表
+    - 适用场景
+        - 存储并计算关系(如微博，关注人或粉丝存放在集合，可以通过交集、并集、差集等操作实现共同关注、共同喜好等功能)
+    - 用法
+        - sadd: sadd key value1 value2...  # 增加集合元素
+        - smembers: smembers key  # 查看集合元素
+        - scrad: scard key  # 获取对应集合中元素个数
+        - sdiff: sdiff key1 key2...  # 差集,第一个key和其他key的不同元素
+        - sdiffstore: sdiffstore new_key key1 key2...  # 差集,第一个key和其他key的不同元素存到新的集合中
+        - sinter: sinter key1 key2...  # 交集,都有的元素
+        - sunion: sunion key1 key2  # 并集,相当于集合间相加
+        - sunionstore: sunionstore key key1 key2  # 并集,并存储
+        - sismember: sismember key value  # 查看是否有该成员
+        - smove: smove source destination member  # 将某个成员从一个集合中移动到另一个集合中
+        - spop: spop key  # 从集合的右侧移除一个元素并将其返回
+        - srandmember: srandmember key numbers  # 从集合中随机获取numbers个元素
+        - srem: srem key values  # 从key中删除指定的某些值
+        - sscan: sscan key start match M*  # 正则查找
+        - sscan_iter: sscan_iter key start match M*（pycharm中使用）  # 正则查找并设置查找结果为iter
 
-# sorted(有序集合)
-    ## 特点
-        # 每个元素带有分值的集合
-    ## 适用场景
-        # 各种排行榜
-    ## 用法
-        # zrevrange: zrevrange key 0 100  # 获取key中权重0-100的元素
-        # zadd：zadd key 权重值 value1 权重值 value2  # 添加元素或更新元素权重
-        # zrange：zrange key 0 -1 withscore  # 查看元素
-        # zcard：zcard key  # 获取对应集合中元素个数
-        # zcount key min max：统计key中权重为min到max之间的元素
-        # zincrby：zincrby key increment  # 自增
-        # zrank key value：升序排序
-        # zrevrank key value：降序排序
-        # zrem：zrem key values：从key中删除指定的某些值
-        # zremrangebyrank：根据排行范围删除
-        # zremrangebyscore：根据权重排行删除
-        # zremrangebylex：根据值返回删除
-        # zsore key value：根据value获取权重值
-        # zinterstore：获取两个有序集合的交集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
+- sorted(有序集合)
+    - 特点
+        - 每个元素带有分值的集合
+    - 适用场景
+        - 各种排行榜
+    - 用法
+        - zrevrange: zrevrange key 0 100  # 获取key中权重0-100的元素
+        - zadd：zadd key 权重值 value1 权重值 value2  # 添加元素或更新元素权重
+        - zrange：zrange key 0 -1 withscore  # 查看元素
+        - zcard：zcard key  # 获取对应集合中元素个数
+        - zcount key min max：统计key中权重为min到max之间的元素
+        - zincrby：zincrby key increment  # 自增
+        - zrank key value：升序排序
+        - zrevrank key value：降序排序
+        - zrem：zrem key values：从key中删除指定的某些值
+        - zremrangebyrank：根据排行范围删除
+        - zremrangebyscore：根据权重排行删除
+        - zremrangebylex：根据值返回删除
+        - zsore key value：根据value获取权重值
+        - zinterstore：获取两个有序集合的交集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
         用法：zinterstore new_key count（参加交集的集合数） 集合1 集合2 ：默认权重值相加，及agg为sum； min取权重值小的， max取大的
-        # zunionstore：获取两个有序集合的并集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
+        - zunionstore：获取两个有序集合的并集，如果遇到相同值不同分数，则按照agg来进行筛选，agg：sum，min，max
         用法同上
-        # zscan：zscan key start match M*  # 正则查找
-        # del key：删除
-        # keys in*：列出以in开头的元素
-        # expire key value：设置过期时间
-        # move key db：把key移动到另一个库（另一个库有该key则不移）
-        # randomkey：随机获取一个key（不删除）
-        # type key：获取key对应值的类型
+        - zscan：zscan key start match M*  # 正则查找
+        - del key：删除
+        - keys in*：列出以in开头的元素
+        - expire key value：设置过期时间
+        - move key db：把key移动到另一个库（另一个库有该key则不移）
+        - randomkey：随机获取一个key（不删除）
+        - type key：获取key对应值的类型
 
-# 建立redis池
-    # pool = redis.ConnectionPool(host="localhost", port=6379, db=0)
-    # db = redis.Redis(connection_pool=pool)
+- 建立redis池
+    - pool = redis.ConnectionPool(host="localhost", port=6379, db=0)
+    - db = redis.Redis(connection_pool=pool)
 
-# 一次提交多个命令，提升效率
-    # db = redis.Redis(connection_pool=pool)
-    # pipe = db.pipeline()
+- 一次提交多个命令，提升效率
+    - db = redis.Redis(connection_pool=pool)
+    - pipe = db.pipeline()
       pipe.set('name', 'Miman')
       pipe.set('age', 24)
-    # pipe.execute()  # 执行上面的命令
+    - pipe.execute()  # 执行上面的命令
     
-    # pipe = db.pipeline()
+    - pipe = db.pipeline()
       pipe.get('name')
       pipe.get('age')
-    # res = pipe.execute()  # 执行上面的命令
-    # print(res)  # >>[b'Miman', b'24']
+    - res = pipe.execute()  # 执行上面的命令
+    - print(res)  # >>[b'Miman', b'24']
 
-# 发布与订阅（redis模块）
-    # 发布者：db.publish(channel[int], "msg")
-    # 订阅者1：
+- 发布与订阅（redis模块）
+    - 发布者：db.publish(channel[int], "msg")
+    - 订阅者1：
         pool = redis.ConnectionPool(host="localhost", port=6379, db=0)
         db = redis.Redis(connection_pool=pool)
-    # 开始订阅，相当于打开收音机
+    - 开始订阅，相当于打开收音机
         pub = db.pubsub()
-    # 调频道
+    - 调频道
         pub.subscribe(879.0)
-    # 准备接收
+    - 准备接收
         pub.parse_response()
         while True:
-            # 开始接受消息
+            - 开始接受消息
             res1 = pub.parse_response()
-            # res2 = pub.get_message()
+            - res2 = pub.get_message()
             if res1:
                 print(res1)
-    # 订阅者2：
-    # 开始订阅，相当于打开收音机
+    - 订阅者2：
+    - 开始订阅，相当于打开收音机
         pub = db.pubsub()
-    # 调频道
+    - 调频道
         pub.subscribe("中文频道")
         for i in pub.listen():  # 一直等待监听
             if i['type'] == "message":
                 print(i['data'])
 
-# 查看连接客户端
-    # info clients
-    # client list
+- 查看连接客户端
+    - info clients
+    - client list
 
 
 

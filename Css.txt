@@ -1,14 +1,14 @@
-﻿-> 注释
+﻿- 注释
     - /* 注释内容 */
 
--> 引用CSS样式文件
+- 引用CSS样式文件
     - <link rel="stylesheet" href="filepath/CSS文件">
 
--> 居中显示
+- 居中显示
     - 水平居中：text-align: center;
     - 垂直居中：line-height: 多少px（多少px中间）
 
--> 漂
+- 漂
     - 左/右漂：float: left/right
     - <div style="border: 1px; solid: red">
           <div style="float: left"></div> 儿子漂
@@ -17,35 +17,35 @@
       </div>
     - 漂后块级标签会以inline的属性显示
 
--> 行内标签无法设置高宽
--> 块级标签可以设置高宽
+- 行内标签无法设置高宽
+- 块级标签可以设置高宽
 
--> display
+- display
     - none：标签消失
     - inline：默认自己有多少占多少，不可设置高宽
     - block：默认占整行，可以设置高宽
     - inline-block：默认自己有多少占多少，可以设置高宽
 
--> 边距
+- 边距
     - 内边距：padding
     - 外边距：margin(0, auto)
 
--> 固定标签
+- 固定标签
     - 绝对标签：style="position: fixed; top: 0; left: 0; right: 0; buttom: 0"
     - 相对标签：style="position: relative; 通常relative和absolute 联合使用（外层使用relative，内层使用absolute来相对于外层定位）
     - position后块级标签会以inline的属性显示
     - opacity：透明属性，范围0-1
     - 分层显示优先级：z-index：值越大，越上层
 
--> overflow
+- overflow
     - 外部设置overflow属性，内部内容超出后
         - ：overflow: hidden（超出部分隐藏）
         - ：overflow: hidden（超出部分用滑轮）
 
--> .a .b:hover{css样式}
+- .a .b:hover{css样式}
     - 加上hover后鼠标放上面时{中的样式会执行}
 
--> 用background插图片
+- 用background插图片
     - <div style="background-image: url(image_url)">
     -  background-repeat: no-repeat： no_repeat: 不重叠
     -  background-position-x: x方向移动距离

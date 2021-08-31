@@ -1,10 +1,10 @@
-﻿-> 初始化项目：scrapy startproject project_name
+﻿- 初始化项目：scrapy startproject project_name
     - scrapy genspider spider_name(不可与项目名相同) allow_spider_domain_name(允许爬的域名)
 
--> 使用不同模板生成spider
+- 使用不同模板生成spider
     - scrpay genspider -t crawl(还可以是其他的，默认base) spider_name domain
 
--> 用户默认配置：custom_settings = {
+- 用户默认配置：custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en',
@@ -12,18 +12,18 @@
         }
     }
 
--> 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv) -t(指定格式) csv或xml
+- 爬取数据写入文件：scrapy crawl spider.py -o xxx.(json or xml or csv) -t(指定格式) csv或xml
 
--> 拼接下一页url：next_url = response.urljoin("body_url")    -暂时用不到
+- 拼接下一页url：next_url = response.urljoin("body_url")    # 暂时用不到
 
-# 调试网站
-    # 控制台中
-        # 使用user-agent调试
-        scrapy shell -s USER_AGENT="" url
-        fetch(url): 请求成功后会自动将当前response和request对象替换
-        view(response): 用浏览器查看响应结果
+- 调试网站
+    - 控制台中
+        - 使用user-agent调试
+            scrapy shell -s USER_AGENT="" url
+            fetch(url): 请求成功后会自动将当前response和request对象替换
+            view(response): 用浏览器查看响应结果
     
-    # Spider中调用shell
+    - Spider中调用shell
         import scrapy
         from scrapy.shell import inspect_response
 
@@ -36,57 +36,52 @@
             ]
 
             def parse(self, response):
-                # We want to inspect one specific response.
+                - We want to inspect one specific response.
                 if ".org" in response.url:
                     inspect_response(response, self)
     Finally you hit Ctrl-D (or Ctrl-Z in Windows) to exit the shell and resume the crawling
 
 
-# 单独运行某一个爬虫文件
-    # 在spider文件中
+- 单独运行某一个爬虫文件
+    - 在spider文件中
         scrapy runspider
 
 
--> 生成未被渲染的html：scrapy view url
+- 生成未被渲染的html：scrapy view url
 
--> xsrf是服务器端防止攻击的一种握手方式，是服务器端生成的一段随机码
-
-
--> 下载管道
-    - def open_spider(self, ...):
-    - def close_spider(self, ...):
-    - def process_item(self, item, spider)
+- xsrf是服务器端防止攻击的一种握手方式，是服务器端生成的一段随机码
     
-# 该框架中的各种请求
--> 由于scrapy基于twisted的异步框架，可以同时处理多个请求，故每个方法返回的
-    - 请求要么是生成器形式， 要么是列表形式
-from scrapy import Request
-from scrapy import FormRequest
--> get请求
-    meta = {
-        'proxy': proxy,
-        'dont_retry': True,
-        'download_timeout': 10,
-    }
-    return [Request(url=url, headers=headers, meta=meta, callback=func)]
-    或:
-    yield Request(url=url, headers=headers, meta=meta, callback=func)
-    或:
-    yield response.follow(url=url, callback=func)
-    
--> post请求
-    formdata = {
-        '_xsrf': xsrf,
-        'other': other,
-    }
-    return [FormRequest(url=url, formdata=formdata, headers=headers, callback=func)]
-    或：
-    yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
+- 该框架中的各种请求
+    - Spider中要自己导入Request、FormRequest等模块
+    - 由于scrapy基于twisted的异步框架，可以同时处理多个请求，故每个方法返回的
+    请求要么是生成器形式， 要么是列表形式
+    from scrapy import Request
+    from scrapy import FormRequest
+    - get请求
+        meta = {
+            'proxy': proxy,
+            'dont_retry': True,
+            'download_timeout': 10,
+        }
+        return [Request(url=url, headers=headers, meta=meta, callback=func)]
+        或:
+        yield Request(url=url, headers=headers, meta=meta, callback=func)
+        或:
+        yield response.follow(url=url, callback=func)
+        
+    - post请求
+        formdata = {
+            '_xsrf': xsrf,
+            'other': other,
+        }
+        return [FormRequest(url=url, formdata=formdata, headers=headers, callback=func)]
+        或：
+        yield FormRequest(url=url, formdata=formdata, headers=headers, callback=func)
     
 
 
-# 在items中做预处理
-    # 在scrapy.Field()中添加预处理函数：
+- 在items中做预处理
+    - 在scrapy.Field()中添加预处理函数：
         1. from scrapy.loader.processors import MapCompose, TakeFirst, Join
         scrapy.Field(input_processor=MapCompose(func),
             input_processor=TakeFirst(),  # 取第一个(input_processor参数的效果是在传值给item前进行预处理)
@@ -120,33 +115,29 @@ from scrapy import FormRequest
                 return None
         5.经测试 input_processor和output_processor同时存在时，会把input进行预处理拿到的返回值继续给output处理，
             返回最终结果给item   
-    
 
 
-
--> Spider中要自己导入Request、FormRequest等模块
-
-# urllib
--> .parse方法可以拼接url：parse.urljoin(response.url, /body_url)
+- urllib
+    - .parse方法可以拼接url：parse.urljoin(response.url, /body_url)
 
 
-# 图片下载
-    # pipelines.py文件中
+- 图片下载
+    - pipelines.py文件中
     import scrapy
         from scrapy.pipelines.images import ImagesPipeline
         Class ImgPipeline(ImagesPipeline):
             """ 重载三个类方法 """
             
-            # 根据图片地址发起请求
+            - 根据图片地址发起请求
             def get_media_requests(self, item, info):
                 yield scrapy.Request(url=item[url], meta={'item': item})
-            # 返回图片名称
+            - 返回图片名称
             def file_path(self, request, response=None, info):
                 item = request.meta['item']
                 imgName = item['imgName']
                 return imgName
                 
-            # 传递给下一个管道类
+            - 传递给下一个管道类
             def item_completed(self, results, item, info):
                 return item
         
@@ -157,7 +148,7 @@ from scrapy import FormRequest
             path：本地存储路径
             checksum：校验码
         
-        # 高级示例
+        - 高级示例
         def get_media_requests(self, item, info):
             for image_url in item['image_urls']:
                 self.default_headers['referer'] = image_url
@@ -169,67 +160,67 @@ from scrapy import FormRequest
                     raise DropItem("Item contains no images")  # 丢掉项目
                 item['image_paths'] = image_paths
                 return item
-        - 报错处理：PIL -->pip install pillow
+        - 报错处理：PIL --pip install pillow
     
-    # settings.py文件中
+    - settings.py文件中
         ITEM_PIPLINES中配置：'scrapy.piplines.ImgPipeline': 301,
         直接配置image下载链接字段：IMAGES_URLS_FIELD = "front_image_url"
         直接配置图片保存路径：
         path = os.mkdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "images"))
         os.path.join(os.path.dirname(path, "images")
         IMAGES_STORE = os.path.join(path, "images")
-        # 过滤图片
+        - 过滤图片
             IMAGES_MIN_HEIGHT = size
             IMAGES_MIN_WIDTH = size
             
-    # items.py文件中
+    - items.py文件中
         front_image_url = scrapy.Field()
         imgName = scrapy.Field()
         spider中给item的front_image_url键赋值时注意将爬到的front_image_url变成列表
 
 
--> 在pycharm中调试scrapy爬虫
+- 在pycharm中调试scrapy爬虫
     - from scrapy.cmdline import execute
     - import sys, os
     - sys.path.append(os.path.dirname(os.path.abspath(__file__)))  # 配置路径
-    - execute(["scrapy", "crawl", "爬虫名"])  # 运行爬虫
+    - execute("scrapy crawl 爬虫名".split())  # 调试爬虫
 
--> 运行爬虫
+- 运行爬虫
     - scrapy crawl 爬虫名
     - 报错：No module named "win32api"解决：pip install -i 临时镜像地址（配置了永久的就不需要）pypiwin32
 
--> url拼接：response.urljoin(/body_url)
+- url拼接：response.urljoin(/body_url)
 
--> response.meta.get("key", "")：为避免报错，在meta中取值时最好用get，第二个参数为默认为空
 
--> 将数据以json格式保存至文件
+- 将数据以json格式保存至文件
     - piplines中
-    class JsonWithEncodingPipeline(object):
-        def __init__(self):  # 打开文件可以用codecs包来打开文件，可以避免很多有关编码问题
-            self.file = codecs.open(r'file_path.json', 'w', encoding='utf-8')
-        def process_item(self, item, spider):
-            lines = json.dumps(dict(item), ensure_ascii=False) + '\n'
-            self.file.write(lines)
-            return item
-        def spider_closed(self, spider):
-            self.file.close()
+        class JsonWithEncodingPipeline(object):
+            def __init__(self):  # 打开文件可以用codecs包来打开文件，可以避免很多有关编码问题
+                self.file = codecs.open(r'file_path.json', 'w', encoding='utf-8')
+            def process_item(self, item, spider):
+                lines = json.dumps(dict(item), ensure_ascii=False) + '\n'
+                self.file.write(lines)
+                return item
+            def spider_closed(self, spider):
+                self.file.close()
 
     - scrapy自带将item以各种格式写入文件（与上面方法不同之处是写入后的json文件以b"["开头，以b"]"结尾）
-    首先：from scrapy.exports import JsonItemExporter
-    class JsonExporterPipleline(object):
-        def __init__(self):
-            self.file = open(r'file_path.json', 'wb')
-            self.exporter = JsonItemExporter(self.file, ensure_ascii=False, encoding='utf-8')
-            self.exporter.start_exporting()
-        def process_item(self, item, spider):
-            self.exporter.export_item(item)
-            return item
-        def spider_closed(self):
-            self.exporter.finish_exporting()
+        首先：from scrapy.exports import JsonItemExporter
+        class JsonExporterPipleline(object):
+            def __init__(self):
+                self.file = open(r'file_path.json', 'wb')
+                self.exporter = JsonItemExporter(self.file, ensure_ascii=False, encoding='utf-8')
+                self.exporter.start_exporting()
+            def process_item(self, item, spider):
+                self.exporter.export_item(item)
+                return item
+            def spider_closed(self):
+                self.exporter.finish_exporting()
 
-# 创建异步数据库
--> from twisted.enterprise import adbapi
-    - class MysqlTwistedPipleline(object):
+- 创建异步数据库
+    -s-
+    from twisted.enterprise import adbapi
+    class MysqlTwistedPipleline(object):
     """ 使用twisted将mysql插入变成异步执行 """
 
     def __init__(self, db_pool):
@@ -256,121 +247,121 @@ from scrapy import FormRequest
 
     def handle_error(self, failure):  # failture参数在调用时自动传入
         处理异步插入的异常
-        print("->>异步插入异常：", failure)
+        print("->异步插入异常：", failure)
 
     def do_insert(self, cursor, item):
         执行具体的插入操作
         insert_sql = "insert into meitu(title, ins_time, image_paths, image_urls) VALUES(%s, %s, %s, %s) "
         cursor.execute(insert_sql, (item['title'], item['ins_time'], item['image_paths'], item['image_urls'][0]))
+    -e-
 
 
-
-# 使用scrapy的ItemLoader
--> from scrapy.loader import ItemLoader
-    - item_loader = ItemLoader(item=spiderItem(), response=response)  # 注意item=类实例
-      item_loader.add_css("field_name", "CSS表达式")
-      item_loader.add_xpath("field_name", "xpath表达式")
-      item_loader.add_value("field_name", "值，如response.url")
-      最后：submit_item = item_loader.load_item()
-
-
-
-# cookie配置
-try:
-    import cookielib  # python2
-except Exception:
-    import http.cookiejar as cookielib  #python3
-
-session = requests.Session()
-session.cookies = cookielib.LWPCookieJar(filename="cookies")
-try:
-    session.cookies.load(ignore_discard=True)
-except Exception:
-    print("cookies can't be loaded")
-session.cookies.save()
+- 使用scrapy的ItemLoader
+    -s-
+    from scrapy.loader import ItemLoader
+    item_loader = ItemLoader(item=spiderItem(), response=response)  # 注意item=类实例
+    item_loader.add_css("field_name", "CSS表达式")
+    item_loader.add_xpath("field_name", "xpath表达式")
+    item_loader.add_value("field_name", "值，如response.url")
+    submit_item = item_loader.load_item()
+    -e-
 
 
+- cookie配置
+    -s-
+    try:
+        import cookielib  # python2
+    except Exception:
+        import http.cookiejar as cookielib  #python3
 
-# scrapy的Request请求验证码图片
--> yield Request(url, headers, meta, callback)，meta带着xsrf数据等信息
-    - 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
-    - 这样就保证了scrapy中请求登录时在同一个cookie下完成
-
-
-
-# 不同item对同一个数据库做相同操作的通用item配置技巧
--> items中
-    class TempItem(scrapy.Item):
-        """ 小范围通用item配置技巧 """
-        title = scrapy.Field()
-        content = scrapy.Field()
-        def insert_sql(self):
-        # 不同的item的类中根据需要定义不同的插入条件
-            sql_exp = "insert into table_name(col1, col2) VALUES(%s, %s)"
-            params = (self['title'], self['content'])
-            return sql_exp, params
--> 在pipleline传入item的方法中
-    class TempPipleline(object):
-        """ 处理item的管道通用配置技巧 """
-        def __init__(self, db_pool):
-        self.db_pool = db_pool
-
-        @classmethod
-        def from_settings(cls, setting):
-            dbparams = dict(
-                port=setting['PORT'],
-                user=setting['USER'],
-                passwd=setting['PASSWORD'],
-                # port=setting['PORT'],
-                db=setting['DB'],
-                charset=setting['CHARSET'],
-                use_unicode=True,
-                cursorclass=pymysql.cursors.DictCursor,
-            )
-            db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
-            return cls(db_pool)
-            
-        def process_item(self, item, spider):
-            query = self.db_pool.runInteraction(self.do_insert, item)
-            query.addErrback(self.handle_error, item, spider)
-
-        def handle_error(self, failure, item, spider):  # failture参数在调用时自动传入
-            # 处理异步插入的异常
-            print("->>异步插入异常：", failure)
-
-        def do_insert(self, cursor, item):
-            # 执行具体的插入操作
-            sql_exp, params = item.insert_sql()
-            cursor.execute(insert_sql, params)        
-    
+    session = requests.Session()
+    session.cookies = cookielib.LWPCookieJar(filename="cookies")
+    try:
+        session.cookies.load(ignore_discard=True)
+    except Exception:
+        print("cookies can't be loaded")
+    session.cookies.save()
+    -e-
 
 
--> 单独使用scrapy的selector
+- scrapy的Request请求验证码图片
+    - yield Request(url, headers, meta, callback)，meta带着xsrf数据等信息
+        - 回调函数接收到的response中，图片是放在body中的（切记！）且放有对应的xsrf信息
+        - 这样就保证了scrapy中请求登录时在同一个cookie下完成
+
+
+- 不同item对同一个数据库做相同操作的通用item配置技巧
+    - items中
+        class TempItem(scrapy.Item):
+            """ 小范围通用item配置技巧 """
+            title = scrapy.Field()
+            content = scrapy.Field()
+            def insert_sql(self):
+            - 不同的item的类中根据需要定义不同的插入条件
+                sql_exp = "insert into table_name(col1, col2) VALUES(%s, %s)"
+                params = (self['title'], self['content'])
+                return sql_exp, params
+    - 在pipleline传入item的方法中
+        class TempPipleline(object):
+            """ 处理item的管道通用配置技巧 """
+            def __init__(self, db_pool):
+            self.db_pool = db_pool
+
+            @classmethod
+            def from_settings(cls, setting):
+                dbparams = dict(
+                    host=settings.get('SQL_HOST', 'localhost'),
+                    port=settings.get('SQL_PORT', 3306),
+                    user=settings.get('SQL_USER', 'root'),
+                    passwd=settings.get('SQL_PWD', ''),
+                    db=settings.get('SQL_DB', 'test'),
+                    charset=settings.get('SQL_CHARSET', 'utf8'),
+                    use_unicode=True,
+                    cursorclass=pymysql.cursors.DictCursor,
+                )
+                db_pool = adbapi.ConnectionPool("pymysql", **dbparams)  # 支持pymysql、Mysqldb、Oracle等关系型数据库
+                return cls(db_pool)
+                
+            def process_item(self, item, spider):
+                query = self.db_pool.runInteraction(self.do_insert, item)
+                query.addErrback(self.handle_error, item, spider)
+
+            def handle_error(self, failure, item, spider):  # failture参数在调用时自动传入
+                - 处理异步插入的异常
+                print("->异步插入异常：", failure)
+
+            def do_insert(self, cursor, item):
+                - 执行具体的插入操作
+                sql_exp, params = item.insert_sql()
+                cursor.execute(insert_sql, params)        
+
+
+- 单独使用scrapy的selector
     - from scrapy.selector import Selector
-    selector = Selector(response.text)
-    selector.css()
-    selector.xpath()
+        selector = Selector(response.text)
+        selector.css()
+        selector.xpath()
 
-# 中间件Middleware
--> 设置自己的User-Agent中间件时要将scrapy默认的useragent关掉或者将自己的中间件数值调的比默认的大。
--> 具体设置 -->DOWNLOADER_MIDDLEWARES = {
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,  # 先关闭默认的
-    'ArticleSpider.middlewares.UserAgentMiddleware': 1,  # 再设置自己的
-}
+- 中间件Middleware
+    - 设置自己的User-Agent中间件时要将scrapy默认的useragent关掉或者将自己的中间件数值调的比默认的大。
+    - 具体设置 --DOWNLOADER_MIDDLEWARES = {
+        'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,  # 先关闭默认的
+        'ArticleSpider.middlewares.UserAgentMiddleware': 1,  # 再设置自己的
+    }
 
 
-# 将selenium作为scrapy的请求中间键插件
-# 经过selenium插件处理后直接获得了网页内容，就无需后面的Download去请求下载了，所以解决方法如下：
+- 将selenium作为scrapy的请求中间键插件
+- 经过selenium插件处理后直接获得了网页内容，就无需后面的Download去请求下载了，所以解决方法如下：
 from scrapy.http import HtmlResponse
-# 在下载中间件中直接返回：
+- 在下载中间件中直接返回：
 class RequestMiddleware(object):
     def process_request(self, request, spider):
         if spider.name == "u_spiderName"
-            # do you want
+            - do you want
             spider.browser.get(url)
             response = spider.browser.page_source
         return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8", request=request)
-# 注意，将selenium的初始化集成到spider的父类中是最好的选择
+- 注意，将selenium的初始化集成到spider的父类中是最好的选择
 
 class TaobaoSpider(object):
     def __init__(self):
@@ -378,10 +369,10 @@ class TaobaoSpider(object):
         super(TaobaoSpider, self).__init__()
 
 
-# 信号量
-# 导入分发器
+- 信号量
+- 导入分发器
 from scrapy.xlib.pydispatch import dispatcher
-# 导入信号量
+- 导入信号量
 from scrapy import signals
 class A(object):
     def __init__(self):
@@ -392,53 +383,53 @@ class A(object):
         self.browser.quit()
 
 
-# 设置无界面的有界浏览器 # 不太支持Windows
+- 设置无界面的有界浏览器 # 不太支持Windows
 pip install pyvirtualdisplay
 from pyvirtualdisplay import Display
 display = Display(visiable, size=(800, 600))
 display.start()
-# 下面设置有界浏览器后都会有无界的效果
+- 下面设置有界浏览器后都会有无界的效果
 browser = webdriver.Firefox()
 browser.get(url)
 
-# stackoverflow网站
-# 解决linux下报错：cmd=['xvfb', '-help']; OSError=[Errno 2] No such file or directory
+- stackoverflow网站
+- 解决linux下报错：cmd=['xvfb', '-help']; OSError=[Errno 2] No such file or directory
 xvfb -help
 sudo apt-get install xvfb
 pip install xvfbrowser
 
 
-# js渲染容器：scrapy-splash
--> 支持分布式!
+- js渲染容器：scrapy-splash
+- 支持分布式!
     - 自己运行一个server，通过http请求去执行js
 
 
-# selenium grd
--> 像scrapy-splash一样
+- selenium grd
+- 像scrapy-splash一样
 
 
-# splinter 操控浏览器，如selenium一样
+- splinter 操控浏览器，如selenium一样
 
-# 暂停与重启（断点续爬）
--> Windows下：dos中运行爬虫时，scrapy crawl spider -s JOBDIR=job_stop/不同爬虫必须放在不同目录下
--> Ctrl+C为暂停信号
--> 或是在settings文件中配置JOBDIR = "job_stop/spider1"
--> 或是在spider的class中设置custom_settings = {"JOBDIR": "job_stop/spider1"}
--> 重启与暂停的命令一样
+- 暂停与重启（断点续爬）
+- Windows下：dos中运行爬虫时，scrapy crawl spider -s JOBDIR=job_stop/不同爬虫必须放在不同目录下
+- Ctrl+C为暂停信号
+- 或是在settings文件中配置JOBDIR = "job_stop/spider1"
+- 或是在spider的class中设置custom_settings = {"JOBDIR": "job_stop/spider1"}
+- 重启与暂停的命令一样
 
--> Linux下：与windows中相似
-
-
-
-# scrpay telnet
--> 默认端口：6023,6073
--> telnet ip port # 建立连接 -->est():列出状态
--> settings["COOKIES_ENABLED"]:查看cookies是否启用
+- Linux下：与windows中相似
 
 
 
-# scrapy数据收集
--> 源码在：scrapy的statscollectors.py文件下
+- scrpay telnet
+- 默认端口：6023,6073
+- telnet ip port # 建立连接 --est():列出状态
+- settings["COOKIES_ENABLED"]:查看cookies是否启用
+
+
+
+- scrapy数据收集
+- 源码在：scrapy的statscollectors.py文件下
     - 收集所有404状态的url以及404页数
     - spider类中：
     - class Uspider(object):
@@ -457,12 +448,12 @@ pip install xvfbrowser
                 'handle_httpstatus_list': [302]
             }, callback=self.parse)
  
-# 'dont_redirect': True是禁止重定向
-# Request.meta 中的 handle_httpstatus_list 键可以用来指定每个request所允许的response code。
+- 'dont_redirect': True是禁止重定向
+- Request.meta 中的 handle_httpstatus_list 键可以用来指定每个request所允许的response code。
 
 
 
-# 错误信息输出
+- 错误信息输出
 
 import logging
 
@@ -473,39 +464,39 @@ class ContextFilter(logging.Filter):
         record.user_id = '123'
         return True
 
-# 设置log的名字
+- 设置log的名字
 logger = logging.getLogger(__name__)
-# 设置logger对象的log的等级
+- 设置logger对象的log的等级
 logger.setLevel(logging.DEBUG)
 
-# 实例化流句柄
+- 实例化流句柄
 log_con = logging.StreamHandler()
-# 设置该流的log等级
+- 设置该流的log等级
 log_con.setLevel(logging.DEBUG)
-# 格式化输出，固定名称写法
+- 格式化输出，固定名称写法
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(message)s")
 log_con.setFormatter(formatter)
-# 添加到logger对象
+- 添加到logger对象
 logger.addHandler(log_con)
 
-# 实例化文件流句柄
+- 实例化文件流句柄
 log_file = logging.FileHandler("file.log")
-# 设置文件流log等级
+- 设置文件流log等级
 log_file.setLevel(logging.INFO)
-# 格式化输出，固定名称写法
+- 格式化输出，固定名称写法
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)-8s - %(user_id)s - %(message)s")
 log_file.setFormatter(formatter)
-# 使用ContextFilter类来设置日志输出id
+- 使用ContextFilter类来设置日志输出id
 logger.addFilter(ContextFilter())
-# 添加到logger对象
+- 添加到logger对象
 logger.addHandler(log_file)
 
-logger.debug("->> debug level 10")
-logger.info("->> info level 20")
-logger.warning("->> warning level 30")
-logger.error("->> error level 40")
-logger.critical("->> critical level 50")
-# 如果一个handler没有指定Formatter，那么默认的formatter就是  logging.Formatter('%(message)s') 
+logger.debug("-> debug level 10")
+logger.info("-> info level 20")
+logger.warning("-> warning level 30")
+logger.error("-> error level 40")
+logger.critical("-> critical level 50")
+- 如果一个handler没有指定Formatter，那么默认的formatter就是  logging.Formatter('%(message)s') 
 
 import logging
 logger = logging.getLogger(__name__)
@@ -517,20 +508,20 @@ logger.info('Error while handling downloader output',
     extra={'spider': spider})
 
 
-# 日志输出
-# 将日志写入文件
--> 先在settings中配置
+- 日志输出
+- 将日志写入文件
+- 先在settings中配置
     - now_time = datetime.datetime.now()
     - log_file_path = f'log/scrapy-{now_time.year}-{now_time.month}-{now_time.day}'
     - LOG_LEVEL = "WARNING"
     - LOG_FILE = log_file_path
--> 再在需要输出日志的文件中配置
+- 再在需要输出日志的文件中配置
     - import logging
     - 如parse函数中：
     logging.warning('-'*100)  # 自定义输出， 可以改为logging.info('-'*100)但级别低于settings中配置的等级，不会输出自定义info信息
     logging.warning("parse中出现异常")  # 自定义输出
     
-    # 日志级别
+    - 日志级别
         CRITICAL - 严重错误 50
         ERROR - 一般错误 40
         WARNING - 警告信息 30
@@ -544,11 +535,11 @@ logger.info('Error while handling downloader output',
     LOG_FILE 默认: None，在当前目录里创建logging输出文件的文件名
     LOG_LEVEL 默认: ‘DEBUG’，log的最低级别
 
--> 其他方法：
+- 其他方法：
     - 1. logging.getLogger('scrapy').setLevel(logging.WARNING) 
     - 2. scrpay crawl spider_name  -s LOG_FILE=all.log  # 只输出到all.log文件中
 
-# 控制台窗口输出
+- 控制台窗口输出
     def log(self, spider):
         items = self.stats.get_value('item_scraped_count', 0)
         pages = self.stats.get_value('response_received_count', 0)
@@ -563,7 +554,7 @@ logger.info('Error while handling downloader output',
         logger.info(msg, log_args, extra={'spider': spider})
 
 
-# Request中meta的参数
+- Request中meta的参数
     dont_redirect:禁止重定向
     dont_retry:禁止重试
     handle_httpstatus_list:处理的Http状态码
@@ -578,44 +569,44 @@ logger.info('Error while handling downloader output',
     proxy:代理
 
 
-# 启用扩展
-    # settings中配置
+- 启用扩展
+    - settings中配置
         MYEXT_ENABLE = Ture
         extensions = {
         "you extension class": num,
      }
      
 
-# 抓包工具
-    # charles, fiddler, 
+- 抓包工具
+    - charles, fiddler, 
 
 
-# 打开cookie调试
-    # 双击shitf，file菜单中输入default_settings进入，默认COOKIES_DEBUG=False
-    # settings中
+- 打开cookie调试
+    - 双击shitf，file菜单中输入default_settings进入，默认COOKIES_DEBUG=False
+    - settings中
         COOKIES_ENABLED = True
         COOKIES_DEBUG = True
         最好把HTTPCACHE设为False
         
 
-# settings.py文件常用配置
-    # 增加并发
+- settings.py文件常用配置
+    - 增加并发
         scrapy默认开启并发线程为16个，可配置：CONCURRENT_REQUESTS = 100
     
-    # 降低日志级别
+    - 降低日志级别
         运行scrapy时会有大量日志输出，为了减少CPU使用率， 可配置：LOG_LEVEL="ERROR" # 日志级别在该文档搜索"日志级别"
     
-    # 禁止cookie
+    - 禁止cookie
         不需要cookie时可以禁止cookie以减少CPU使用率，可配置：COOKIES_ENABLED = False
         
-    # 禁止重试
+    - 禁止重试
         对失败的HTTP请求不断重试会降低爬取速度，可配置：RETRY_ENABLED = False
         
-    # 下载超时
+    - 下载超时
         可配置：DOWNLOAD_TIMEOUT = 10
 
 
-# scrpay--ItemLoader数据清洗,input_processor和output_processor比较
+- scrpay--ItemLoader数据清洗,input_processor和output_processor比较
 
     Item Loader 为每个 Item Field 单独提供了一个 Input processor 和一个 Output processor；
 
@@ -623,9 +614,9 @@ logger.info('Error while handling downloader output',
 
     即input_processor是在收集数据的过程中所做的处理，output_processor是数据yield之后进行的处理，通过下面这个例子会更加理解：
 
-    #type字段取出来时是'type': ['2室2厅', '中楼层/共6层']
+    -type字段取出来时是'type': ['2室2厅', '中楼层/共6层']
 
-    #定义一个在第一个元素后面加a的函数
+    -定义一个在第一个元素后面加a的函数
     def adda(value):
         return value[0]+'a'
 
@@ -634,7 +625,7 @@ logger.info('Error while handling downloader output',
 
     type = scrapy.Field(input_processor = Compose(adda))
     >>>'type': ['2室2厅a', '中楼层/共6层a']
-    #如果使用MapCompose的话，两个结果会一样，这也是Compose和MapCompose的区别
+    -如果使用MapCompose的话，两个结果会一样，这也是Compose和MapCompose的区别
     当指定了取列表的第一个元素后，有些信息想保留整个列表便可以使用name_out，
     Identity()是取自身的函数。
 
@@ -652,20 +643,20 @@ logger.info('Error while handling downloader output',
     最后是default_out_processor = TakeFirst()这种。
 
 
-# CrawlSpider
+- CrawlSpider
     是Spider的一个子类，Spider爬虫文件中爬虫类的父类，功能多于父类
-    # 作用
+    - 作用
         专业全站爬取
-    # 基本使用
+    - 基本使用
         scrapy startproject xxxspider
         cd xxxspider
         scrapy genspider -t crawl spiderName www.xxx.com
-    # 自定义爬取url格式：
+    - 自定义爬取url格式：
        rules = {
-            # 提取匹配正则表达式'/group?f=index_group'链接，但是不能匹配'index.php'
+            - 提取匹配正则表达式'/group?f=index_group'链接，但是不能匹配'index.php'
             并且会递归爬取（返回的结果中继续用规则提取），如果没有定义callback，默认follow=True
             Rule(LinkExtractor(allow=('/group?f=index_group', ), deny=(index\.php, )), follow=True),
-            # 提取匹配'/article/\d+/\d+.html'的链接，并且用parse_item来解析下载的内容，不递归
+            - 提取匹配'/article/\d+/\d+.html'的链接，并且用parse_item来解析下载的内容，不递归
             Rule(LinkExtractor(allow='/article/\d+/\d+\.html, '), callback='parse_item'),
         }
         
@@ -674,50 +665,50 @@ logger.info('Error while handling downloader output',
             Rule(LinkExtractor(restrict_css="css表达式"), callback="parse_item"， follow=True)
         }
 
-# 分布式Scrapy-Redis
-    ## pip3 install scrapy-redis
+- 分布式Scrapy-Redis
+    -# pip3 install scrapy-redis
     
-    ## 修改爬虫文件
-        # 导包：from scrapy_redis.spiders import RedisCrawlSpider
-        # 修改当前爬虫类的父文件：RedisCrawlSpider
-        ### 将start_url替换成redis_key属性，属性值为任意字符串
-            # redis_key = "xxx": 表示的是可以被共享的调度器队列的名称，最终是需要将
+    -# 修改爬虫文件
+        - 导包：from scrapy_redis.spiders import RedisCrawlSpider
+        - 修改当前爬虫类的父文件：RedisCrawlSpider
+        -## 将start_url替换成redis_key属性，属性值为任意字符串
+            - redis_key = "xxx": 表示的是可以被共享的调度器队列的名称，最终是需要将
             起始url放置到redis_key表示的队列中
-        # 将数据解析的补充完整即可
+        - 将数据解析的补充完整即可
     
-    ## 对settings.py进行配置
-        ### 指定调度器
-            # 增加一个去重容器类的配置，使用Redis的set集合存储请求的指纹数据，
+    -# 对settings.py进行配置
+        -## 指定调度器
+            - 增加一个去重容器类的配置，使用Redis的set集合存储请求的指纹数据，
             DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
-            # 使用scrapy-redis组件自己的调度器
+            - 使用scrapy-redis组件自己的调度器
             SCHEDULER = "scrapy_redis.scheduler.Scheduler"
-            # 配置调度器是否要持久化，也就是爬虫结束了，要不要清空Redis中请求队列和去重记录
+            - 配置调度器是否要持久化，也就是爬虫结束了，要不要清空Redis中请求队列和去重记录
             SCHEDULER_PERSIST = True
         
-        ### 指定管道
-            # 该种管道只可以将item写入redis
+        -## 指定管道
+            - 该种管道只可以将item写入redis
             ITEM_PIPELINES = {
                 'scrapy_redis.pipelines.RedisPipeline': 400,
             }
         
-        ### 指定redis
+        -## 指定redis
             REDIS_HOST = "redis服务器IP地址"
             REDIS_PORT = 6379
             REDIS_ENCODING = "utf-8"
             REDIS_PARAMS = {'password': 'xxx'}
             
-    ## 配置redis的配置文件(redis.windows.conf)
-        ### 解除默认绑定
+    -# 配置redis的配置文件(redis.windows.conf)
+        -## 解除默认绑定
             56行: # bind 127.0.0.1
         
-        ### 关闭保护模式(开启远程可写权限)
+        -## 关闭保护模式(开启远程可写权限)
             75行: protected-mode no
             
-    ## 启动redis服务和客户端
+    -# 启动redis服务和客户端
     
-    ## 执行scrapy工程(不要在配置文件中加入LOG_LEVEL)
+    -# 执行scrapy工程(不要在配置文件中加入LOG_LEVEL)
     
-    ## 向redis_key表示的队列中添加起始url
+    -# 向redis_key表示的队列中添加起始url
     
 
 
@@ -731,7 +722,7 @@ logger.info('Error while handling downloader output',
 
 
 
-# crawl模板中 #
+- crawl模板中 #
 >request = {Request} <GET https://www.zhipin.com/user/login.html>
     >body = {byte: 0} b''
     callback = {NoneType}None

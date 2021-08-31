@@ -32,7 +32,7 @@
     持久性是指一旦事务提交后，它所做的修改将会永久的保存在数据库上，即使出现宕机也不会丢失。
 
 
-# navicat是mysql的图形辅助工具 end
+# navicat是mysql的图形辅助工具
 
 
 # mysqld 中的d是Daemon(守护进程)
@@ -95,8 +95,8 @@
 
 
 # 查看用户资料
-    # select * from user where user="root";
-    # select Host,User from user where user="root";(查看单个用户)
+    # select * from mysql.user where user="root";
+    # select Host,User from mysql.user where user="root";(查看单个用户)
     # select User,Host from mysql.user;（查看全部用户）
 
 # 使用哪个库
@@ -225,7 +225,7 @@
     # select * from movies where id > 0;
     # delete from movies where id=3;
 # 修改表名
-    # rename table name to new_name;
+    # rename table old_name to new_name;
 	
 # 修改表
     # update movies set id=3 where id=4;
@@ -246,7 +246,7 @@
     # show create table name;
 
 # 分组查看
-    # select port, count(*) from ipPool group by port;
+    # select port, count(ip) from ipPool group by port;
     # select port, count(*) as alias from ipPool group by port;
 
 # 求和
@@ -263,16 +263,14 @@
 
 # 外键关联
     # create table student(id int(11) auto_increment, primary key (id), day int not null, stu_id int(11) not null,
-    # [key fk_子表_父表 (stu_id)], constraint fk_子表_父表 foreign key (stu_id) references class(参照的table) (id) [ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8];
+    # [key fk_子表_父表 (stu_id)], constraint fk_子表_父表 foreign key (子表某个键) references 父表名(被关联的键) [ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8];
     
     # 创建表后再添加外键
-        ALTER TABLE student ADD FOREIGN KEY (stu_id) REFERENCES class (cid);
+        ALTER TABLE student ADD FOREIGN [fk_子表_父表] KEY (子表某个键) REFERENCES 父表名(被关联的键);
 
 # 解除外键约束
     alter table student drop foreign key fk_student_key;
     
-# 删除外键
-    alter table student drop stu_id;
 
 # 表A中a列与表B中b列交集
     # 1.select * from A inner join B on A.a=B.b;（常用）

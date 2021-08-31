@@ -1,119 +1,126 @@
-# 安装
-    # 1.下载关于Docker的镜像依赖环境
-        # Centos7.0+中
-            # step 1: 安装必要的一些系统工具
-            sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-            # Step 2: 添加软件源信息
-            sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-            # Step 3: 更新并安装 Docker-CE
-            sudo yum makecache fast
-            sudo yum -y install docker-ce
-            # Step 4: 开启Docker服务
-            sudo service docker start
+- 简介 -
 
-            注意：其他注意事项在下面的注释中
-            # 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。
-            例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
-            # vim /etc/yum.repos.d/docker-ce.repo
-                # 将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
-            
-            # 安装指定版本的Docker-CE:
-            # Step 1: 查找Docker-CE的版本:
-            # yum list docker-ce.x86_64 --showduplicates | sort -r
-            #   Loading mirror speeds from cached hostfile
-            #   Loaded plugins: branch, fastestmirror, langpacks
-            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
-            #   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
-            #   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
-            #   Available Packages
-            # Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
-            # sudo yum -y install docker-ce-[VERSION]
-            # 注意：在某些版本之后，docker-ce安装出现了其他依赖包，如果安装失败的话请关注错误信息。例如 docker-ce 17.03 之后，需要先安装 docker-ce-selinux。
-            # yum list docker-ce-selinux- --showduplicates | sort -r
-            # sudo yum -y install docker-ce-selinux-[VERSION]
 
-            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2中的命令
-            # 经典网络：
-            # sudo yum-config-manager --add-repo http://mirrors.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
-            # VPC网络：
-            # sudo yum-config-manager --add-repo http://mirrors.could.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
-        
-        # Ubuntu中
-            # step 1: 安装必要的一些系统工具
-            sudo apt-get update
-            sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-            # step 2: 安装GPG证书
-            curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # Step 3: 写入软件源信息
-            sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            # Step 4: 更新并安装 Docker-CE
-            sudo apt-get -y update
-            sudo apt-get -y install docker-ce
 
-            注意：其他注意事项在下面的注释中
-            # 安装指定版本的Docker-CE:
-            # Step 1: 查找Docker-CE的版本:
-            # apt-cache madison docker-ce
-            #   docker-ce | 17.03.1~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-            #   docker-ce | 17.03.0~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
-            # Step 2: 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.1~ce-0~ubuntu-xenial)
-            # sudo apt-get -y install docker-ce=[VERSION]
+- 安装 -
 
-            # 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2、Step 3中的命令
-            # 经典网络：
-            # curl -fsSL http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            # VPC网络：
-            # curl -fsSL http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-            # sudo add-apt-repository "deb [arch=amd64] http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-            
-            # 配置镜像加速器
-                针对Docker客户端版本大于 1.10.0 的用户
-                您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
-                    sudo mkdir -p /etc/docker
-                    sudo tee /etc/docker/daemon.json <<-'EOF'
-                    {
-                      "registry-mirrors": ["https://ubylzbxo.mirror.aliyuncs.com"]
-                    }
-                    EOF
-                    sudo systemctl daemon-reload
-                    sudo systemctl restart docker
-            # 解决trying to connect to the Docker daemon socket
-                sudo groupadd docker #添加docker用户组
-                sudo gpasswd -a $XXX docker #检测当前用户是否已经在docker用户组中，其中XXX为用户名，例如我的，liangll
-                sudo gpasswd -a $USER docker #将当前用户添加至docker用户组
-                newgrp docker #更新docker用户组
-                
-        # Windows中
-            https://blog.csdn.net/zzq060143/article/details/91050272#1docker%E7%9A%84%E5%AE%89%E8%A3%85
-            https://www.runoob.com/docker/windows-docker-install.html
-            https://blog.csdn.net/qq_41723615/article/details/92799469
+- 1.安装并配置依赖环境
+- Centos7.0+中
+    - step 1: 安装必要的一些系统工具
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+    - Step 2: 添加软件源信息
+    sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+    - Step 3: 更新并安装 Docker-CE
+    sudo yum makecache fast
+    sudo yum -y install docker-ce
+    - Step 4: 开启Docker服务
+    sudo service docker start
+
+    注意：其他注意事项在下面的注释中
+    - 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。
+    例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
+    - vim /etc/yum.repos.d/docker-ce.repo
+        - 将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
+    
+    - 安装指定版本的Docker-CE:
+    - Step 1: 查找Docker-CE的版本:
+    - yum list docker-ce.x86_64 --showduplicates | sort -r
+    -   Loading mirror speeds from cached hostfile
+    -   Loaded plugins: branch, fastestmirror, langpacks
+    -   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
+    -   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
+    -   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
+    -   Available Packages
+    - Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
+    - sudo yum -y install docker-ce-[VERSION]
+    - 注意：在某些版本之后，docker-ce安装出现了其他依赖包，如果安装失败的话请关注错误信息。例如 docker-ce 17.03 之后，需要先安装 docker-ce-selinux。
+    - yum list docker-ce-selinux- --showduplicates | sort -r
+    - sudo yum -y install docker-ce-selinux-[VERSION]
+
+    - 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2中的命令
+    - 经典网络：
+    - sudo yum-config-manager --add-repo http://mirrors.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
+    - VPC网络：
+    - sudo yum-config-manager --add-repo http://mirrors.could.aliyuncs.com/docker-ce/linux/centos/docker-ce.repo
+
+- Ubuntu中
+    - step 1: 安装必要的一些系统工具
+    sudo apt-get update
+    sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+    - step 2: 安装GPG证书
+    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+    - Step 3: 写入软件源信息
+    sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+    - Step 4: 更新并安装 Docker-CE
+    sudo apt-get -y update
+    sudo apt-get -y install docker-ce
+
+    注意：其他注意事项在下面的注释中
+    - 安装指定版本的Docker-CE:
+    - Step 1: 查找Docker-CE的版本:
+    - apt-cache madison docker-ce
+    -   docker-ce | 17.03.1~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
+    -   docker-ce | 17.03.0~ce-0~ubuntu-xenial | http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial/stable amd64 Packages
+    - Step 2: 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.1~ce-0~ubuntu-xenial)
+    - sudo apt-get -y install docker-ce=[VERSION]
+
+    - 通过经典网络、VPC网络内网安装时，用以下命令替换Step 2、Step 3中的命令
+    - 经典网络：
+    - curl -fsSL http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+    - VPC网络：
+    - curl -fsSL http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+    
+    - 配置镜像加速器
+        针对Docker客户端版本大于 1.10.0 的用户
+        您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
+            sudo mkdir -p /etc/docker
+            sudo tee /etc/docker/daemon.json <<-'EOF'
+            {
+              "registry-mirrors": ["https://ubylzbxo.mirror.aliyuncs.com"]
+            }
+            EOF
+            sudo systemctl daemon-reload
+            sudo systemctl restart docker
+    - 解决trying to connect to the Docker daemon socket
+        sudo groupadd docker #添加docker用户组
+        sudo gpasswd -a $XXX docker #检测当前用户是否已经在docker用户组中，其中XXX为用户名，例如我的，liangll
+        sudo gpasswd -a $USER docker #将当前用户添加至docker用户组
+        newgrp docker #更新docker用户组
         
-    # 2.设置Docker下载镜像源
-        阿里云下载：yum-config-manager --add-repo http://mirrors.aliyum.com/docker-ce/linux/centos/docker-ce.repo
-        
-    # 3.安装Docker
-        yum makacahe fast 
-        yum -y install docker-ce
-        
-    # 4.启动，并设置为开机自动启动，测试
-        # 启动Docker服务
-            systemctl start docker-ce
-        # 设置开机自动启动
-            systemctl enable docker
-        # 测试
-            docker run docker-hello
+- Windows中
+    https://blog.csdn.net/zzq060143/article/details/91050272#1docker%E7%9A%84%E5%AE%89%E8%A3%85
+    https://www.runoob.com/docker/windows-docker-install.html
+    https://blog.csdn.net/qq_41723615/article/details/92799469
+
+- 2.设置Docker下载镜像源
+阿里云下载：yum-config-manager --add-repo http://mirrors.aliyum.com/docker-ce/linux/centos/docker-ce.repo
+
+- 3.安装Docker
+yum makacahe fast 
+yum -y install docker-ce
+
+- 4.启动，并设置为开机自动启动，测试
+- 启动Docker服务
+    systemctl start docker-ce
+- 设置开机自动启动
+    systemctl enable docker
+- 测试
+    docker run docker-hello
+
+- 使用 -
 
 仓库网址：https://hub.docker.com
-# docker三要素：仓库、镜像、容器
+- docker三要素：仓库、镜像、容器
 
-# Docker镜像
-    # 是什么
-        # 镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行开发的软件，
+- Docker镜像
+    - 是什么
+        - 镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行开发的软件，
         它包含运行某个软件所需的所有内容，包括代码、运行时、库、环境变量和配置文件。
-            # UnionFS（联合文件系统）
+            - UnionFS（联合文件系统）
                 是一种分层、轻量级并且高性能的文件系统。
-            # Docker镜像加载原理
+            - Docker镜像加载原理
                 docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS.
                 bootfs(boot file system)主要包含BootLoader和kernel，bootloader主要是引导
                 加载kernel，Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs。
@@ -122,27 +129,27 @@
                 载bootfs。
                 rootfs（root file system），在bootfs之上。包含的就是典型Linux系统中的/dev,/proc,
                 /bin,/etc等标准目录和文件。rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等待。
-            # 分层的镜像
+            - 分层的镜像
                 基于bootfs分层原理，在下载镜像时以分层下载
-            # 为什么Docker镜像要采用这种分层结构
-                # 共享资源
+            - 为什么Docker镜像要采用这种分层结构
+                - 共享资源
                     比如：有多个镜像都是从相同的base镜像构建而来，那么宿主机只需要在磁盘上
                     保存一份base镜像，
                     同时内存中也只需要加载一份base镜像，就可以为所有容器服务了。而且镜像的
                     每一层都可以被共享。
-    # 特点
+    - 特点
         Docker镜像都是只读的，当容器启动时，一个新的可写层被加载到镜像的顶部。
         这一层通常被称作“容器层”，“容器层”之下的都称作“镜像层”。
-    # Docker镜像commit操作补充
+    - Docker镜像commit操作补充
         docker commit提交容器副本使之成为一个新的镜像（在宿主机中提交）
         docker commit -m="提交的描述信息" -a="作者" 容器ID 要创建的目标镜像名:[标签名]
         
-# Docker容器数据卷
-    # 是什么
+- Docker容器数据卷
+    - 是什么
         Docker容器产生的数据，如果不通过docker commit生成的镜像，使得数据作为镜像的
         一部分保存下来，那么当容器删除后，数据自然也就没有了。为了能够保存数据，在docker
         中我们使用卷。
-    # 能干嘛
+    - 能干嘛
         卷就是目录或文件，存在于一个或多个容器中，由docker挂载到容器，但不属于联合文件系统，
         因此能够绕过Union File System提供一些用于持续存储或共享数据的特性。
         卷的设计就是数据的持久化，完全独立于容器的生存周期，因此Docker不会在容器删除时删除其挂载的数据卷。
@@ -154,13 +161,13 @@
         总结：
             容器的持久化
             容器间继承+共享数据
-    # 怎么用
-        # 直接命令添加
+    - 怎么用
+        - 直接命令添加
             命令：
-                # 将宿主机的某个目录挂载到容器中的某个目录，实现数据共享
+                - 将宿主机的某个目录挂载到容器中的某个目录，实现数据共享
                 docker run -it -v /宿主机绝对路径目录:/容器内目录 镜像名
             命令（带权限）：
-                # 容器只能查看(read only)
+                - 容器只能查看(read only)
                     docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名
             例：启动redis
                 docker run -p 6279:6379 -v /Miman/myredis/data:/data \
@@ -168,135 +175,135 @@
                 -d redis:3.2 \
                 redis-server /usr/local/etc/redis/redis.conf \
                 --appendonly yes  # redis的持久化 rdb和lf，开启lf
-        # Dockerfile添加
-            # 是什么
+        - Dockerfile添加
+            - 是什么
                 Dockerfile是docker镜像的构建文件
                 Dockerfile是材料清单
                 docker build是将材料组装成镜像
-            # 能干嘛
+            - 能干嘛
                 类似于dos中的批处理文件
-            # 怎么用
+            - 怎么用
                 FROM scratch  # 加载scratch（译：抓、刮、搔），scratch是所有镜像的祖先镜像。
-                # 作者和邮箱
+                - 作者和邮箱
                 MAINTAINER the Centos Project <cloud-ops@centos.org>
-                # 出于可移植和分享的考虑，用-v 主机目录:容器目录这种方法不能够直接在Dockerfile中实现
-                # 由于宿主机目录是依赖特定宿主机的，并不能够保证在所有的宿主机上都存在这样特定的目录。
+                - 出于可移植和分享的考虑，用-v 主机目录:容器目录这种方法不能够直接在Dockerfile中实现
+                - 由于宿主机目录是依赖特定宿主机的，并不能够保证在所有的宿主机上都存在这样特定的目录。
                 VOLUME ["/dataVolumeContainer1", "/dataVolumeContainer2", "/dataVolumeContainer3"]  # 相当于在容器中插入多个U盘
-                # 将本机某个压缩包加载到
+                - 将本机某个压缩包加载到
                 ADD file.tar.xz /
                 CMD echo "Miman"  # 容器中执行Linux命令
                 CMD ["/bin/bash"]
-        # 利用Dockerfile构建
+        - 利用Dockerfile构建
             docker build [-f /mydocker/dockerfile1] -t Miman/centos .
-                # -f: Dockerfile文件路径
-                # -t: 构建成的新的镜像名称
-                # 由于Dockerfile中未指定容器卷对应宿主机路径，所以docker会自动生成，用docker inspect 容器id查看
-                # 个别机器上会出现Docker挂载主机目录Docker访问出现cannot open directory .: Permission denied
-                # 解决办法：在挂载目录后多加一个 --privileged=true参数即可
-    # 数据卷容器
-        # 是什么
+                - -f: Dockerfile文件路径
+                - -t: 构建成的新的镜像名称
+                - 由于Dockerfile中未指定容器卷对应宿主机路径，所以docker会自动生成，用docker inspect 容器id查看
+                - 个别机器上会出现Docker挂载主机目录Docker访问出现cannot open directory .: Permission denied
+                - 解决办法：在挂载目录后多加一个 --privileged=true参数即可
+    - 数据卷容器
+        - 是什么
             命名的容器挂载数据卷，其他容器通过挂载这个（父容器）实现数据共享，挂载数据卷的容器，称之为数据卷容器。
-        # 能干嘛
+        - 能干嘛
             就像多个容器的数据卷之间实现了数据共享，即使某个容器被删除了，其他容器数据卷依然数据共享。数据卷的生命
             周期一直持续到没有容器使用它为止。
-        # 做么做
+        - 做么做
             docker run -it --name mycentos --volumes-from (卷的容器id) 容器id
-    # 列出镜像的变更历史
-        docker history 镜像名# Dockerfile解析
-    # 是什么
+    - 列出镜像的变更历史
+        docker history 镜像名- Dockerfile解析
+    - 是什么
         Dockerfile是用来构建Docker镜像的构建文件，是由一系列命令和参数构成的脚本。
-    # Dockerfile构建过程解析
+    - Dockerfile构建过程解析
         一个命令commit形成一个新的镜像，再由新的镜像执行下一个命令再commit，成功后删除上一个镜像,以此类推
-    # 保留字
-        # FROM
+    - 保留字
+        - FROM
             基础镜像，当前新镜像是基于哪个镜像的
-        # MAINTAINER（即将被废弃）
+        - MAINTAINER（即将被废弃）
             镜像维护者的姓名和邮箱地址
-        # RUN
+        - RUN
             容器构建时候需要运行的命令
-        # EXPOSE
+        - EXPOSE
             当前容器对外暴露的端口
-        # WORKDIR
+        - WORKDIR
             指定在创建容器后，终端默认登录进来的工作目录，一个落脚点
-        # ENV
+        - ENV
             用来在构建镜像过程中设置环境变量
-            # ENV MY_PATH /usr/mytest
+            - ENV MY_PATH /usr/mytest
                 这个环境变量可以在后续任何RUN指令中使用，这就如同在命令前面
                 指定了环境变量前缀一样；也可以在其他指令中直接使用这些环境变量，
                 比如：WORKDIR $MY_PATH
-        # ADD   
+        - ADD   
             将宿主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar压缩包
-        # COPY
+        - COPY
             直接复制宿主机文件到容器，不加处理
             COPY 宿主机文件 容器路径
             COPY ["宿主机文件", "容器路径"]
-        # VOLUME
+        - VOLUME
             容器数据卷，用于保存和持久化工作
-        # CMD
+        - CMD
             指定一个容器启动时要运行的命令
             Dockerfile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的
             参数替换
             例：
                 CMD echo "Miman"
-                # 只有该命令才会生效，不会打印"Miman"
+                - 只有该命令才会生效，不会打印"Miman"
                 CMD ["curl", "-s", "http://www.baidu.com"]
-                # -i会替换最后一个CMD命令，即CMD -i
+                - -i会替换最后一个CMD命令，即CMD -i
                 docker run -it 镜像名 -i
-        # ENTRYPOINT
+        - ENTRYPOINT
             指定一个容器启动时要运行的命令
             ENTRYPOINT 的目的和CMD一样，都是指定容器启动程序及参数，但是以追加方式
             例：
                 ENTRYPOINT ["curl", "-s", "http://www.baidu.com"]
-                # 会在最后一个CMD命令后面追加 -i，打印出报文头信息
+                - 会在最后一个CMD命令后面追加 -i，打印出报文头信息
                 docker run -it 镜像名 -i
-        # LABEL(没有实质作用，一般放在第二行)
+        - LABEL(没有实质作用，一般放在第二行)
             LABEL author="Miman" sex="male"
-        # EXPOSE
+        - EXPOSE
             EXPOSE 80 | 80/tcp | 80/udp
-        # ONBUILD
+        - ONBUILD
             当构建一个被继承的Dockerfile时运行的命令，父镜像在被子继承后父镜像的onbuild触发
 
-# 搜索镜像
+- 搜索镜像
     docker search 镜像名
-    # 搜索点赞数超过30的镜像
+    - 搜索点赞数超过30的镜像
         docker search -s 30 镜像名
 
-# 拉取镜像到本地
+- 拉取镜像到本地
     docker pull 镜像名称[:tag]
-    # 栗子
+    - 栗子
         docker pull daocloud.io/library/tomcat:8.5.15-jre8
             
-# 查看全部本地镜像
+- 查看全部本地镜像
     docker images
 
-# 删除本地镜像
+- 删除本地镜像
     docker rmi 
 
-# 镜像的导入导出（不规范）
-    # 将本地的镜像导出
+- 镜像的导入导出（不规范）
+    - 将本地的镜像导出
         docker save -o 导出路径 镜像id
         或：
         docker save 镜像名>file.tar
-    # 加载本地的镜像
+    - 加载本地的镜像
         docker load -i file.tar
-        # 加载后的镜像文件名称是None，可以手动修改解决
+        - 加载后的镜像文件名称是None，可以手动修改解决
             docker tag 镜像id 新的镜像名称:版本
 
-# 容器的操作
-    # 运行器
-        # 简单操作
-            # docker run [option] 镜像的标识|镜像的名称[:tag]
-        # 常用的参数
-            # docker run -d -p 宿主机端口:容器端口 --name 容器的名称 镜像的标识|镜像名称[:tag]
+- 容器的操作
+    - 运行器
+        - 简单操作
+            - docker run [option] 镜像的标识|镜像的名称[:tag]
+        - 常用的参数
+            - docker run -d -p 宿主机端口:容器端口 --name 容器的名称 镜像的标识|镜像名称[:tag]
                 -d: 代表后台运行容器（注：若容器内没有正在运行的东西，会自动停止）
                 -p: 宿主机端口:容器端口；为了映射当前linux端口和容器端口
                 -P: 随机端口映射(大写的P)
                 --name: 容器名称
-        # 复杂操作
-            # docker run -d 镜像 /bin/sh -c "while true; do echo Miman; sleep 2; done;"
+        - 复杂操作
+            - docker run -d 镜像 /bin/sh -c "while true; do echo Miman; sleep 2; done;"
                 后台运行容器，每隔两秒打印Miman（注：容器内有正在运行的东西，不会自动停止）
-    # 查看正在运行的容器
-        # docker ps [-qa]
+    - 查看正在运行的容器
+        - docker ps [-qa]
             [null]: 查看当前正在运行的容器
             -a : 查看全部的容器（包括当前运行的和过往的）
             -q : 只查看容器的标识
@@ -305,84 +312,84 @@
             -n 3: 上3次运行过的
             --digests: 显示镜像的摘要信息
             --no-trunc: 显示完整的镜像信息
-    # 进入到容器当中
+    - 进入到容器当中
         docker attach 容器id
-    # 让容器的交互式模拟终端执行命令（linux命令），不需要进入容器
+    - 让容器的交互式模拟终端执行命令（linux命令），不需要进入容器
         docker exec -it 容器id 命令
-    # 从容器内拷贝文件到主机上
+    - 从容器内拷贝文件到主机上
         docker cp 容器id:path/file 宿主机路径
-    # 进入到容器的内部
-        # docker exec -it 容器id /bin/bash == docker attach 容器id
+    - 进入到容器的内部
+        - docker exec -it 容器id /bin/bash == docker attach 容器id
             -i: 以交互模式运行容器，通常与-t同时使用
             -t: 容器重新分配一个伪输入终端，通常与-i同时使用
             退出容器
                 exit
                 Ctrl+q+p
-        # 导出mysql数据库
+        - 导出mysql数据库
             docker exec mysql容器id sh -c "mysqldump --all-databases -uroot -p'123'" > /Miman/all-databases.sql
-    # 停止容器
-        # docker stop [-f] 容器id
+    - 停止容器
+        - docker stop [-f] 容器id
             -f: 强制停止
-        # docker kill 容器id  # 强制停止
-    # 删除容器（删除容器前，需要先停止容器）
-        # 删除指定容器
+        - docker kill 容器id  # 强制停止
+    - 删除容器（删除容器前，需要先停止容器）
+        - 删除指定容器
             docker rm 容器id
-        # 删除全部容器
+        - 删除全部容器
             docker rm $(docker ps -qa)
-    # 查看容器内运行的进程
+    - 查看容器内运行的进程
         docker top 容器id
-    # 查看容器内部的细节
+    - 查看容器内部的细节
         docker inspect 容器id
-    # 查看容器日志
-        # docker logs [-t] [-f] [--tail row] 容器id
+    - 查看容器日志
+        - docker logs [-t] [-f] [--tail row] 容器id
             -t: 显示时间
             -f: 不停地追加，可持续的看日志
             --tail 3: 看倒数三行日志
 
 
-# Docker的中央仓库
+- Docker的中央仓库
 
-# 1.Docker的官方中央仓库，这个仓库的镜像的最全的，但是下载速度较慢
+- 1.Docker的官方中央仓库，这个仓库的镜像的最全的，但是下载速度较慢
     https://hub.docker.com
     
-# 2.国内的下载网站：网易蜂巢、daoCloud
+- 2.国内的下载网站：网易蜂巢、daoCloud
     https://c.163yun.com/hub#/home  # 需要登录
     http://hub.daocloud.io/  # 推荐使用
     
-# 3.在公司内部采用私服的方式拉取镜像。（添加配置）
-    # 需要在/etc/docker/daemon.json
+- 3.在公司内部采用私服的方式拉取镜像。（添加配置）
+    - 需要在/etc/docker/daemon.json
     {
         "registry-mirrors": ["https://registry.docker-cn.com"],
         "insecure-registreis": ["ip:port"]
     }
-    # 重启两个服务
+    - 重启两个服务
         systemctl daemon-reload
         systemctl restart docker
     
 
-# Docker应用
+- Docker应用
 
-    # 先停止系统中的tomcat和mysql服务
-        # 进入tomcat目录
+    - 先停止系统中的tomcat和mysql服务
+        - 进入tomcat目录
             cd /usr/local/apache-tomcat-8.5.53/
             cd bin/bash
             ./shutdown.sh
-        # 停止mmysql
+        - 停止mmysql
             systemctl stop mysqld
             systemctl disable mysqld
-        # run mysql镜像，如果没有mysql镜像，该命令会先去下载
+        - run mysql镜像，如果没有mysql镜像，该命令会先去下载
             docker run -d -p 3306:3306 --nmae mysql -e MYSQL_ROOT_PASSWORD=root daocloud.io/library/mysql:5.7.4
         
-        # 登录mysql若遇到/var/run/mysqld/mysqld.sock错误
-            # 可以尝试这样连接
+        - 登录mysql若遇到/var/run/mysqld/mysqld.sock错误
+            - 可以尝试这样连接
                 mysql -uroot -h 127.0.0.1 -p
-            # 配置
+            - 配置
                 [mysqld]
                 datadir=/usr/local/mysql/data
                 basedir=/usr/local/mysql
                 socket=/var/lib/mysql/mysql.sock（跟这个socket路径一样）
                 user=mysql
-                # Disabling symbolic-links is recommended to prevent assorted security risks
+                - Disabling symbolic-links is recommended to prevent assorted security risks
                 symbolic-links=0
 
                 [mysqld_safe]
@@ -393,139 +400,139 @@
                 port=3306
                 socket=/var/lib/mysql/mysql.sock
 
-    # 3.1准备SSM工程
-        # MySql数据库的连接用户名和密码改变了，修改db.properties
+    - 3.1准备SSM工程
+        - MySql数据库的连接用户名和密码改变了，修改db.properties
     
-    # 3.2准备MySql容器
-        # 在daoCloud网站搜索MySql并复制拉取连接
+    - 3.2准备MySql容器
+        - 在daoCloud网站搜索MySql并复制拉取连接
             docker run 拉取连接
-        # 运行mysql容器
+        - 运行mysql容器
             docker run -d -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=root daocloud.io/library/mysql:5.7.4
     
-    # 3.3准备Tomcat容器
-        # 运行Tomcat容器，前面搞定后，只需要将SSM项目的war包部署到Tomcat容器即可
-        # 通过命令将宿主机的内容复制到容器内部
+    - 3.3准备Tomcat容器
+        - 运行Tomcat容器，前面搞定后，只需要将SSM项目的war包部署到Tomcat容器即可
+        - 通过命令将宿主机的内容复制到容器内部
             先进入ssm文件将用户名密码修改，再重新打包（war包）：mvn clean package -DskipTests  # 此步骤可以不要
             将打好的war包复制到某个路径并重命名: mv old.war new.war  # 此步骤可以不要
             docker cp 文件名称 容器id:容器内部路径
-        # 举个栗子
+        - 举个栗子
             docker cp ssm.war fe:/usr/local/tomcat/webapps
     
-    # 3.4数据卷
+    - 3.4数据卷
         为了部署SSM的工程，需要使用到cp的命令将宿主机内的ssm.war文件复制到容器内部。
         数据卷：将宿主机的一个目录映射到容器的一个目录中
         可以在宿主机中操作目录中的内容，容器内部映射的文件也会跟着改变
-        # 创建数据卷
+        - 创建数据卷
             docker volume create 数据卷名称
             
-        # 创建数据卷之后，默认会存放在一个目录下: /var/lib/docker/volumes/创建时指定的数据卷名称/_data
+        - 创建数据卷之后，默认会存放在一个目录下: /var/lib/docker/volumes/创建时指定的数据卷名称/_data
         
-        # 查看数据卷的详细信息
+        - 查看数据卷的详细信息
             docker volume inspect 数据卷名称
         
-        # 查看全部数据卷
+        - 查看全部数据卷
             docker volume ls
             
-        # 删除数据卷
+        - 删除数据卷
             docker volume rm 数据卷名称
             
-        # 应用数据卷
-            # 当你映射数据卷时，如果数据卷不存在，Docker会帮你自动创建
+        - 应用数据卷
+            - 当你映射数据卷时，如果数据卷不存在，Docker会帮你自动创建
                 docker run -v 数据卷名称:容器内部的路径 镜像id
-            # 直接指定一个路径作为数据卷的存放位置
+            - 直接指定一个路径作为数据卷的存放位置
                 docker run -v 路径:容器内部的路径 镜像id
                 
-            # 栗子步骤
-                # 映射数据卷，会将容器内部自带的文件，存储在默认的存放路径中
-                    # 停掉之前的tomcat
+            - 栗子步骤
+                - 映射数据卷，会将容器内部自带的文件，存储在默认的存放路径中
+                    - 停掉之前的tomcat
                         docker ps  # 查看当前运行的容器，有需要停掉的容器就进行下面步骤
                         docker stop 容器id
                         docker rm 容器id
-                    # 查看容器id
+                    - 查看容器id
                         docker ps -a
-                    # 创建数据卷
+                    - 创建数据卷
                         docker volume create volume_ssm_tomcat
-                    # 启动
+                    - 启动
                         docker run -d -p 8080:8080 --name ssm_tomcat -v volumes_ssm_tomcat:/usr/local/tomcat/用户应用(webapps)(被映射的目录) 容器id
-                    # 如果想把war包部署到卷中
+                    - 如果想把war包部署到卷中
                         就将war包复制到/var/lib/docker/volumes/卷名/_data
-                    # 查看日志
+                    - 查看日志
                         docker logs -f 容器id  # 最后一行[可以看到已经将ssm包加载进来了]
-                # 指定一个路径作为数据卷的存放位置用户应用(webapps)(被映射的目录) 容器
-                    # docker run -d -p 8080:8080 --name ssm_tomcat -v /opt/volume_ssm_tomcat(指定的绝对路径):/usr/local/tomcat/用户应用(webapps)(被映射的目录) 容器id
-                    # cd /opt/ ls会发现该目录下多了一个volume_ssm_tomcat目录
-                    # 此时volume_ssm_tomcat目录为空，需要手动添加文件（建议使用）
+                - 指定一个路径作为数据卷的存放位置用户应用(webapps)(被映射的目录) 容器
+                    - docker run -d -p 8080:8080 --name ssm_tomcat -v /opt/volume_ssm_tomcat(指定的绝对路径):/usr/local/tomcat/用户应用(webapps)(被映射的目录) 容器id
+                    - cd /opt/ ls会发现该目录下多了一个volume_ssm_tomcat目录
+                    - 此时volume_ssm_tomcat目录为空，需要手动添加文件（建议使用）
                     
-    # 4.Docker自定义镜像(附1)
+    - 4.Docker自定义镜像(附1)
     
-        # 指令
-            # COPY和ADD
+        - 指令
+            - COPY和ADD
                 COPY:从文件系统复制内容
                 ADD :不仅可以从文件系统，还可以从某个url复制
-            # CMD和ENTRYPOINT
+            - CMD和ENTRYPOINT
                 RNTRYPOINT非json则以RNTRYPOINT为准，如果RNTRYPOINT和CMD都是json则
                 RNTRYPOINT+CMD拼接成shell
-            # EXPOSE:当前的镜像暴露出来的端口
-                # docker inspect 镜像名称  # 查看镜像信息
-                    # 在config下的ExposePorts下记录了暴露的端口
-            # ENV:定义环境变量，从构建到容器退出都生效
+            - EXPOSE:当前的镜像暴露出来的端口
+                - docker inspect 镜像名称  # 查看镜像信息
+                    - 在config下的ExposePorts下记录了暴露的端口
+            - ENV:定义环境变量，从构建到容器退出都生效
                 ENV A=10
                 CMD echo $A  # 运行镜像是将会打印出10
-            # ARG:定义环境变量，构建时生效
-                # 可在构建时临时修改
+            - ARG:定义环境变量，构建时生效
+                - 可在构建时临时修改
                     docker build -t test --build-arg A=12
-            # LABEL:标识，没有实质作用,一般放在第二行
+            - LABEL:标识，没有实质作用,一般放在第二行
                 LABEL k="v" k1="v1"
-            # ONBUILD
+            - ONBUILD
                 ONBUILD ENV C=100 # 另一个文件以FROM形式导入后生效
     
-        # 创建一个Dockerfile文件（文件是没有任何后缀的），并且指定自定义镜像信息
-            # Dockerfile文件中常用的内容
+        - 创建一个Dockerfile文件（文件是没有任何后缀的），并且指定自定义镜像信息
+            - Dockerfile文件中常用的内容
                 from：指定当前自定义镜像依赖的环境，例：daocloud.io/library/tomcat:8.5.15-jre8
                 copy：将相对路径（和DockerFile文件同级目录）下的内容复制到自定义镜像中
                 workdir：声明镜像的默认工作路径
                 cmd：需要执行的命令（在workdir下执行的，cmd可以写多的，只以最后一个为准）
-            # 举个栗子
+            - 举个栗子
                 from daocloud.io/library/tomcat:8.5.15-jre8
                 copy ssm.war /usr/local/tomcat/webapps
-            # 将准备好的Dockerfile和相应的文件拖拽到linux操作系统中，通过Docker命令制作镜像
+            - 将准备好的Dockerfile和相应的文件拖拽到linux操作系统中，通过Docker命令制作镜像
                 docker build -t 镜像名称:[tag]
-                # 举个栗子
+                - 举个栗子
                     先在~下创建个ssm-tomcat文件用来区分
                     cd ssm-tomcat
                     docker build -t ssm-tomcat:1.0.0 .
                     docker images
                     docker run -d -p 8081:8080 --name custom-ssm-tomcat 容器id
-                # 缓存特性
+                - 缓存特性
                     当构建到某一步失败（可进入上层容器中查看原因：docker run -it id），之后再进行构建时，会自动从失败的地方继续。
                 
-    # 5.Docker-Compose
+    - 5.Docker-Compose
         之前运行一个镜像，需要添加大量的参数
         可以通过Docker-Compose编写这些参数
         Docker-Compose可以帮助我们批量的管理容器
         只需要通过一个docker-compose.yml文件去维护即可
         
-        # 下载Docker-Compose
-            # 去GitHub官网搜索docker-compose，下载1.24.1版本的Docker-Compose
+        - 下载Docker-Compose
+            - 去GitHub官网搜索docker-compose，下载1.24.1版本的Docker-Compose
                 连接地址：https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
-            # 将下载好的文件拖拽到Linux系统中
+            - 将下载好的文件拖拽到Linux系统中
                 ~# mv docker-compose-Linux-x86_64 /usr/local/
                 cd /usr/local/
                 mv docker-compose-Linux-x86_64 docker-compose
-                # 添加可执行权限
+                - 添加可执行权限
                     chmod 777 docker-compose
                 mv docker-compose bin
                 cd bin/
                 pwd 复制路径
-                # 修改环境变量
+                - 修改环境变量
                     vim /etc/profile
                         在最后面将路径添加到export PATH=$PATH:后面
-                # 重新加载环境变量
+                - 重新加载环境变量
                     source /etc/profile
-                # 测试docker-compose是否加载成功
+                - 测试docker-compose是否加载成功
                     cd ~
                     docker-compose
-    # 6.Docker-Compose管理MySql和Tomcat容器
+    - 6.Docker-Compose管理MySql和Tomcat容器
         yml文件以key: value方式来指定配置信息
         多个配置信息以换行+缩进的方式来区分
         在docker-compose.yml文件中，不要使用制表符
@@ -555,22 +562,22 @@
                   - opt/docker_mysql_tomcat/tomcat_webapps:/usr/local/tomcat/webapps
                   - opt/docker_mysql_tomcat/tomcat_logs:/usr/local/tomcat/logs
         
-        # 使用docker-compose命令管理容器
+        - 使用docker-compose命令管理容器
             在使用docker-compose的命令时，默认会在当前目录下找到docker-compose.yml文件
-            # 基于docker-copmose.yml启动管理容器
+            - 基于docker-copmose.yml启动管理容器
                 docker-compose up -d
-            # 关闭并删除容器
+            - 关闭并删除容器
                 docker-compose down
-            # 开启|关闭|重启已经存在的由docker-compose维护的容器
+            - 开启|关闭|重启已经存在的由docker-compose维护的容器
                 docker-compose start|stop|restart
-            # 查看有docker-compose管理的容器
+            - 查看有docker-compose管理的容器
                 docker-compose ps
-            # 查看日志
+            - 查看日志
                 docker-compose logs -f
                 
-        # docker-compose配置Dockerfile使用
+        - docker-compose配置Dockerfile使用
             使用docker-compose.yml文件以及Dockerfile文件在生成自定义镜像的同时启动当前镜像，并且由docker-compose去管理容器
-            # docker-compose.yml文件内容:
+            - docker-compose.yml文件内容:
                 version: '3.1'
                 services:
                   ssm:
@@ -584,11 +591,11 @@
                       - 8081:8080
                     environment:
                       TZ: Asia/Sichuan
-            # Dockerfile文件内容：
+            - Dockerfile文件内容：
                 from daocloud.io/library/tomcat:8.5.15-jre8
                 copy ssm.war /usr/local/tomcat/webapps
                 
-            # 上面两个文件准备好后，要注意docker-compose.yml文件在Dockerfile文件下一级
+            - 上面两个文件准备好后，要注意docker-compose.yml文件在Dockerfile文件下一级
                 创建一个docker_ssm文件夹打开
                 创建一个docker-compose文件夹，并在其中放入docker-compose.yml文件
                 将ssm.war、Dockerfile复制到docker-compose文件夹中
@@ -600,92 +607,92 @@
                     cd docker_ssm/
                     cd docker-compose
                     docker-compose up -d
-            # 可以直接启动基于docker-compose.yml以及Dockerfile文件构建自定义镜像
+            - 可以直接启动基于docker-compose.yml以及Dockerfile文件构建自定义镜像
                 docker-compose up -d
-                # 如果自定义镜像不存在，会帮助我们构建出自定义镜像，如果自定义镜像已经存在，会直接运行这个自定义镜像
-                # 重新构建的话
-                # 重新构建自定义镜像
+                - 如果自定义镜像不存在，会帮助我们构建出自定义镜像，如果自定义镜像已经存在，会直接运行这个自定义镜像
+                - 重新构建的话
+                - 重新构建自定义镜像
                     docker-compose build
-                # 运行前，重新构建
+                - 运行前，重新构建
                     docker-compose up -d --build
-# end #
 
-# 镜像文件修改后不会保存，要想保存修改必须自己打包
 
-# 启动最近的Ubuntu并运行home/usr/hello-word镜像
-  # docker run ubuntu:latest /home/usr/hello-word
+- 镜像文件修改后不会保存，要想保存修改必须自己打包
+
+- 启动最近的Ubuntu并运行home/usr/hello-word镜像
+    - docker run ubuntu:latest /home/usr/hello-word
   
-# 下载python3.6镜像
-  # docker pull python:3.6
+- 下载python3.6镜像
+    - docker pull python:3.6
 
-# 运行redis并为其ID取名为redis1
-  # docker run --name redis1 redis
+- 运行redis并为其ID取名为redis1
+    - docker run --name redis1 redis
  
-# 运行redis并为其ID取名为redis1,退出时自动删除容器
-  # docker run --rm --name redis1 redis
+- 运行redis并为其ID取名为redis1,退出时自动删除容器
+    - docker run --rm --name redis1 redis
   
-# 运行redis,为其ID取名为redis2,并将本机/data/redis目录映射到redis容器中的/data目录
-  # docker run --name redis2 -v /data/redis:/data redis
+- 运行redis,为其ID取名为redis2,并将本机/data/redis目录映射到redis容器中的/data目录
+    - docker run --name redis2 -v /data/redis:/data redis
   
-# 查看当前运行容器
-  # docker ps
+- 查看当前运行容器
+    - docker ps
   
-# 查看所有容器
-  # docker ps -a
+- 查看所有容器
+    - docker ps -a
   
-# 查看容器IP地址
-  # docker inspect ID(或者--name 后面起的名字)
+- 查看容器IP地址
+    - docker inspect ID(或者--name 后面起的名字)
   
-# 查询一个只有几兆的linux系统
-  # docker search alphine
+- 查询一个只有几兆的linux系统
+    - docker search alphine
   
-# 删除容器
-  # docker rm 容器ID
+- 删除容器
+    - docker rm 容器ID
 
-# 找到docker的所有CONTAINER并将其删除
-  # docker ps -a | grep -v CONTAINER | cut -d ' ' -f1 | xargs docker rm
+- 找到docker的所有CONTAINER并将其删除
+    - docker ps -a | grep -v CONTAINER | cut -d ' ' -f1 | xargs docker rm
   
-# 从新的窗口进入到已经启动的docker容器中
-  # docker exec -it name或ID /bin/hash
+- 从新的窗口进入到已经启动的docker容器中
+    - docker exec -it name或ID /bin/hash
   
-# 打包
-  # docker commit [-a 作者名] -m 'installed django' 容器ID 别名:版本
-  # 再运行
-    # docker run -it --rm 别名:版本 /bin/bash
+- 打包
+    - docker commit [-a 作者名] -m 'installed django' 容器ID 别名:版本
+    - 再运行
+    - docker run -it --rm 别名:版本 /bin/bash
     
-# 创建自己的镜像，其实就像pip -r requirement.txt一样，简化了一些频繁安装操作
-  # 首先vim 一个dockerfile文件
-  # 写入
-    # FROM 一个基准镜像比如python_django:3.6
+- 创建自己的镜像，其实就像pip -r requirement.txt一样，简化了一些频繁安装操作
+    - 首先vim 一个dockerfile文件
+    - 写入
+    - FROM 一个基准镜像比如python_django:3.6
       如果没有这个镜像，就会自动从云端下载
-    # RUN pip install ...
+    - RUN pip install ...
       具体要执行的命令
-    # 创建镜像
+    - 创建镜像
       docker build -t python_django:3.6 .
       # 无缓存创建镜像
         docker build -t python_django:3.6 --no-cache .
         
       
-# 终端模式登陆docker
-  # docker login
+- 终端模式登陆docker
+    - docker login
 
-# 给镜像重新命名
-  # docker tag old_name new_name
+- 给镜像重新命名
+    - docker tag old_name new_name
 
-# docker 镜像上传与下载
-  # docker push 1350/miman_1:tagname
-  # docker网址: https://hub.docker.com
-  # docker push image_name
+- docker 镜像上传与下载
+    - docker push 1350/miman_1:tagname
+    - docker网址: https://hub.docker.com
+    - docker push image_name
    # 不会推所有的，有些底层的不会推，只会推上层我们的
 
-# docker容器中使用selenium驱动chrome #
+- docker容器中使用selenium驱动chrome #
     需要给options添加
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-gpu')
         options.add_argument('--disable-dev-shm-usage')
-# end #
+
 
 
 

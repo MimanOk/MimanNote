@@ -1,11 +1,11 @@
-# 通过域名查ip #
-# 以google为例(Google有自己的DNS服务器（ns1.google.com、ns2.google.com等），除此之外还提供免费的公共DNS服务器（IP地址分别为8.8.8.8 和8.8.4.4），为公众提供域名解析服务。)
-  # nslookup 要解析的域名 ns1.google.com
-    # nslookup -q=TXT _netblocks.google.com 8.8.8.8
-	# 可以查看google最新的服务器IP地址段，但这里面没有大陆的IP地址段。
-# end #
+- 通过域名查ip
+- 以google为例(Google有自己的DNS服务器（ns1.google.com、ns2.google.com等），除此之外还提供免费的公共DNS服务器（IP地址分别为8.8.8.8 和8.8.4.4），为公众提供域名解析服务。)
+    - nslookup 要解析的域名 ns1.google.com
+    - nslookup -q=TXT _netblocks.google.com 8.8.8.8
+    - 可以查看google最新的服务器IP地址段，但这里面没有大陆的IP地址段。
 
-# 修改dos显示的路径
-  # set PROMPT=new_path  # 等号两边无空格
+
+- 修改dos显示的路径
+  - set PROMPT=new_path  # 等号两边无空格
 
 

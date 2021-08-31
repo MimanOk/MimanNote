@@ -8,34 +8,70 @@ html1.css('')
 html2.cssselect('')
 
 
-# 获取标签下文本
+- 获取标签下文本
     ::text
   
-# 获取href属性的属性值
+- 获取href属性的属性值
     ::attr(href)
-  
-# li标签的下一个兄弟标签下的a标签
+
+- li标签后面第一个p标签
+    li + p
+
+- li标签后面第一个li标签(兄弟标签)下的a标签
     li + li a
+    
+- 选取id为1的div的第一个ul子元素
+    div#1 > ul
+    
+- 选取与ul相邻的所有p元素
+    ul~p
+    
+- 选取所有有title属性的a元素
+    a[title]
+    
+- href属性等于link的p元素
+    p[href = "link"]
   
-# href属性包含link的p元素
+- href属性包含link的p元素
     p[href *= "link"]
     
-# class属性不包含Miman的div标签
+- href属性值以link开头的p元素
+    p[href ^= "link"]
+    
+- href属性值以.jpg结尾的p元素
+    p[href $= ".jpg"]
+    
+- class属性不包含Miman的div标签
     div:not(.Miman)
     
-# id包含tb-的所有节点
+- id属性不包含Miman的div标签
+    div:not(#Miman)
+    
+- id包含tb-的所有节点
     *[id *= 'tb-']
+    
+- 选取状态为选中的radio元素
+    input[type=radio]:checked
+    
+- 选取第三个li元素
+    li:nth-child(3)
+    
+- 选取第偶数个li元素
+    li:nth-child(2n)
+    
+- 选取第奇数个li元素
+    li:nth-child(2n-1)
   
-# 多个属性
+- 多个属性
     div.cls1.cls2
     
-# 选择属性为job-tags且不包含tag-all属性的div标签
+- 选择属性为job-tags且不包含tag-all属性的div标签
     div.job-tags:not(.tag-all)
   
-# span中包含"下一页"文本内容的a标签
+- span中包含"下一页"文本内容的a标签
     .css("a:has(span:contains("下一页"))")  # 这是错误的用法，css里没有包含文本这种用法
   
-# 示例(淘宝定位购物车按钮)，同XPATH笔记中
+- 示例(淘宝定位购物车按钮)，同XPATH笔记中
     div.tb-skin div.tb-action div:not(.tb-hidden):not(.tb-btn-buy) a
   
   
